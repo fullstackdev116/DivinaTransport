@@ -1,0 +1,58 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "com.example.divinatransport"
+        minSdk 23
+        targetSdk 32
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.5.0'
+    implementation 'com.android.support:design:32.0.0'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.navigation:navigation-fragment:2.5.1'
+    implementation 'androidx.navigation:navigation-ui:2.5.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'me.relex:circleindicator:2.1.6'
+    implementation 'org.imaginativeworld.whynotimagecarousel:whynotimagecarousel:2.1.0'
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
+    implementation 'com.hbb20:ccp:2.6.1'
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
+    implementation 'com.github.CanHub:Android-Image-Cropper:4.3.1'
+    implementation 'me.zhanghai.android.materialratingbar:library:1.4.0'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-location:20.0.0'
+    implementation 'com.google.android.gms:play-services-places:17.0.0'
+//    implementation 'joda-time:joda-time:2.4'
+    implementation 'com.google.maps:google-maps-services:0.1.6'
+    implementation 'com.google.maps.android:android-maps-utils:0.3.4'
+    implementation 'com.github.hantrungkien:BottomSheetBehavior:1.0.3'
+//    implementation 'com.mahc.custombottomsheetbehavior:googlemaps-like:0.9.1'
+//    implementation('com.microblink:blinkid:5.18.0@aar') {
+//        transitive = true
+//    }
+}

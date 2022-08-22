@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DriverSignupFragments.Fragment_driver_signup_intro">
+
+    <!-- TODO: Update blank fragment layout -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+                android:id="@+id/carousel"
+                android:layout_width="match_parent"
+                android:layout_height="256dp" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginLeft="20dp"
+                    >
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:background="@drawable/frame_border"
+                        android:padding="10dp"
+                        >
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:layout_marginTop="5dp"
+                            android:singleLine="false"
+                            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse fermentum, erat vel volutpat porttitor, nunc mauris placerat nisi, sed lacinia dolor quam ut mauris. Nam at nulla facilisis, aliquet urna suscipit, semper velit. In tempus erat cursus nisi vehicula, id euismod ligula volutpat. Quisque accumsan dui blandit, hendrerit ligula vel, tristique tortor. Nulla efficitur nibh quis mauris venenatis vehicula. Fusce varius, ex non vulputate pellentesque, velit justo blandit purus, sodales vehicula magna risus a ipsum. Phasellus risus orci, rhoncus non ipsum sed, pellentesque efficitur elit."
+                            android:textColor="@color/black" />
+                    </RelativeLayout>
+                    <CheckBox
+                        android:id="@+id/chk_agree"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="I agree on the Terms of Use and Privacy Policy"
+                        android:layout_marginTop="10dp"
+                        />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/white"
+                    android:textColor="#333333"
+                    android:text="  Terms of Use and Privacy Policy  " />
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</FrameLayout>
