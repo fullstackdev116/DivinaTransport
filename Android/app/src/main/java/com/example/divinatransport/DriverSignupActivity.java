@@ -14,14 +14,9 @@ import android.widget.TextView;
 import com.example.divinatransport.DriverSignupFragments.Fragment_driver_signup_intro;
 import com.example.divinatransport.DriverSignupFragments.Fragment_driver_signup_license;
 import com.example.divinatransport.DriverSignupFragments.Fragment_driver_signup_userinfo;
-
-import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
-import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
+import com.example.divinatransport.idcamera.IDCardCamera;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class DriverSignupActivity extends AppCompatActivity {
     FragmentTransaction transaction;
@@ -104,5 +99,16 @@ public class DriverSignupActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    public void openIDCamera() {
+        IDCardCamera.create(this).openCamera(IDCardCamera.TYPE_IDCARD_FRONT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fl_container);
+        fragment.onActivityResult(requestCode, resultCode, data);
     }
 }

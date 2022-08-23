@@ -14,4 +14,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="touch_to_focus">Touch the screen to focus</string>
+    <string name="crop_fail">Crop failed</string>
+    <string name="no_flash">This device does not support flash</string>
 </resources>
