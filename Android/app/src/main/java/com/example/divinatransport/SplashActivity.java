@@ -1,5 +1,7 @@
 package com.example.divinatransport;
 
+import static com.example.divinatransport.App.RunAnimation;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -41,10 +43,5 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
     }
-    private void RunAnimation(View v, Animation a)
-    {
-        a.reset();
-        v.clearAnimation();
-        v.startAnimation(a);
-    }
+
 }

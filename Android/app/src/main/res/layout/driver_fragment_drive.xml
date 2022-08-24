@@ -74,6 +74,7 @@
                     android:layout_height="wrap_content"
                     android:text="Allen Deal"
                     android:textColor="@color/white"
+                    android:textAlignment="center"
                     android:layout_marginTop="5dp"
                     android:singleLine="true"
                     android:textSize="12dp"

@@ -18,6 +18,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.URLUtil;
 import android.widget.Toast;
@@ -57,6 +58,12 @@ public class App extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
+    }
+
+    public static void RunAnimation(View v, Animation a) {
+        a.reset();
+        v.clearAnimation();
+        v.startAnimation(a);
     }
     public static void setPreference(String key, String value) {
         PreferenceManager.getDefaultSharedPreferences(mContext)

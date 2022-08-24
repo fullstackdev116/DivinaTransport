@@ -365,10 +365,6 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
-//        if (marker.equals(myMarker))
-//        {
-//
-//        }
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         removeRoad();
 //        mTaskSnapToRoads.execute();
