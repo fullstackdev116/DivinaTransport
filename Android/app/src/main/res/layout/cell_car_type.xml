@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp"
+    >
+    <RelativeLayout
+        android:id="@+id/ly_cover"
+        android:layout_width="160dp"
+        android:layout_height="90dp"
+        android:gravity="center"
+        android:background="@color/white"
+        >
+        <ImageView
+            android:id="@+id/img_carType"
+            android:layout_width="156dp"
+            android:layout_height="86dp"
+            android:scaleType="fitXY"
+            android:background="@android:color/darker_gray"
+            />
+    </RelativeLayout>
+</LinearLayout>

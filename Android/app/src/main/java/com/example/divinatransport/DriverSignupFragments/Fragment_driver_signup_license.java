@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.example.divinatransport.DriverSignupActivity;
 import com.example.divinatransport.R;
 import com.example.divinatransport.idcamera.IDCardCamera;
+import com.example.divinatransport.idcamera.utils.FileUtils;
 
 
 public class Fragment_driver_signup_license extends Fragment {
@@ -34,7 +35,7 @@ public class Fragment_driver_signup_license extends Fragment {
             @Override
             public void onClick(View v) {
 //                activity.openIDCamera();
-                IDCardCamera.create(activity).openCamera(IDCardCamera.TYPE_IDCARD_FRONT);
+                IDCardCamera.create(activity).openCamera(IDCardCamera.TYPE_IDCARD_BACK);
             }
         });
 
@@ -48,14 +49,12 @@ public class Fragment_driver_signup_license extends Fragment {
             //获取图片路径，显示图片
             final String path = IDCardCamera.getImagePath(data);
             if (!TextUtils.isEmpty(path)) {
-                if (requestCode == IDCardCamera.TYPE_IDCARD_FRONT) { //身份证正面
+                if (requestCode == IDCardCamera.TYPE_IDCARD_BACK) { //身份证正面
                     imageView.setImageBitmap(BitmapFactory.decodeFile(path));
-                } else if (requestCode == IDCardCamera.TYPE_IDCARD_BACK) {  //身份证反面
-//                    mIvBack.setImageBitmap(BitmapFactory.decodeFile(path));
+                } else {  //身份证反面
                 }
 
-                //实际开发中将图片上传到服务器成功后需要删除全部缓存图片
-//                FileUtils.clearCache(this);
+                FileUtils.clearCache(activity);
             }
         }
     }

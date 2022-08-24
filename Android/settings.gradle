@@ -11,8 +11,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        jcenter()
         maven { url "https://jitpack.io" }
-        maven { url 'https://maven.microblink.com' }
+//        maven { url 'https://maven.microblink.com' }
     }
 }
 rootProject.name = "DivinaTransport"
