@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/color_screen_background"
     android:layout_height="match_parent"
     tools:context=".DriverMainFragments.Fragment_driver_set_car">
 
@@ -20,7 +21,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Car Photo"
-                android:textColor="@color/red_dark"
                 />
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -68,13 +68,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Car Type"
-                    android:textColor="@color/red_dark"
                     />
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cv_carType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/holo_orange_dark"
+                    android:backgroundTint="@color/red"
                     android:layout_marginLeft="10dp"
                     app:cardCornerRadius="5dp"
                     app:contentPadding="10dp"
@@ -96,7 +95,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text=""
-                            android:textColor="@color/red_dark"
+                            android:textColor="@color/white"
                             android:textSize="20dp"
                             android:textStyle="bold|italic"
                             android:layout_marginLeft="5dp"
@@ -130,7 +129,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Price (per mile)"
-                    android:textColor="@color/red_dark"
                     />
                 <TextView
                     android:layout_width="wrap_content"
@@ -141,7 +139,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="0.0"
+                    android:hint="0.0"
                     android:inputType="numberDecimal"
                     android:layout_marginLeft="3dp"
                     />
@@ -150,8 +148,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Available days in a week"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/red_dark"
+                android:layout_marginTop="15dp"
                 />
             <ca.antonious.materialdaypicker.MaterialDayPicker
                 android:id="@+id/day_picker"
@@ -159,14 +156,16 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/red"
+                android:foregroundTint="@color/red"
                 app:selectionMode="ca.antonious.materialdaypicker.DefaultSelectionMode"
                 />
             <Button
                 android:id="@+id/btn_set"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="30dp"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/round_frame"
                 android:text="Set" />

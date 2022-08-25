@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/color_screen_background"
     android:padding="5dp"
     >
     <RelativeLayout
@@ -10,7 +11,7 @@
         android:layout_width="160dp"
         android:layout_height="90dp"
         android:gravity="center"
-        android:background="@color/white"
+        android:background="@color/color_screen_background"
         >
         <ImageView
             android:id="@+id/img_carType"

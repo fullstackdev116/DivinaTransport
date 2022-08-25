@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/color_screen_background"
     tools:context=".DriverSignupFragments.Fragment_driver_signup_license">
     <ScrollView
         android:layout_width="match_parent"
@@ -58,141 +59,248 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/red_dark"
                 app:contentPadding="5dp"
                 android:layout_marginTop="10dp"
                 app:cardCornerRadius="10dp"
+                android:backgroundTint="@color/white"
+                app:cardElevation="@dimen/cardview_default_elevation"
+                app:cardUseCompatPadding="true"
                 >
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="@drawable/frame_border_round_white"
                     android:padding="10dp"
                     >
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         >
                         <TextView
-                            android:layout_width="80dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="First Name"
-                            android:textColor="@color/teal_200"
+                            android:text="1"
                             />
-                        <EditText
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Jhon"
-                            android:textColor="@android:color/holo_orange_light"
-                            />
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:layout_marginLeft="10dp"
+                            android:padding="8dp"
+                            android:background="@drawable/frame_border_round">
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="15dp"
+                                android:background="@android:color/transparent"
+                                android:hint="First Name"
+                                android:text=""
+                                android:textSize="15dp"
+                                android:singleLine="true"
+                                android:inputType="textPersonName"
+                                />
+                        </LinearLayout>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="10dp"
                         >
                         <TextView
-                            android:layout_width="80dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Last Name"
-                            android:textColor="@color/teal_200"
+                            android:text="2"
                             />
-                        <EditText
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Klak"
-                            android:textColor="@android:color/holo_orange_light"
-                            />
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:layout_marginLeft="10dp"
+                            android:padding="8dp"
+                            android:background="@drawable/frame_border_round">
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="15dp"
+                                android:background="@android:color/transparent"
+                                android:hint="Last Name"
+                                android:text=""
+                                android:textSize="15dp"
+                                android:singleLine="true"
+                                android:inputType="textPersonName"
+                                />
+                        </LinearLayout>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="10dp"
                         >
                         <TextView
-                            android:layout_width="80dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Gender"
-                            android:textColor="@color/teal_200"
+                            android:text="3"
                             />
-                        <EditText
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="M"
-                            android:backgroundTint="@color/teal_200"
-                            android:textColor="@android:color/holo_orange_light"
-                            />
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:layout_marginLeft="10dp"
+                            android:padding="8dp"
+                            android:background="@drawable/frame_border_round">
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="15dp"
+                                android:background="@android:color/transparent"
+                                android:hint="Gender (M/F)"
+                                android:text=""
+                                android:textSize="15dp"
+                                android:singleLine="true"
+                                android:inputType="textPersonName"
+                                />
+                        </LinearLayout>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="10dp"
                         >
                         <TextView
-                            android:layout_width="80dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Date of Birth"
-                            android:textColor="@color/teal_200"
+                            android:text="4"
                             />
-                        <EditText
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="01/03/1985"
-                            android:backgroundTint="@color/teal_200"
-                            android:textColor="@android:color/holo_orange_light"
-                            />
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:layout_marginLeft="10dp"
+                            android:padding="8dp"
+                            android:background="@drawable/frame_border_round">
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="15dp"
+                                android:background="@android:color/transparent"
+                                android:hint="Date of Birth (01/01/2000)"
+                                android:text=""
+                                android:textSize="15dp"
+                                android:singleLine="true"
+                                android:inputType="textPersonName"
+                                />
+                        </LinearLayout>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="10dp"
                         >
                         <TextView
-                            android:layout_width="80dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Issue Date"
-                            android:textColor="@color/teal_200"
+                            android:text="5"
                             />
-                        <EditText
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="08/16/2010"
-                            android:backgroundTint="@color/teal_200"
-                            android:textColor="@android:color/holo_orange_light"
-                            />
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:layout_marginLeft="10dp"
+                            android:padding="8dp"
+                            android:background="@drawable/frame_border_round">
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="15dp"
+                                android:background="@android:color/transparent"
+                                android:hint="Issue Date (01/01/2015)"
+                                android:text=""
+                                android:textSize="15dp"
+                                android:singleLine="true"
+                                android:inputType="textPersonName"
+                                />
+                        </LinearLayout>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="10dp"
                         >
                         <TextView
-                            android:layout_width="80dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Expiry Date"
-                            android:textColor="@color/teal_200"
+                            android:text="6"
                             />
-                        <EditText
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="08/16/2013"
-                            android:backgroundTint="@color/teal_200"
-                            android:textColor="@android:color/holo_orange_light"
-                            />
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:layout_marginLeft="10dp"
+                            android:padding="8dp"
+                            android:background="@drawable/frame_border_round">
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="15dp"
+                                android:background="@android:color/transparent"
+                                android:hint="Expiry Date (01/01/2020)"
+                                android:text=""
+                                android:textSize="15dp"
+                                android:singleLine="true"
+                                android:inputType="textPersonName"
+                                />
+                        </LinearLayout>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="10dp"
                         >
                         <TextView
-                            android:layout_width="80dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Number"
-                            android:textColor="@color/teal_200"
+                            android:text="7"
                             />
-                        <EditText
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="A90348UI01"
-                            android:backgroundTint="@color/teal_200"
-                            android:textColor="@android:color/holo_orange_light"
-                            />
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:layout_marginLeft="10dp"
+                            android:padding="8dp"
+                            android:background="@drawable/frame_border_round">
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="15dp"
+                                android:background="@android:color/transparent"
+                                android:hint="License Number"
+                                android:text=""
+                                android:textSize="15dp"
+                                android:singleLine="true"
+                                android:inputType="textPersonName"
+                                />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

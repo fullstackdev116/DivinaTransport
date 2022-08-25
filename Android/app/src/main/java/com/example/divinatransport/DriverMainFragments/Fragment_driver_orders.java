@@ -95,7 +95,7 @@ public class Fragment_driver_orders extends Fragment implements OnMapReadyCallba
         markerTo = googleMap.addMarker(new MarkerOptions()
                 .position(toLatLan)
                 .title("To Location"));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(toLatLan, 14));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(fromLatLan, 14));
 
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         PolylineOptions polyline = new PolylineOptions();

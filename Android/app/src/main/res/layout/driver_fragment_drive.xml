@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/color_screen_background"
     android:layout_height="match_parent"
     tools:context=".DriverMainFragments.Fragment_driver_drive">
 
@@ -12,6 +13,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        android:alpha="0.2"
+        />
     <ProgressBar
         android:layout_width="fill_parent"
         android:layout_height="5dp"
@@ -52,7 +59,6 @@
             android:id="@+id/clickable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
             android:padding="10dp">
 
             <LinearLayout
@@ -68,42 +74,43 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:importantForAccessibility="no"
-                    android:src="@drawable/ic_avatar_white" />
+                    android:src="@drawable/ic_avatar" />
                 <TextView
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:text="Allen Deal"
-                    android:textColor="@color/white"
                     android:textAlignment="center"
                     android:layout_marginTop="5dp"
+                    android:textColor="@color/black"
                     android:singleLine="true"
                     android:textSize="12dp"
                     />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/ly_seats"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toEndOf="@+id/ly_avatar"
-                android:gravity="center"
-                android:layout_marginLeft="5dp"
                 android:layout_centerVertical="true"
-                android:background="@drawable/frame_border_round_white"
-                android:padding="5dp"
-                >
+                android:layout_marginLeft="5dp"
+                android:layout_toEndOf="@+id/ly_avatar"
+                android:background="@drawable/frame_border"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="5dp">
+
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:importantForAccessibility="no"
-                    android:src="@drawable/ic_seats" />
+                    android:src="@drawable/ic_seats_dark" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="2"
-                    android:textColor="@color/white"
-                    android:textSize="17dp"
-                    />
+                    android:textColor="@color/black"
+                    android:textSize="17dp" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -121,7 +128,6 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:textStyle="bold"
-                    android:textColor="@color/white"
                     android:lines="2"
                     android:textSize="18dp"
                     android:text="Target address here ..."/>
@@ -138,7 +144,7 @@
                 android:importantForAccessibility="no"
                 android:src="@drawable/ic_expand_more"
                 android:tintMode="src_in"
-                app:tint="@color/white" />
+                app:tint="@color/red_dark" />
 
         </RelativeLayout>
 
@@ -146,7 +152,7 @@
             android:id="@+id/sheet_header_shadow"
             android:layout_width="match_parent"
             android:layout_height="3dp"
-            android:alpha="0.5"
+            android:alpha="0.1"
             android:background="@drawable/filters_sheet_header_shadow"
             />
 
@@ -155,7 +161,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="1px"
-            android:background="#eeeeee"
+            android:background="@color/white"
             android:padding="15dp">
 
             <LinearLayout

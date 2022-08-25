@@ -43,6 +43,8 @@ public class Fragment_driver_set_car extends Fragment {
     private ImageView img_carType, img_car;
     private TextView txt_carName;
     private androidx.cardview.widget.CardView cv_carTyppe;
+    MaterialDayPicker dayPicker;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.driver_fragment_set_car, container, false);
@@ -51,6 +53,7 @@ public class Fragment_driver_set_car extends Fragment {
         img_car = v.findViewById(R.id.img_car);
         txt_carName = v.findViewById(R.id.txt_carType);
         cv_carTyppe = v.findViewById(R.id.cv_carType);
+        dayPicker = v.findViewById(R.id.day_picker);
 
         carTypes = new int[]{R.drawable.car_auris, R.drawable.car_avensis, R.drawable.car_camry, R.drawable.car_corolla, R.drawable.car_gt86,
                     R.drawable.car_hiace, R.drawable.car_highlander, R.drawable.car_hilux, R.drawable.car_land_cruiser_200, R.drawable.car_land_cruiser_prado,

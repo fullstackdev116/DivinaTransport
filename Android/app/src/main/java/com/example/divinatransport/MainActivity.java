@@ -10,7 +10,10 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.divinatransport.DriverMainFragments.Fragment_driver_drive;
+import com.example.divinatransport.DriverMainFragments.Fragment_driver_history;
+import com.example.divinatransport.DriverMainFragments.Fragment_driver_message;
 import com.example.divinatransport.DriverMainFragments.Fragment_driver_orders;
+import com.example.divinatransport.DriverMainFragments.Fragment_driver_rewards;
 import com.example.divinatransport.DriverMainFragments.Fragment_driver_set_car;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -98,8 +101,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             selectFragment(new Fragment_driver_orders());
             txt_title.setText("Orders");
         } else if (id == R.id.nav_history) {
+            selectFragment(new Fragment_driver_history());
+            txt_title.setText("History");
         } else if (id == R.id.nav_chat) {
+            selectFragment(new Fragment_driver_message());
+            txt_title.setText("Message");
         } else if (id == R.id.nav_rewards) {
+            selectFragment(new Fragment_driver_rewards());
+            txt_title.setText("Rewards");
         }
         closeDrawer();
         return true;

@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="12039489"
-                android:background="@color/teal_200"
+                android:background="@android:color/darker_gray"
                 android:textColor="@color/white"
                 android:padding="5dp"
                 />
@@ -173,79 +173,53 @@
                 android:layout_marginRight="15dp"
                 android:background="@android:color/darker_gray" />
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/ly_driver"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical|end"
                 android:orientation="horizontal"
                 android:padding="5dp">
-
                 <LinearLayout
-                    android:id="@+id/ly_avatar"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/img_photo"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/ic_avatar" />
-
-                    <TextView
-                        android:layout_width="60dp"
+                    android:orientation="vertical"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:singleLine="true"
-                        android:text="Allen Deal"
-                        android:textAlignment="center"
-                        android:textSize="12dp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_call"
-                        android:backgroundTint="@color/red" />
-
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        >
+                        <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                            android:id="@+id/rate"
+                            android:layout_width="100dp"
+                            android:layout_height="20dp"
+                            android:layout_marginBottom="10dp"
+                            android:rating="3.5"
+                            android:clickable="false"
+                            android:layout_marginTop="10dp"
+                            android:progressTint="@android:color/holo_orange_light"
+                            style="@style/Widget.MaterialRatingBar.RatingBar" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="reviewed by "
+                            />
+                        <ImageView
+                            android:id="@+id/img_photo"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/ic_avatar" />
+                    </LinearLayout>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:text="+25487954621" />
+                        android:text="Happy driving! very kind driver!"
+                        android:textStyle="italic"
+                        />
                 </LinearLayout>
-
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/stat_notify_chat"
-                    android:backgroundTint="@color/red"
-                    android:layout_marginLeft="20dp"
-                    />
-
-            </LinearLayout>
-
+            </RelativeLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
-
-
-    <Button
-        android:id="@+id/btn_view"
-        android:layout_width="95dp"
-        android:layout_height="40dp"
-        android:text="View Road"
-        android:textSize="10dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="10dp"
-        android:layout_alignParentEnd="true"
-        />
 </RelativeLayout>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    android:background="@color/color_screen_background"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:contentPadding="5dp"
+        app:cardCornerRadius="5dp"
+        android:backgroundTint="@color/white"
+        app:cardElevation="@dimen/cardview_default_elevation"
+        app:cardUseCompatPadding="true"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_photo"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/ic_avatar"
+                android:layout_gravity="center_vertical"
+                app:civ_border_color="@android:color/transparent"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                />
+            <LinearLayout
+                android:id="@+id/ly_status"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@drawable/status_offline"
+                android:layout_toRightOf="@+id/img_photo"
+                android:layout_below="@+id/img_photo"
+                android:layout_marginTop="-5dp"
+                android:layout_marginLeft="-20dp"
+                android:orientation="horizontal" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_toRightOf="@+id/img_photo"
+                android:layout_centerVertical="true"
+                android:paddingLeft="5dp"
+                android:paddingEnd="5dp"
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    />
+                <TextView
+                    android:id="@+id/txt_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Jhon"
+                    android:textStyle="bold"
+                    />
+                <TextView
+                    android:id="@+id/txt_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse fermentum, erat vel volutpat porttitor, nunc mauris placerat nisi, sed lacinia dolor quam ut mauris. Nam at nulla facilisis, aliquet urna suscipit, semper velit. In tempus erat cursus nisi vehicula, id euismod ligula volutpat. Quisque accumsan dui blandit, hendrerit ligula vel, tristique tortor. Nulla efficitur nibh quis mauris venenatis vehicula. Fusce varius, ex non vulputate pellentesque, velit justo blandit purus, sodales vehicula magna risus a ipsum. Phasellus risus orci, rhoncus non ipsum sed, pellentesque efficitur elit."
+                    android:maxLines="1"
+                    android:layout_marginRight="20dp"
+
+                    />
+                <TextView
+                    android:id="@+id/txt_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="textEnd"
+                    android:layout_marginTop="5dp"
+                    android:text="20:21"
+                    />
+
+            </LinearLayout>
+        </RelativeLayout>
+    </com.google.android.material.card.MaterialCardView>
+</RelativeLayout>

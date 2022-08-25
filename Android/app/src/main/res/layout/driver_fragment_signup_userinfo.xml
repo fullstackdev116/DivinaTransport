@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/color_screen_background"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".DriverSignupFragments.Fragment_driver_signup_intro">
 
@@ -42,7 +43,6 @@
                 android:hint="Full name"
                 android:text=""
                 android:textSize="15dp"
-                android:textColor="#000000"
                 android:singleLine="true"
                 android:inputType="textPersonName"
                 />
@@ -70,7 +70,6 @@
                 android:hint="Email address"
                 android:text=""
                 android:textSize="15dp"
-                android:textColor="#000000"
                 android:singleLine="true"
                 android:inputType="textEmailAddress"
                 />
@@ -93,7 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:ccp_defaultNameCode="ci"
-                app:ccp_contentColor="#000000"
+                app:ccp_contentColor="#888888"
                 android:layout_marginStart="10dp"
                 app:ccp_textSize="14dp"
                 />
@@ -107,7 +106,6 @@
                 android:hint="Phone number"
                 android:text=""
                 android:textSize="15dp"
-                android:textColor="#000000"
                 android:singleLine="true"
                 android:inputType="phone"
                 />
