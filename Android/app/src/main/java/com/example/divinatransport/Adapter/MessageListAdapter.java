@@ -1,22 +1,18 @@
 package com.example.divinatransport.Adapter;
 
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.example.divinatransport.DriverMainFragments.Fragment_driver_history;
-import com.example.divinatransport.DriverMainFragments.Fragment_driver_message;
-import com.example.divinatransport.MainActivity;
 import com.example.divinatransport.R;
 
 public class MessageListAdapter extends BaseAdapter {
-    MainActivity activity;
-    Fragment_driver_message fragment;
+    Activity activity;
 
-    public MessageListAdapter(MainActivity _activity, Fragment_driver_message _fragment) {
+    public MessageListAdapter(Activity _activity) {
         activity = _activity;
-        fragment = _fragment;
     }
 
     @Override

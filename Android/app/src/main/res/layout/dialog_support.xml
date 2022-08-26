@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    >
+    <RelativeLayout
+        android:layout_height="150dp"
+        android:layout_width="wrap_content"
+        android:gravity="center_horizontal"
+        android:background="@android:color/transparent"
+        android:orientation="vertical">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black"
+            android:alpha="0.5"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:padding="20dp">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/supporter" />
+
+            <TextView
+                android:id="@+id/txt_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/bubble_incoming"
+                android:paddingLeft="20dp"
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"
+                android:textSize="18dp"
+                android:text="Welcome to Divina Transport Service!\nWe support all people who live in IvoryCost area."
+                android:textColor="@color/red" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

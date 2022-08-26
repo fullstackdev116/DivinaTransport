@@ -4,18 +4,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 
 import com.example.divinatransport.DriverMainFragments.Fragment_driver_history;
-import com.example.divinatransport.DriverMainFragments.Fragment_driver_orders;
-import com.example.divinatransport.MainActivity;
+import com.example.divinatransport.DriverMainActivity;
 import com.example.divinatransport.R;
 
 public class HistoryListAdapter extends BaseAdapter {
-    MainActivity activity;
+    DriverMainActivity activity;
     Fragment_driver_history fragment;
 
-    public HistoryListAdapter(MainActivity _activity, Fragment_driver_history _fragment) {
+    public HistoryListAdapter(DriverMainActivity _activity, Fragment_driver_history _fragment) {
         activity = _activity;
         fragment = _fragment;
     }

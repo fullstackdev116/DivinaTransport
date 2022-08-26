@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.MultiSelectListPreference;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,22 +20,15 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.divinatransport.DriverSignupActivity;
-import com.example.divinatransport.MainActivity;
+import com.example.divinatransport.DriverMainActivity;
 import com.example.divinatransport.R;
 import com.example.divinatransport.idcamera.IDCardCamera;
 import com.example.divinatransport.idcamera.utils.FileUtils;
-import com.google.android.material.card.MaterialCardView;
-
-import java.util.ArrayList;
 
 import ca.antonious.materialdaypicker.MaterialDayPicker;
-import ca.antonious.materialdaypicker.SelectionMode;
-import ca.antonious.materialdaypicker.SelectionState;
-import ca.antonious.materialdaypicker.SingleSelectionMode;
 
 public class Fragment_driver_set_car extends Fragment {
-    MainActivity activity;
+    DriverMainActivity activity;
     LinearLayout ly_carType;
     int[] carTypes = new int[13];
     String[] carNames = new String[13];
@@ -126,6 +118,6 @@ public class Fragment_driver_set_car extends Fragment {
     }
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (MainActivity) context;
+        activity = (DriverMainActivity) context;
     }
 }

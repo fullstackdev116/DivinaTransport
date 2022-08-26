@@ -1,7 +1,6 @@
 package com.example.divinatransport;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -44,7 +43,7 @@ public class DriverSignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (btn_next.getText().equals("Submit")) {
-                    Intent intent = new Intent(DriverSignupActivity.this, MainActivity.class);
+                    Intent intent = new Intent(DriverSignupActivity.this, DriverMainActivity.class);
                     startActivity(intent);
                     finishAffinity();
                 } else {
@@ -99,10 +98,6 @@ public class DriverSignupActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
-    }
-
-    public void openIDCamera() {
-        IDCardCamera.create(this).openCamera(IDCardCamera.TYPE_IDCARD_FRONT);
     }
 
     @Override

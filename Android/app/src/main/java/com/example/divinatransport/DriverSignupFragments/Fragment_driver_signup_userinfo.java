@@ -2,6 +2,7 @@ package com.example.divinatransport.DriverSignupFragments;
 
 import static android.graphics.Color.WHITE;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -10,10 +11,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -69,8 +76,32 @@ public class Fragment_driver_signup_userinfo extends Fragment {
                 displayChoiceDialog();
             }
         });
-
+        v.findViewById(R.id.btn_verify).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openVerifyDialog();
+            }
+        });
         return v;
+    }
+    public void openVerifyDialog() {
+        final Dialog dlg = new Dialog(getActivity());
+        Window window = dlg.getWindow();
+        View view = getLayoutInflater().inflate(R.layout.dialog_o_t_p, null);
+        view.findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dlg.dismiss();
+            }
+        });
+        int width = (int)(getResources().getDisplayMetrics().widthPixels*0.80);
+        int height = (int)(getResources().getDisplayMetrics().heightPixels*0.5);
+        view.setMinimumWidth(width);
+        view.setMinimumHeight(height);
+        dlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dlg.setContentView(view);
+        window.setGravity(Gravity.CENTER);
+        dlg.show();
     }
     private void displayChoiceDialog() {
         String choiceString[] = new String[] {"Gallery" ,"Camera"};

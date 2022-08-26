@@ -1,7 +1,5 @@
 package com.example.divinatransport.DriverMainFragments;
 
-import static android.content.ContentValues.TAG;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,8 +9,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,17 +17,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
 
-import com.example.divinatransport.MainActivity;
+import com.example.divinatransport.DriverMainActivity;
 import com.example.divinatransport.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -52,9 +45,6 @@ import com.google.maps.RoadsApi;
 import com.google.maps.model.SnappedPoint;
 import com.kienht.bottomsheetbehavior.BottomSheetBehavior;
 
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,7 +54,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
     private static final int PAGE_SIZE_LIMIT = 100;
     private static final int PAGINATION_OVERLAP = 5;
 
-    MainActivity activity;
+    DriverMainActivity activity;
     BottomSheetBehavior bottomSheetBehavior;
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
@@ -72,7 +62,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
     List<LatLng> latLngList_user = new LinkedList<>();
     List<LatLng> latLngList_driver = new LinkedList<>();
     List<LatLng> latLngList_place = new LinkedList<>();
-    Marker marker_start, marker_target;
+    Marker marker_start, marker_target, marker_me;
     Polyline roadLine;
     ProgressBar mProgressBar;
     GeoApiContext mContext;
@@ -86,14 +76,14 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
 
         mProgressBar = v.findViewById(R.id.progress_bar);
 
-        latLngList_user.add(new LatLng(37.42692293, -122.06936845));
-        latLngList_user.add(new LatLng(37.41192293, -122.0736845));
+        latLngList_user.add(new LatLng(33.980805, -118.2641));
+        latLngList_user.add(new LatLng(33.990101,-118.270445));
 
         latLngList_place.add(new LatLng(37.42792293, -122.06936845));
         latLngList_place.add(new LatLng(37.41892293, -122.06736845));
 
-        latLngList_driver.add(new LatLng(37.4233438, -122.0728817));
-        latLngList_driver.add(new LatLng(37.4329101,-122.0749094));
+        latLngList_driver.add(new LatLng(33.984805, -118.2711));
+        latLngList_driver.add(new LatLng(33.9729101,-118.2691));
 
         ImageButton btn_menu = v.findViewById(R.id.btn_menu);
         btn_menu.setOnClickListener(new View.OnClickListener() {
@@ -106,21 +96,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
         btn_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    Snackbar.make(v, "Please enable location service.", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
-                    }
-                    return;
-                }
-                mMap.setMyLocationEnabled(true);
-                mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-                    @Override
-                    public void onMyLocationChange(Location arg0) {
-                        mMap.addMarker(new MarkerOptions().position(new com.google.android.gms.maps.model.LatLng(arg0.getLatitude(), arg0.getLongitude())).title("It's Me!"));
-                    }
-                });
+                findMyLocation();
             }
         });
 
@@ -201,6 +177,32 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
             }
         });
         return v;
+    }
+    void findMyLocation() {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Snackbar.make(getView(), "Please enable location service.", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
+            }
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location arg0) {
+                if (marker_me != null) {
+                    marker_me.remove();
+                }
+
+                marker_me = mMap.addMarker(new MarkerOptions().position(new com.google.android.gms.maps.model.LatLng(arg0.getLatitude(), arg0.getLongitude())).title("It's Me!").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_my_taxi)));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new com.google.android.gms.maps.model.LatLng(arg0.getLatitude(), arg0.getLongitude()), 14));
+                if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                mMap.setMyLocationEnabled(false);
+            }
+        });
     }
     private List<SnappedPoint> snapToRoads(GeoApiContext context) throws Exception {
         List<SnappedPoint> snappedPoints = new ArrayList<>();
@@ -320,10 +322,8 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
         googleMap.getUiSettings().setMapToolbarEnabled(false);
 
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
-        // Add a marker in Sydney and move the camera
-        com.google.android.gms.maps.model.LatLng sydney = new com.google.android.gms.maps.model.LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        findMyLocation();
 
         googleMap.addMarker(new MarkerOptions()
                 .position(new com.google.android.gms.maps.model.LatLng(latLngList_driver.get(0).lat, latLngList_driver.get(0).lng))
@@ -346,7 +346,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
                 .title("Moril Bictor")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_passenger)));
 
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new com.google.android.gms.maps.model.LatLng(latLngList_user.get(0).lat, latLngList_user.get(0).lng), 14));
+//        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new com.google.android.gms.maps.model.LatLng(latLngList_user.get(0).lat, latLngList_user.get(0).lng), 14));
 
         Circle circle = mMap.addCircle(new CircleOptions()
                 .center(new com.google.android.gms.maps.model.LatLng(latLngList_user.get(0).lat, latLngList_user.get(0).lng))
@@ -355,7 +355,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
                 .fillColor(Color.argb(100, 0, 255, 0)));
 
         mMap.addCircle(new CircleOptions()
-                .center(new com.google.android.gms.maps.model.LatLng(latLngList_user.get(1).lat, latLngList_user.get(0).lng))
+                .center(new com.google.android.gms.maps.model.LatLng(latLngList_user.get(1).lat, latLngList_user.get(1).lng))
                 .radius(1000)
                 .strokeColor(Color.TRANSPARENT)
                 .fillColor(Color.argb(100, 255, 0, 0)));
@@ -377,6 +377,6 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
     }
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (MainActivity) context;
+        activity = (DriverMainActivity) context;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.divinatransport.DriverMainFragments;
+package com.example.divinatransport;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,26 +12,24 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.divinatransport.Adapter.HistoryListAdapter;
 import com.example.divinatransport.Adapter.MessageListAdapter;
 import com.example.divinatransport.ChatActivity;
-import com.example.divinatransport.MainActivity;
+import com.example.divinatransport.DriverMainActivity;
 import com.example.divinatransport.R;
 
-public class Fragment_driver_message extends Fragment {
+public class Fragment_message extends Fragment {
     ListView listView;
-    MainActivity activity;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.driver_fragment_message, container, false);
+        View v = inflater.inflate(R.layout.fragment_message, container, false);
         listView = v.findViewById(R.id.listView);
-        MessageListAdapter adapter = new MessageListAdapter(activity, this);
+        MessageListAdapter adapter = new MessageListAdapter(getActivity());
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(activity, ChatActivity.class);
+                Intent intent = new Intent(getActivity(), ChatActivity.class);
                 startActivity(intent);
             }
         });
@@ -44,7 +42,6 @@ public class Fragment_driver_message extends Fragment {
     }
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (MainActivity) context;
     }
 
 }

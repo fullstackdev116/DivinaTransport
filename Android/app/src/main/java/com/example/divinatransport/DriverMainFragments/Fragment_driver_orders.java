@@ -16,17 +16,13 @@ import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.divinatransport.Adapter.OrderListAdapter;
-import com.example.divinatransport.MainActivity;
+import com.example.divinatransport.Adapter.DriverOrderListAdapter;
+import com.example.divinatransport.DriverMainActivity;
 import com.example.divinatransport.R;
-import com.example.divinatransport.SplashActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -37,7 +33,7 @@ import com.google.maps.GeoApiContext;
 
 public class Fragment_driver_orders extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     ListView listView;
-    MainActivity activity;
+    DriverMainActivity activity;
     RelativeLayout ly_bottom;
     SupportMapFragment mapFragment;
     GeoApiContext mContext;
@@ -52,7 +48,7 @@ public class Fragment_driver_orders extends Fragment implements OnMapReadyCallba
         ly_bottom = v.findViewById(R.id.ly_bottom);
         ly_bottom.setVisibility(View.GONE);
         listView = v.findViewById(R.id.listView);
-        OrderListAdapter adapter = new OrderListAdapter(activity, this);
+        DriverOrderListAdapter adapter = new DriverOrderListAdapter(activity, this);
         listView.setAdapter(adapter);
         btn_close = v.findViewById(R.id.btn_close);
         btn_close.setOnClickListener(new View.OnClickListener() {
@@ -134,7 +130,7 @@ public class Fragment_driver_orders extends Fragment implements OnMapReadyCallba
     }
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (MainActivity) context;
+        activity = (DriverMainActivity) context;
     }
 
     @Override

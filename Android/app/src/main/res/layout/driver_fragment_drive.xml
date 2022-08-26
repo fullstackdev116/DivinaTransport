@@ -28,21 +28,20 @@
         style="?android:attr/progressBarStyleHorizontal"/>
     <ImageButton
         android:id="@+id/btn_menu"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:background="@drawable/ic_menu"
-        />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/transparent"
+        android:src="@drawable/ic_menu"
+        app:tint="@color/red_dark" />
 
     <ImageButton
         android:id="@+id/btn_location"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:background="@drawable/ic_location" />
+        android:src="@drawable/ic_location"
+        android:backgroundTint="@android:color/transparent"
+        app:tint="@color/red_dark" />
     <LinearLayout
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
@@ -88,38 +87,13 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ly_seats"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
-                android:layout_toEndOf="@+id/ly_avatar"
-                android:background="@drawable/frame_border"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="5dp">
-
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_seats_dark" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2"
-                    android:textColor="@color/black"
-                    android:textSize="17dp" />
-            </LinearLayout>
-            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_toLeftOf="@+id/expand_icon"
-                android:layout_toRightOf="@+id/ly_seats"
+                android:layout_toRightOf="@+id/ly_avatar"
                 android:gravity="center_vertical"
                 android:layout_centerVertical="true"
                 >

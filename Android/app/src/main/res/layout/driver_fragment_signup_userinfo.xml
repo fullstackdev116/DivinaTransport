@@ -109,7 +109,16 @@
                 android:singleLine="true"
                 android:inputType="phone"
                 />
-
         </LinearLayout>
+        <Button
+            android:id="@+id/btn_verify"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="Verify"
+            android:layout_gravity="end"
+            android:layout_marginRight="10dp"
+            android:background="@android:color/transparent"
+            android:textColor="@color/red_dark"
+            />
     </LinearLayout>
 </FrameLayout>

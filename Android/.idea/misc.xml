@@ -9,7 +9,9 @@
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/drawable-v24/round_frame.xml" value="0.227" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/drawable-v24/round_frame_card.xml" value="0.248" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/drawable/border_bottom.xml" value="0.1315" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/drawable/bubble_incoming.xml" value="0.3035" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/drawable/filters_sheet_background.xml" value="0.1" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/drawable/filters_sheet_background1.xml" value="0.2935" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/drawable/filters_sheet_header_shadow.xml" value="0.1425" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/drawable/frame_border.xml" value="0.1015" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/drawable/frame_border_round.xml" value="0.3035" />
@@ -25,13 +27,20 @@
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout-v28/driver_fragment_rewards.xml" value="0.3625" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout-v28/driver_fragment_signup_license.xml" value="0.34010416666666665" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout-v28/id_crop_image_view.xml" value="0.2520833333333333" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout-v28/nav_header_main_customer.xml" value="0.3625" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/activity_chat.xml" value="0.24895833333333334" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/activity_customer_main.xml" value="0.3625" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/activity_customer_signup.xml" value="0.3625" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/activity_driver_main.xml" value="0.3625" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/activity_driver_signup.xml" value="0.22" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/activity_idcamera.xml" value="0.2520833333333333" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/activity_main.xml" value="0.22552083333333334" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/activity_main_driver.xml" value="0.3625" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/activity_signup.xml" value="0.25" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/activity_splash.xml" value="0.22" />
-        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/app_bar_main.xml" value="0.24166666666666667" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/app_bar_main.xml" value="0.21" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/app_bar_main_customer.xml" value="0.22864583333333333" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/app_bar_main_driver.xml" value="0.22864583333333333" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/bottom_sheet_content.xml" value="0.2463768115942029" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/cell_car_type.xml" value="0.67" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/cell_chat_left.xml" value="0.33" />
@@ -41,7 +50,13 @@
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/cell_order.xml" value="0.5" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/center_carousel_item.xml" value="0.36666666666666664" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/content_main.xml" value="0.25226449275362317" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/content_main_customer.xml" value="0.3625" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/crop_image_view.xml" value="0.2375" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/customer_fragment_orders.xml" value="0.3625" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/customer_fragment_ride.xml" value="0.5412130637636081" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/dialog_o_t_p.xml" value="0.3625" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/dialog_payment.xml" value="0.3625" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/dialog_support.xml" value="0.3625" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/driver_fragment_drive.xml" value="0.33" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/driver_fragment_history.xml" value="0.3625" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/driver_fragment_message.xml" value="0.24895833333333334" />
@@ -50,7 +65,8 @@
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/driver_fragment_set_car.xml" value="0.33" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/driver_fragment_signup_intro.xml" value="0.33" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/driver_fragment_signup_license.xml" value="0.33" />
-        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/driver_fragment_signup_userinfo.xml" value="0.5412130637636081" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/driver_fragment_signup_userinfo.xml" value="0.33" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/fragment_customer_ride.xml" value="0.3625" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/fragment_driver_signup_intro.xml" value="0.33" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/fragment_driver_signup_license.xml" value="0.12552083333333333" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/fragment_driver_signup_userinfo.xml" value="0.25" />
@@ -62,8 +78,13 @@
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/map_bottom_sheet_content.xml" value="0.2463768115942029" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/mergedappbarlayout.xml" value="0.19090909090909092" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/nav_header_main.xml" value="0.25" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/nav_header_main_customer.xml" value="0.3625" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/nav_header_main_driver.xml" value="0.17552083333333332" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/number_picker_custom_layout.xml" value="0.2734375" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/layout/pager_item.xml" value="0.19166666666666668" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/menu/activity_main_drawer.xml" value="0.5" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/menu/activity_main_drawer_customer.xml" value="0.3625" />
+        <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/menu/activity_main_drawer_driver.xml" value="0.17552083333333332" />
         <entry key="..\:/Projects/EDIATAHH/DivinaTransport/app/src/main/res/menu/main.xml" value="0.24166666666666667" />
       </map>
     </option>

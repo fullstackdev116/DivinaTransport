@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/color_screen_background"
+    android:layout_height="match_parent"
+    tools:context=".DriverMainFragments.Fragment_driver_orders">
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:divider="@android:color/transparent"
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:id="@+id/ly_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_alignParentBottom="true"
+        >
+        <View
+            android:id="@+id/sheet_header_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:alpha="0.5"
+            android:background="@drawable/filters_sheet_header_shadow"
+            />
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/sheet_header_shadow" />
+        <ImageButton
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:backgroundTint="@android:color/transparent"
+            android:layout_alignParentEnd="true"
+            app:tint="@color/black" />
+    </RelativeLayout>
+
+</RelativeLayout>

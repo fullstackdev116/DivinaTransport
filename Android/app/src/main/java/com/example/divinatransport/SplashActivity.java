@@ -34,11 +34,17 @@ public class SplashActivity extends AppCompatActivity {
             }
         }, 3000);
 
-        Button btn_driver = findViewById(R.id.btn_driver);
-        btn_driver.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_driver).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SplashActivity.this, DriverSignupActivity.class);
+                startActivity(intent);
+            }
+        });
+        findViewById(R.id.btn_customer).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SplashActivity.this, CustomerSignupActivity.class);
                 startActivity(intent);
             }
         });

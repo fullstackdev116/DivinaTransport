@@ -6,20 +6,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
-import com.example.divinatransport.Adapter.HistoryListAdapter;
-import com.example.divinatransport.MainActivity;
+import com.example.divinatransport.DriverMainActivity;
 import com.example.divinatransport.R;
 
 import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator;
 
 public class Fragment_driver_rewards extends Fragment {
-    MainActivity activity;
+    DriverMainActivity activity;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -37,7 +35,7 @@ public class Fragment_driver_rewards extends Fragment {
     }
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (MainActivity) context;
+        activity = (DriverMainActivity) context;
     }
 
 }

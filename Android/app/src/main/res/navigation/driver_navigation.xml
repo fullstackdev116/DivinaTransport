@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mobile_navigation"
+    android:id="@+id/driver_navigation"
     app:startDestination="@+id/nav_drive">
 
     <fragment
@@ -22,4 +22,22 @@
         android:name="com.example.divinatransport.DriverMainFragments.Fragment_driver_orders"
         android:label="Orders"
         tools:layout="@layout/driver_fragment_orders" />
+
+    <fragment
+        android:id="@+id/nav_history"
+        android:name="com.example.divinatransport.DriverMainFragments.Fragment_driver_history"
+        android:label="History"
+        tools:layout="@layout/driver_fragment_history" />
+
+    <fragment
+        android:id="@+id/nav_message"
+        android:name="com.example.divinatransport.Fragment_message"
+        android:label="Message"
+        tools:layout="@layout/fragment_message" />
+
+    <fragment
+        android:id="@+id/nav_rewards"
+        android:name="com.example.divinatransport.DriverMainFragments.Fragment_driver_rewards"
+        android:label="Rewards"
+        tools:layout="@layout/driver_fragment_rewards" />
 </navigation>

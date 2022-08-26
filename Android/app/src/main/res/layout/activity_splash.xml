@@ -52,7 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone"
+        android:visibility="visible"
         android:padding="15dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20dp"
@@ -74,10 +74,9 @@
             />
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="70dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
-            android:layout_marginBottom="10dp"
             >
             <Button
                 android:id="@+id/btn_driver"
@@ -85,6 +84,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:background="@drawable/round_frame"
+                android:layout_marginBottom="20dp"
                 android:text="Driver"
                 />
             <Button
@@ -94,6 +94,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/round_frame"
+                android:layout_marginBottom="20dp"
                 android:text="Customer"
                 />
         </LinearLayout>
