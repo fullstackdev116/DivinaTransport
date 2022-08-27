@@ -6,14 +6,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.example.divinatransport.DriverMainFragments.Fragment_driver_history;
-import com.example.divinatransport.DriverMainActivity;
+import com.example.divinatransport.MainActivityDriver;
 import com.example.divinatransport.R;
 
 public class HistoryListAdapter extends BaseAdapter {
-    DriverMainActivity activity;
+    MainActivityDriver activity;
     Fragment_driver_history fragment;
 
-    public HistoryListAdapter(DriverMainActivity _activity, Fragment_driver_history _fragment) {
+    public HistoryListAdapter(MainActivityDriver _activity, Fragment_driver_history _fragment) {
         activity = _activity;
         fragment = _fragment;
     }

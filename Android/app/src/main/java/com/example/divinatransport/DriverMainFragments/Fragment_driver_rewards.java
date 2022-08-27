@@ -11,13 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
-import com.example.divinatransport.DriverMainActivity;
+import com.example.divinatransport.MainActivityDriver;
 import com.example.divinatransport.R;
 
 import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator;
 
 public class Fragment_driver_rewards extends Fragment {
-    DriverMainActivity activity;
+    MainActivityDriver activity;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -35,7 +35,7 @@ public class Fragment_driver_rewards extends Fragment {
     }
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (DriverMainActivity) context;
+        activity = (MainActivityDriver) context;
     }
 
 }

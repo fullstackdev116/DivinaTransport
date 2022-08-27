@@ -13,11 +13,10 @@ import android.widget.TextView;
 import com.example.divinatransport.DriverSignupFragments.Fragment_driver_signup_intro;
 import com.example.divinatransport.DriverSignupFragments.Fragment_driver_signup_license;
 import com.example.divinatransport.DriverSignupFragments.Fragment_driver_signup_userinfo;
-import com.example.divinatransport.idcamera.IDCardCamera;
 
 import java.util.ArrayList;
 
-public class DriverSignupActivity extends AppCompatActivity {
+public class SignupActivityDriver extends AppCompatActivity {
     FragmentTransaction transaction;
     ArrayList<String> arr_step = new ArrayList<>();
     int index_step = 0;
@@ -43,7 +42,7 @@ public class DriverSignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (btn_next.getText().equals("Submit")) {
-                    Intent intent = new Intent(DriverSignupActivity.this, DriverMainActivity.class);
+                    Intent intent = new Intent(SignupActivityDriver.this, MainActivityDriver.class);
                     startActivity(intent);
                     finishAffinity();
                 } else {

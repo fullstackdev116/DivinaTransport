@@ -7,14 +7,14 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 
 import com.example.divinatransport.DriverMainFragments.Fragment_driver_orders;
-import com.example.divinatransport.DriverMainActivity;
+import com.example.divinatransport.MainActivityDriver;
 import com.example.divinatransport.R;
 
 public class DriverOrderListAdapter extends BaseAdapter {
-    DriverMainActivity activity;
+    MainActivityDriver activity;
     Fragment_driver_orders fragment;
 
-    public DriverOrderListAdapter(DriverMainActivity _activity, Fragment_driver_orders _fragment) {
+    public DriverOrderListAdapter(MainActivityDriver _activity, Fragment_driver_orders _fragment) {
         activity = _activity;
         fragment = _fragment;
     }

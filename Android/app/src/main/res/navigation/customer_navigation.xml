@@ -23,4 +23,10 @@
         android:label="Message"
         tools:layout="@layout/fragment_message" />
 
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.example.divinatransport.CustomerMainFragments.Fragment_customer_profile"
+        android:label="Profile"
+        tools:layout="@layout/customer_fragment_profile" />
+
 </navigation>

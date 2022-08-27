@@ -24,7 +24,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
-import com.example.divinatransport.DriverMainActivity;
+import com.example.divinatransport.MainActivityDriver;
 import com.example.divinatransport.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -54,7 +54,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
     private static final int PAGE_SIZE_LIMIT = 100;
     private static final int PAGINATION_OVERLAP = 5;
 
-    DriverMainActivity activity;
+    MainActivityDriver activity;
     BottomSheetBehavior bottomSheetBehavior;
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
@@ -377,6 +377,6 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
     }
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (DriverMainActivity) context;
+        activity = (MainActivityDriver) context;
     }
 }

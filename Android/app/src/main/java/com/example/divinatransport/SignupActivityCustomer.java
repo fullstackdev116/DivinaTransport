@@ -9,7 +9,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 
-public class CustomerSignupActivity extends AppCompatActivity {
+public class SignupActivityCustomer extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class CustomerSignupActivity extends AppCompatActivity {
         findViewById(R.id.btn_submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CustomerSignupActivity.this, CustomerMainActivity.class);
+                Intent intent = new Intent(SignupActivityCustomer.this, MainActivityCustomer.class);
                 startActivity(intent);
                 finishAffinity();
             }

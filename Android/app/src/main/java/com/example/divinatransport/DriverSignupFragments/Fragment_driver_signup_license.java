@@ -13,7 +13,7 @@ import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
 
-import com.example.divinatransport.DriverSignupActivity;
+import com.example.divinatransport.SignupActivityDriver;
 import com.example.divinatransport.R;
 import com.example.divinatransport.idcamera.IDCardCamera;
 import com.example.divinatransport.idcamera.utils.FileUtils;
@@ -21,7 +21,7 @@ import com.example.divinatransport.idcamera.utils.FileUtils;
 
 public class Fragment_driver_signup_license extends Fragment {
     ImageView imageView;
-    DriverSignupActivity activity;
+    SignupActivityDriver activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,6 +60,6 @@ public class Fragment_driver_signup_license extends Fragment {
     }
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (DriverSignupActivity) context;
+        activity = (SignupActivityDriver) context;
     }
 }

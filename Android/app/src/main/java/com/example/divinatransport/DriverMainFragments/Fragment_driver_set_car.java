@@ -20,7 +20,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.divinatransport.DriverMainActivity;
+import com.example.divinatransport.MainActivityDriver;
 import com.example.divinatransport.R;
 import com.example.divinatransport.idcamera.IDCardCamera;
 import com.example.divinatransport.idcamera.utils.FileUtils;
@@ -28,7 +28,7 @@ import com.example.divinatransport.idcamera.utils.FileUtils;
 import ca.antonious.materialdaypicker.MaterialDayPicker;
 
 public class Fragment_driver_set_car extends Fragment {
-    DriverMainActivity activity;
+    MainActivityDriver activity;
     LinearLayout ly_carType;
     int[] carTypes = new int[13];
     String[] carNames = new String[13];
@@ -118,6 +118,6 @@ public class Fragment_driver_set_car extends Fragment {
     }
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (DriverMainActivity) context;
+        activity = (MainActivityDriver) context;
     }
 }

@@ -17,9 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.divinatransport.Adapter.CustomerOrderListAdapter;
-import com.example.divinatransport.Adapter.DriverOrderListAdapter;
-import com.example.divinatransport.CustomerMainActivity;
-import com.example.divinatransport.DriverMainActivity;
+import com.example.divinatransport.MainActivityCustomer;
 import com.example.divinatransport.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,7 +33,7 @@ import com.google.maps.GeoApiContext;
 
 public class Fragment_customer_orders extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     ListView listView;
-    CustomerMainActivity activity;
+    MainActivityCustomer activity;
     RelativeLayout ly_bottom;
     SupportMapFragment mapFragment;
     GeoApiContext mContext;
@@ -132,7 +130,7 @@ public class Fragment_customer_orders extends Fragment implements OnMapReadyCall
     }
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (CustomerMainActivity) context;
+        activity = (MainActivityCustomer) context;
     }
 
     @Override

@@ -13,9 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.divinatransport.Adapter.MessageListAdapter;
-import com.example.divinatransport.ChatActivity;
-import com.example.divinatransport.DriverMainActivity;
-import com.example.divinatransport.R;
 
 public class Fragment_message extends Fragment {
     ListView listView;

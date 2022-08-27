@@ -3,12 +3,8 @@ package com.example.divinatransport;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
-import android.widget.FrameLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.divinatransport.databinding.ActivityDriverMainBinding;
 import com.google.android.material.navigation.NavigationView;
@@ -21,7 +17,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -30,22 +25,26 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class DriverMainActivity extends AppCompatActivity {
+public class MainActivityDriver extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
-    private ActivityDriverMainBinding binding;
+//    private ActivityDriverMainBinding binding;
     View header;
-
+    DrawerLayout drawer;
+    Toolbar mtoolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityDriverMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_driver_main);
+//        binding = ActivityDriverMainBinding.inflate(getLayoutInflater());
+//        setContentView(binding.getRoot());
 
-        setSupportActionBar(binding.appBarMain.toolbar);
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = binding.navView;
+        mtoolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mtoolbar);//(binding.appBarMain.toolbar);
+        drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+//        NavigationView navigationView = binding.navView;
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, binding.appBarMain.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, mtoolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -53,6 +52,7 @@ public class DriverMainActivity extends AppCompatActivity {
                 R.id.nav_drive, R.id.nav_set_car, R.id.nav_orders, R.id.nav_history, R.id.nav_message, R.id.nav_rewards)
                 .setOpenableLayout(drawer)
                 .build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
@@ -60,10 +60,10 @@ public class DriverMainActivity extends AppCompatActivity {
             @Override
             public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
                 if (navDestination.getId() == R.id.nav_drive) {
-                    binding.appBarMain.toolbar.setVisibility(View.GONE);
+                    mtoolbar.setVisibility(View.GONE);
                     return;
                 }
-                binding.appBarMain.toolbar.setVisibility(View.VISIBLE);
+                mtoolbar.setVisibility(View.VISIBLE);
                 toggle.setDrawerIndicatorEnabled(false);
                 toggle.setHomeAsUpIndicator(R.drawable.ic_back);
             }
@@ -84,15 +84,22 @@ public class DriverMainActivity extends AppCompatActivity {
                 do_logout();
             }
         });
+        header.findViewById(R.id.img_photo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navController.navigate(R.id.nav_profile);
+                closeDrawer();
+            }
+        });
     }
     void do_logout() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure to logout?");
         builder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog,int id) {
-                Intent intent = new Intent(DriverMainActivity.this, SplashActivity.class);
+                Intent intent = new Intent(MainActivityDriver.this, SplashActivity.class);
                 startActivity(intent);
-                ActivityCompat.finishAffinity(DriverMainActivity.this);
+                ActivityCompat.finishAffinity(MainActivityDriver.this);
             }
         });
         builder.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
@@ -112,7 +119,7 @@ public class DriverMainActivity extends AppCompatActivity {
             builder.setMessage("Are you sure to quite the app?");
             builder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog,int id) {
-                    ActivityCompat.finishAffinity(DriverMainActivity.this);
+                    ActivityCompat.finishAffinity(MainActivityDriver.this);
                     System.exit(0);
                 }
             });
@@ -126,11 +133,9 @@ public class DriverMainActivity extends AppCompatActivity {
     }
 
     public void openDrawer(){
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.openDrawer(GravityCompat.START);
     }
     public void closeDrawer() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
     @Override

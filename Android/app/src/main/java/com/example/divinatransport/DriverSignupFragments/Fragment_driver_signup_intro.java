@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 
-import com.example.divinatransport.DriverSignupActivity;
+import com.example.divinatransport.SignupActivityDriver;
 import com.example.divinatransport.R;
 
 import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Fragment_driver_signup_intro extends Fragment {
-    DriverSignupActivity activity;
+    SignupActivityDriver activity;
     CheckBox checkBox;
 
     @Override
@@ -56,6 +56,6 @@ public class Fragment_driver_signup_intro extends Fragment {
 
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (DriverSignupActivity) context;
+        activity = (SignupActivityDriver) context;
     }
 }

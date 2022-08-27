@@ -11,12 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.divinatransport.Adapter.HistoryListAdapter;
-import com.example.divinatransport.DriverMainActivity;
+import com.example.divinatransport.MainActivityDriver;
 import com.example.divinatransport.R;
 
 public class Fragment_driver_history extends Fragment {
     ListView listView;
-    DriverMainActivity activity;
+    MainActivityDriver activity;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class Fragment_driver_history extends Fragment {
     }
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (DriverMainActivity) context;
+        activity = (MainActivityDriver) context;
     }
 
 }

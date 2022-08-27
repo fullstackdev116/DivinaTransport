@@ -24,14 +24,12 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -40,7 +38,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.divinatransport.CustomerMainActivity;
+import com.example.divinatransport.MainActivityCustomer;
 import com.example.divinatransport.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -63,7 +61,6 @@ import com.kienht.bottomsheetbehavior.BottomSheetBehavior;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
@@ -73,7 +70,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
     private static final int PAGE_SIZE_LIMIT = 100;
     private static final int PAGINATION_OVERLAP = 5;
 
-    CustomerMainActivity activity;
+    MainActivityCustomer activity;
     BottomSheetBehavior bottomSheetBehavior;
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
@@ -621,6 +618,6 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
     }
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (CustomerMainActivity) context;
+        activity = (MainActivityCustomer) context;
     }
 }

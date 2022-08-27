@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.divinatransport.Adapter.DriverOrderListAdapter;
-import com.example.divinatransport.DriverMainActivity;
+import com.example.divinatransport.MainActivityDriver;
 import com.example.divinatransport.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -33,7 +33,7 @@ import com.google.maps.GeoApiContext;
 
 public class Fragment_driver_orders extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     ListView listView;
-    DriverMainActivity activity;
+    MainActivityDriver activity;
     RelativeLayout ly_bottom;
     SupportMapFragment mapFragment;
     GeoApiContext mContext;
@@ -130,7 +130,7 @@ public class Fragment_driver_orders extends Fragment implements OnMapReadyCallba
     }
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (DriverMainActivity) context;
+        activity = (MainActivityDriver) context;
     }
 
     @Override

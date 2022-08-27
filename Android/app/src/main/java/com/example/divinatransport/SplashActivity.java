@@ -8,9 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 
 
 public class SplashActivity extends AppCompatActivity {
@@ -37,14 +35,14 @@ public class SplashActivity extends AppCompatActivity {
         findViewById(R.id.btn_driver).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SplashActivity.this, DriverSignupActivity.class);
+                Intent intent = new Intent(SplashActivity.this, SignupActivityDriver.class);
                 startActivity(intent);
             }
         });
         findViewById(R.id.btn_customer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SplashActivity.this, CustomerSignupActivity.class);
+                Intent intent = new Intent(SplashActivity.this, SignupActivityCustomer.class);
                 startActivity(intent);
             }
         });

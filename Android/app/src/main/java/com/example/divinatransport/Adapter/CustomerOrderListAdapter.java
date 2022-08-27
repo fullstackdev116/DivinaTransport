@@ -6,17 +6,15 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 
-import com.example.divinatransport.CustomerMainActivity;
+import com.example.divinatransport.MainActivityCustomer;
 import com.example.divinatransport.CustomerMainFragments.Fragment_customer_orders;
-import com.example.divinatransport.DriverMainActivity;
-import com.example.divinatransport.DriverMainFragments.Fragment_driver_orders;
 import com.example.divinatransport.R;
 
 public class CustomerOrderListAdapter extends BaseAdapter {
-    CustomerMainActivity activity;
+    MainActivityCustomer activity;
     Fragment_customer_orders fragment;
 
-    public CustomerOrderListAdapter(CustomerMainActivity _activity, Fragment_customer_orders _fragment) {
+    public CustomerOrderListAdapter(MainActivityCustomer _activity, Fragment_customer_orders _fragment) {
         activity = _activity;
         fragment = _fragment;
     }
