@@ -5,7 +5,7 @@
     android:background="@color/color_000000">
 
     <!--相机预览-->
-    <com.example.divinatransport.idcamera.IDCameraPreview
+    <com.ujs.divinatransport.idcamera.IDCameraPreview
         android:id="@+id/camera_preview"
         android:visibility="gone"
         android:layout_width="match_parent"
@@ -53,7 +53,7 @@
                     android:scaleType="fitXY" />
 
                 <!--手动裁剪区域-->
-                <com.example.divinatransport.idcamera.cropper.IDCropImageView
+                <com.ujs.divinatransport.idcamera.cropper.IDCropImageView
                     android:visibility="gone"
                     android:id="@+id/crop_image_view"
                     android:layout_width="wrap_content"

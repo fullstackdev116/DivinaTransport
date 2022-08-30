@@ -7,25 +7,25 @@
 
     <fragment
         android:id="@+id/nav_ride"
-        android:name="com.example.divinatransport.CustomerMainFragments.Fragment_customer_ride"
+        android:name="com.ujs.divinatransport.CustomerMainFragments.Fragment_customer_ride"
         android:label="Ride"
         tools:layout="@layout/customer_fragment_ride" />
 
     <fragment
         android:id="@+id/nav_orders"
-        android:name="com.example.divinatransport.CustomerMainFragments.Fragment_customer_orders"
+        android:name="com.ujs.divinatransport.CustomerMainFragments.Fragment_customer_orders"
         android:label="Orders"
         tools:layout="@layout/customer_fragment_orders" />
 
     <fragment
         android:id="@+id/nav_message"
-        android:name="com.example.divinatransport.Fragment_message"
+        android:name="com.ujs.divinatransport.Fragment_message"
         android:label="Message"
         tools:layout="@layout/fragment_message" />
 
     <fragment
         android:id="@+id/nav_profile"
-        android:name="com.example.divinatransport.CustomerMainFragments.Fragment_customer_profile"
+        android:name="com.ujs.divinatransport.CustomerMainFragments.Fragment_customer_profile"
         android:label="Profile"
         tools:layout="@layout/customer_fragment_profile" />
 

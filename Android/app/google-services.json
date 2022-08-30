@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "71746424695",
+    "project_id": "divina-transport",
+    "storage_bucket": "divina-transport.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:71746424695:android:4c29a35de09c27ec561b72",
+        "android_client_info": {
+          "package_name": "com.ujs.divinatransport"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "71746424695-pu8kalo2a4v84f0qq0phf0oig4n1ldf7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCS5XDtrgK8UySAe2ZPFwVZlV77RiIezz8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "71746424695-pu8kalo2a4v84f0qq0phf0oig4n1ldf7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

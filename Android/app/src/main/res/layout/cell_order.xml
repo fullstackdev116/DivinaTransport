@@ -10,27 +10,28 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:contentPadding="5dp"
         android:layout_marginTop="10dp"
-        app:cardCornerRadius="5dp"
         android:backgroundTint="@color/white"
+        app:cardCornerRadius="5dp"
         app:cardElevation="@dimen/cardview_default_elevation"
         app:cardUseCompatPadding="true"
-        >
+        app:contentPadding="5dp">
+
         <LinearLayout
             android:id="@+id/ly_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#ffffff"
             android:orientation="vertical">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="12039489"
                 android:background="@color/teal_200"
-                android:textColor="@color/white"
                 android:padding="5dp"
-                />
+                android:text="12039489"
+                android:textColor="@color/white" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -172,6 +173,7 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:background="@android:color/darker_gray" />
+
             <LinearLayout
                 android:id="@+id/ly_driver"
                 android:layout_width="match_parent"
@@ -213,8 +215,8 @@
                     <ImageButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_call"
-                        android:backgroundTint="@color/red" />
+                        android:backgroundTint="@color/red"
+                        android:src="@drawable/ic_call" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -226,10 +228,9 @@
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@android:drawable/stat_notify_chat"
-                    android:backgroundTint="@color/red"
                     android:layout_marginLeft="20dp"
-                    />
+                    android:backgroundTint="@color/red"
+                    android:src="@android:drawable/stat_notify_chat" />
 
             </LinearLayout>
 

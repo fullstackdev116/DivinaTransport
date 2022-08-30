@@ -11,28 +11,49 @@
         android:layout_width="match_parent"
         android:gravity="center_horizontal"
         android:padding="20dp"
+        android:layout_marginBottom="50dp"
         android:orientation="vertical">
-        <ImageView
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
+            android:text="SMS Verification"
+            android:textSize="30dp"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            />
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="10dp"
             app:srcCompat="@drawable/otp" />
 
         <com.jkb.vcedittext.VerificationCodeEditText
             android:id="@+id/edit_code"
-            android:layout_width="250dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="50dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:inputType="number"
             android:textColor="@color/white"
             android:textSize="40sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             app:bottomLineHeight="4dp"
             app:bottomLineNormalColor="@color/white"
             app:bottomLineSelectedColor="@color/white"
             app:figures="6"
             app:selectedBackgroundColor="@android:color/transparent"
             app:verCodeMargin="5dp" />
+        <TextView
+            android:id="@+id/txt_remaining"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textAlignment="center"
+            android:text=""
+            android:textSize="18dp"
+            android:textColor="@color/white"
+            />
     </LinearLayout>
     <ImageButton
         android:id="@+id/btn_close"

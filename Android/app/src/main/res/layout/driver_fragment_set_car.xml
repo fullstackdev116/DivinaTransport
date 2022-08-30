@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:background="@color/color_screen_background"
     android:layout_height="match_parent"
-    tools:context=".DriverMainFragments.Fragment_driver_set_car">
+    tools:context="com.ujs.divinatransport.DriverMainFragments.Fragment_driver_set_car">
 
     <ScrollView
         android:layout_width="match_parent"

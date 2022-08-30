@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    tools:context=".DriverMainFragments.Fragment_driver_orders">
+    tools:context="com.ujs.divinatransport.DriverMainFragments.Fragment_driver_orders">
 
     <RelativeLayout
         android:layout_width="match_parent"

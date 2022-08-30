@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Divina Transport</string>
-    <string name="google_api_key">AIzaSyBG0iJj-TWYO4qcj03b9dqd___yF8E9U6A</string>
+    <string name="google_api_key1">AIzaSyBG0iJj-TWYO4qcj03b9dqd___yF8E9U6A</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -17,4 +17,21 @@
     <string name="touch_to_focus">Touch the screen to focus</string>
     <string name="crop_fail">Crop failed</string>
     <string name="no_flash">This device does not support flash</string>
+
+    <string name="error">Error</string>
+    <string name="sms_code_has_been_sent_to_your_phone">SMS code has been sent to your phone</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="please_input_your_mobile_number">Please input your mobile number</string>
+    <string name="sms_verification_failed_please_try_again">SMS verification failed! Please try again.</string>
+    <string name="phone_verified_successfully">The phone number has been verified successfully</string>
+    <string name="enable_permissions">Please enable permissions to use the app.</string>
+    <string name="user_registered_successfully">User information has been registered successfully.</string>
+    <string name="driving_license_registered_successfully">Driving License has been registered successfully.</string>
+    <string name="please_fill_in_blank_field">Please fill in blank field(s)</string>
+    <string name="warning">Warning</string>
+    <string name="invalid_email">Invalid email address!</string>
+    <string name="please_select_a_photo">Please select a photo</string>
+    <string name="please_wait_admin_enable_login">Please wait until admin enables to login</string>
+    <string name="driving_license_missed">You are already registered but driving license is missed.</string>
+
 </resources>

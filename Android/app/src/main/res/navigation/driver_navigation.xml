@@ -7,43 +7,43 @@
 
     <fragment
         android:id="@+id/nav_drive"
-        android:name="com.example.divinatransport.DriverMainFragments.Fragment_driver_drive"
+        android:name="com.ujs.divinatransport.DriverMainFragments.Fragment_driver_drive"
         android:label="Drive"
         tools:layout="@layout/driver_fragment_drive" />
 
     <fragment
         android:id="@+id/nav_set_car"
-        android:name="com.example.divinatransport.DriverMainFragments.Fragment_driver_set_car"
+        android:name="com.ujs.divinatransport.DriverMainFragments.Fragment_driver_set_car"
         android:label="Set Car Info"
         tools:layout="@layout/driver_fragment_set_car" />
 
     <fragment
         android:id="@+id/nav_orders"
-        android:name="com.example.divinatransport.DriverMainFragments.Fragment_driver_orders"
+        android:name="com.ujs.divinatransport.DriverMainFragments.Fragment_driver_orders"
         android:label="Orders"
         tools:layout="@layout/driver_fragment_orders" />
 
     <fragment
         android:id="@+id/nav_history"
-        android:name="com.example.divinatransport.DriverMainFragments.Fragment_driver_history"
+        android:name="com.ujs.divinatransport.DriverMainFragments.Fragment_driver_history"
         android:label="History"
         tools:layout="@layout/driver_fragment_history" />
 
     <fragment
         android:id="@+id/nav_message"
-        android:name="com.example.divinatransport.Fragment_message"
+        android:name="com.ujs.divinatransport.Fragment_message"
         android:label="Message"
         tools:layout="@layout/fragment_message" />
 
     <fragment
         android:id="@+id/nav_rewards"
-        android:name="com.example.divinatransport.DriverMainFragments.Fragment_driver_rewards"
+        android:name="com.ujs.divinatransport.DriverMainFragments.Fragment_driver_rewards"
         android:label="Rewards"
         tools:layout="@layout/driver_fragment_rewards" />
 
     <fragment
         android:id="@+id/nav_profile"
-        android:name="com.example.divinatransport.DriverMainFragments.Fragment_driver_profile"
+        android:name="com.ujs.divinatransport.DriverMainFragments.Fragment_driver_profile"
         android:label="Profile"
         tools:layout="@layout/driver_fragment_profile" />
 </navigation>

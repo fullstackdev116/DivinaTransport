@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:background="@drawable/round_frame_dialog"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:textColor="@color/gray"
+                android:textSize="20dp" />
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_phone_login"
+                android:layout_marginTop="20dp"
+                app:tint="@color/gray"
+
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/frame_border_round"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginLeft="15dp"
+                    android:src="@drawable/ic_phone" />
+
+                <com.hbb20.CountryCodePicker
+                    android:id="@+id/txt_countryCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    app:ccp_contentColor="#888888"
+                    app:ccp_defaultNameCode="ci"
+                    app:ccp_textSize="14dp" />
+
+                <EditText
+                    android:id="@+id/edit_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="15dp"
+                    android:background="@android:color/transparent"
+                    android:hint="Phone number"
+                    android:inputType="phone"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textSize="15dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/round_frame"
+                android:text="Login"
+                android:textAllCaps="true" />
+            <TextView
+                android:id="@+id/txt_msg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sms_verification_failed_please_try_again"
+                android:textAlignment="center"
+                android:textColor="@color/red"
+                android:visibility="gone"
+                />
+        </LinearLayout>
+
+    </RelativeLayout>
+    <ImageView
+        android:id="@+id/img_close"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@drawable/ic_close_circle"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="-3dp"
+        />
+</RelativeLayout>

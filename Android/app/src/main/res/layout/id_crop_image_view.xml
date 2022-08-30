@@ -16,7 +16,7 @@
             android:scaleType="fitCenter"
             />
 
-        <com.example.divinatransport.idcamera.cropper.IDCropOverlayView
+        <com.ujs.divinatransport.idcamera.cropper.IDCropOverlayView
             android:id="@+id/overlay_crop"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

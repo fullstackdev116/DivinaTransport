@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_screen_background"
-    tools:context=".SignupActivityDriver">
+    tools:context="com.ujs.divinatransport.SignupActivityDriver">
     <TextView
         android:id="@+id/txt_title"
         android:layout_width="match_parent"
