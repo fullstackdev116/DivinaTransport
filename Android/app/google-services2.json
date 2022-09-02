@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "121166438252",
+    "project_id": "divina-af6b6",
+    "storage_bucket": "divina-af6b6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:121166438252:android:9c95b042ba7d07e02d1d49",
+        "android_client_info": {
+          "package_name": "com.ujs.divinatransport"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "121166438252-sd4rq9hns92jkkfus344h1s69r4ahhcb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtusUxUtDD70mohPpy-IdwzncOaNMCD1A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "121166438252-sd4rq9hns92jkkfus344h1s69r4ahhcb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

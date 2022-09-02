@@ -24,6 +24,7 @@ import android.widget.RadioButton;
 
 import androidx.fragment.app.Fragment;
 
+import com.ujs.divinatransport.App;
 import com.ujs.divinatransport.SignupActivityDriver;
 import com.ujs.divinatransport.R;
 import com.ujs.divinatransport.Utils.MyMediaScannerClient;
@@ -111,6 +112,7 @@ public class Fragment_driver_signup_license extends Fragment {
         edit_birth_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                App.hideKeyboard(activity);
                 new DatePickerDialog(activity, birthdateSelectListner,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
@@ -126,6 +128,7 @@ public class Fragment_driver_signup_license extends Fragment {
         edit_issue_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                App.hideKeyboard(activity);
                 new DatePickerDialog(activity, issuedateSelectListner,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
@@ -141,6 +144,7 @@ public class Fragment_driver_signup_license extends Fragment {
         edit_expiry_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                App.hideKeyboard(activity);
                 new DatePickerDialog(activity, expirydateSelectListner,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
@@ -148,6 +152,7 @@ public class Fragment_driver_signup_license extends Fragment {
         radio_man.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                App.hideKeyboard(activity);
                 activity.license_gender = "M";
             }
         });
@@ -155,6 +160,7 @@ public class Fragment_driver_signup_license extends Fragment {
         radio_woman.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                App.hideKeyboard(activity);
                 activity.license_gender = "F";
             }
         });
@@ -180,7 +186,6 @@ public class Fragment_driver_signup_license extends Fragment {
             if (!TextUtils.isEmpty(path)) {
                 if (requestCode == IDCardCamera.TYPE_IDCARD_BACK) { //身份证正面
                     imageView.setImageBitmap(BitmapFactory.decodeFile(path));
-//                    activity.getContentResolver().notifyChange(Uri.parse(path), null);
                     try {
                         Uri uriContent = Uri.parse(MediaStore.Images.Media.insertImage(activity.getContentResolver(), path, null, null));
                         activity.license_photo = uriContent;

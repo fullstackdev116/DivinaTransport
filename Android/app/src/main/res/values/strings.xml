@@ -26,6 +26,7 @@
     <string name="phone_verified_successfully">The phone number has been verified successfully</string>
     <string name="enable_permissions">Please enable permissions to use the app.</string>
     <string name="user_registered_successfully">User information has been registered successfully.</string>
+    <string name="car_registered_successfully">Car information has been registered successfully.</string>
     <string name="driving_license_registered_successfully">Driving License has been registered successfully.</string>
     <string name="please_fill_in_blank_field">Please fill in blank field(s)</string>
     <string name="warning">Warning</string>
@@ -33,5 +34,8 @@
     <string name="please_select_a_photo">Please select a photo</string>
     <string name="please_wait_admin_enable_login">Please wait until admin enables to login</string>
     <string name="driving_license_missed">You are already registered but driving license is missed.</string>
-
+    <string name="car_info_missed">You are already registered but car information is missed.</string>
+    <string name="phone_number_already_exists">Phone number already exists.</string>
+    <string name="former_info_will_be_reset">The former information will be reset! \nAre you sure to go back?</string>
+    <string name="please_enable_location_service">Please enable location service.</string>
 </resources>

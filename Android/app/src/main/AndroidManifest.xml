@@ -11,7 +11,9 @@
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -83,6 +85,10 @@
             android:name=".MainActivityCustomer"
             android:exported="true"
             android:theme="@style/Theme.DivinaTransport.NoActionBar"></activity>
+        <service
+            android:name=".Utils.LocationService"
+            android:label="Location Service" >
+        </service>
     </application>
 
 </manifest>

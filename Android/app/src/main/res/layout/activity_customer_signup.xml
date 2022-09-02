@@ -77,13 +77,14 @@
         </LinearLayout>
         <Button
             android:id="@+id/btn_verify"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Verify"
             android:layout_gravity="end"
             android:layout_marginRight="10dp"
             android:background="@android:color/transparent"
             android:textColor="@color/red_dark"
+            android:textAllCaps="false"
             />
         <Button
             android:id="@+id/btn_submit"
@@ -91,6 +92,7 @@
             android:layout_height="40dp"
             android:layout_marginTop="30dp"
             android:background="@drawable/round_frame"
+            android:enabled="false"
             android:text="Submit" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

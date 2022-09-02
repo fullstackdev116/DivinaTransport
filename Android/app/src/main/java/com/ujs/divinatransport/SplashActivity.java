@@ -66,11 +66,14 @@ public class SplashActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Write whatever to want to do after delay specified (1 sec)
-//                RunAnimation(findViewById(R.id.txt_doyouknow), AnimationUtils.loadAnimation(SignupActivity.this, R.anim.blink));
                 findViewById(R.id.ly_bottom).setVisibility(View.VISIBLE);
                 RunAnimation(findViewById(R.id.ly_bottom), AnimationUtils.loadAnimation(SplashActivity.this, R.anim.fade1));
                 RunAnimation(findViewById(R.id.txt_doyouknow), AnimationUtils.loadAnimation(SplashActivity.this, R.anim.translate));
+
+                if (Utils.mUser != null) {
+                    progressDialog.show();
+                    App.goToMainPage(SplashActivity.this, progressDialog);
+                }
             }
         }, 3000);
 
@@ -254,57 +257,11 @@ public class SplashActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Utils.mUser = Utils.auth.getCurrentUser();
-                            Utils.mDatabase.child(Utils.tbl_user).orderByChild(Utils.PHONE).equalTo(country_code+number)
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            progressDialog.dismiss();
-                                            dlg_login.dismiss();
-                                            if (dataSnapshot.getValue() != null) {
-                                                for(DataSnapshot datas: dataSnapshot.getChildren()){
-                                                    Utils.cur_user = datas.getValue(User.class);
-                                                    Utils.cur_user.uid = datas.getKey();
-                                                    if (Utils.cur_user.type.equals("DRIVER")) {
-                                                        if (Utils.cur_user.state == 0) { // missing signup license
-                                                            Intent myIntent = new Intent(SplashActivity.this, SignupActivityDriver.class);
-                                                            myIntent.putExtra("index_step", 2);
-                                                            startActivity(myIntent);
-                                                        } else if (Utils.cur_user.state == 1) { // disabled
-                                                            Utils.showAlert(SplashActivity.this, getResources().getString(R.string.warning), getResources().getString(R.string.please_wait_admin_enable_login));
-                                                        } else {  // enabled
-                                                            Intent myIntent = new Intent(SplashActivity.this, MainActivityDriver.class);
-                                                            startActivity(myIntent);
-                                                            finishAffinity();
-                                                        }
-                                                    }
-                                                }
-                                            } else { // go to signup intro
-                                                Intent myIntent = new Intent(SplashActivity.this, SignupActivityDriver.class);
-                                                startActivity(myIntent);
-//                                                Utils.auth.signOut();
-//                                                Intent intent = new Intent(activity, LoginActivity.class);
-//                                                activity.startActivity(intent);
-//                                                activity.finish();
-                                            }
-//                                            Snackbar.make(parentLayout, getResources().getString(R.string.phone_verified_successfully), 2000).show();
-
-                                        }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-                                            progressDialog.dismiss();
-                                            txt_msg.setVisibility(View.VISIBLE);
-//                                            Snackbar.make(parentLayout, getResources().getString(R.string.sms_verification_failed_please_try_again), 2000).show();
-
-                                            Log.w( "loadPost:onCancelled", databaseError.toException());
-                                            // ...
-                                        }
-                                    });
+                            dlg_login.dismiss();
+                            App.goToMainPage(SplashActivity.this, progressDialog);
                         } else {
                             progressDialog.dismiss();
                             txt_msg.setVisibility(View.VISIBLE);
-//                            Snackbar.make(parentLayout, getResources().getString(R.string.sms_verification_failed_please_try_again), 2000).show();
                         }
 
                     }

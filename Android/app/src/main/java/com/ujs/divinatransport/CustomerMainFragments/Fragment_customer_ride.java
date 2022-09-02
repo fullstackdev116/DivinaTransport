@@ -22,6 +22,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,18 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.ujs.divinatransport.MainActivityCustomer;
+import com.ujs.divinatransport.MainActivityDriver;
+import com.ujs.divinatransport.Model.GeoUser;
+import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -45,50 +57,43 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
-import com.google.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.maps.GeoApiContext;
-import com.google.maps.RoadsApi;
-import com.google.maps.model.SnappedPoint;
 import com.kienht.bottomsheetbehavior.BottomSheetBehavior;
 import com.ujs.divinatransport.App;
+import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.hrmovecarmarkeranimation.geolocation.GeoHRMarkerAnimation;
+import com.ujs.divinatransport.hrmovecarmarkeranimation.geolocation.GeoHRUpdateLocationCallBack;
+import com.ujs.divinatransport.hrmovecarmarkeranimation.location.HRMarkerAnimation;
+import com.ujs.divinatransport.hrmovecarmarkeranimation.location.HRUpdateLocationCallBack;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Fragment_customer_ride extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
-    private static final int PAGE_SIZE_LIMIT = 100;
-    private static final int PAGINATION_OVERLAP = 5;
-
     MainActivityCustomer activity;
     BottomSheetBehavior bottomSheetBehavior;
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
-    List<LatLng> latLngList_user = new LinkedList<>();
-    List<LatLng> latLngList_driver = new LinkedList<>();
-    List<LatLng> latLngList_place = new LinkedList<>();
-    Marker marker_start, marker_target, marker_me;
-    Circle circle_me;
-    Polyline roadLine;
+
     ProgressBar mProgressBar;
-    GeoApiContext mContext;
-    private long pulseDuration = 1000;
-    private ValueAnimator lastPulseAnimator;
+    Polyline polyline;
+    long distance = 0, duration = 0, price = 0;
+    ArrayList<GeoUser> arr_nearby = new ArrayList<>();
+    boolean location_track = false;
+
     LinearLayout ly_top;
     RelativeLayout ly_topContent;
     boolean toggle = false;
-    ArrayList<Marker> arrayMarker = new ArrayList<>();
-    Timer timer;
     TextView txt_state;
     ImageButton btn_down;
 
@@ -97,15 +102,10 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         View v = inflater.inflate(R.layout.customer_fragment_ride, container, false);
         mapFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        mContext = new GeoApiContext().setApiKey(getString(R.string.google_api_key));
+//        mContext = new GeoApiContext().setApiKey(getString(R.string.google_api_key));
 
         mProgressBar = v.findViewById(R.id.progress_bar);
         txt_state = v.findViewById(R.id.txt_state);
-//        latLngList_place.add(new LatLng(37.42792293, -122.06936845));
-//        latLngList_place.add(new LatLng(37.41892293, -122.06736845));
-//
-        latLngList_driver.add(new LatLng(33.980805, -118.2641));
-        latLngList_driver.add(new LatLng(33.990101,-118.270445));
 
         ImageButton btn_menu = v.findViewById(R.id.btn_menu);
         btn_menu.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +118,17 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         btn_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                findMyLocation();
+                location_track = !location_track;
+                String msg = "";
+                if (!location_track) {
+                    btn_location.setBackground(getResources().getDrawable(R.drawable.ic_location_view));
+                    msg = "Location Tracking is disabled.";
+                } else {
+                    btn_location.setBackground(getResources().getDrawable(R.drawable.ic_location_track));
+                    msg = "Location Tracking is enabled.";
+//                    findMyLocation();
+                }
+                Snackbar.make(getView(), msg, 3000).show();
             }
         });
         ly_top = v.findViewById(R.id.ly_top);
@@ -197,23 +207,187 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         });
 
         openSupportDialog();
+        activity.locationUpdateCallback = new MainActivityCustomer.LocationUpdateCallback() {
+            @Override
+            public void locationUpdateCallback() {
+//                Toast.makeText(activity, String.valueOf(Utils.cur_location.toString()), Toast.LENGTH_SHORT).show();
+//                addMarkerMe();
+                mLastLocation = Utils.cur_location;
+                addMarker(mMap, Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude(), location_track, R.drawable.ic_pin0);
+                Utils.geo_customer.setLocation(Utils.cur_user.uid, new GeoLocation(Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude()), new GeoFire.CompletionListener() {
+                    @Override
+                    public void onComplete(String key, DatabaseError error) {
+                        if (error != null) {
+                            Snackbar.make(getView(), error.getMessage(), 3000).show();
+                        } else {
+                            getListNearbyCars();
+                        }
+                    }
+                });
+            }
+        };
+
         return v;
+    }
+    void getNearByInfo(String key, GeoLocation location, boolean isRemove) {
+        Utils.mDatabase.child(Utils.tbl_user).child(key).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    User user = snapshot.getValue(User.class);
+                    user.uid = snapshot.getKey();
+                    for (GeoUser geoUser : arr_nearby) {
+                        if (geoUser.user.uid.equals(user.uid)) {
+                            arr_nearby.remove(geoUser);
+                            break;
+                        }
+                    }
+                    if (!isRemove) {
+                        GeoUser n_geoUser = new GeoUser(user, location);
+                        arr_nearby.add(n_geoUser);
+
+                        mGeoLastLocation.put(key, location);
+                        if (markerCountGeo.get(key) == null) {
+                            markerCountGeo.put(key, 0);
+                        }
+                        addMarkerGeo(user.name, key, mMap, location.latitude, location.longitude, false, R.drawable.ic_car_dark);
+                    } else {
+                        markerGeo.get(key).remove();
+                        markerCountGeo.put(key, 0);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("color", "Error: " + error.getMessage());
+            }
+        });
+    }
+
+    private Marker marker_me;
+
+    Map<String, GeoLocation> mGeoLastLocation = new HashMap<String, GeoLocation>();
+    Map<String, GeoLocation> oldGeoLocation = new HashMap<String, GeoLocation>();
+    Map<String, Integer> markerCountGeo = new HashMap<String, Integer>();
+    Map<String, Marker> markerGeo = new HashMap<String, Marker>();
+
+    public void addMarkerMe() {
+        if (Utils.cur_location != null) {
+            if (marker_me != null) marker_me.remove();
+            LatLng latLng = new LatLng(Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude());
+            marker_me = mMap.addMarker(new MarkerOptions().position(latLng)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin0)));
+            marker_me.setTitle("It's me");
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
+        }
+    }
+    private Location mLastLocation;
+    private Location oldLocation;
+    private int markerCount = 0;
+    private Marker marker;
+    public void addMarker(GoogleMap googleMap, double lat, double lon, boolean isCamera, int drawable) {
+        try {
+            if (markerCount == 1) {
+                if (oldLocation != null) {
+                    new HRMarkerAnimation(googleMap, 1000, new HRUpdateLocationCallBack() {
+                        @Override
+                        public void onHRUpdatedLocation(Location updatedLocation) {
+                            oldLocation = updatedLocation;
+                        }
+                    }).animateMarker(mLastLocation, oldLocation, marker, isCamera, false);
+                } else {
+                    oldLocation = mLastLocation;
+                }
+            } else if (markerCount == 0) {
+                if (marker != null) {
+                    marker.remove();
+                }
+                mMap = googleMap;
+
+                LatLng latLng = new LatLng(lat, lon);
+
+                marker = mMap.addMarker(new MarkerOptions().position(latLng)
+                        .icon(BitmapDescriptorFactory.fromResource(drawable)));
+                marker.setTitle("It's me");
+                if (isCamera)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
+
+                /*################### Set Marker Count to 1 after first marker is created ###################*/
+
+                markerCount = 1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void addMarkerGeo(String title, String key, GoogleMap googleMap, double lat, double lon, boolean isCamera, int drawable) {
+        try {
+            if (markerCountGeo.get(key) == 1) {
+                if (oldGeoLocation.get(key) != null) {
+                    new GeoHRMarkerAnimation(googleMap, 1000, new GeoHRUpdateLocationCallBack() {
+                        @Override
+                        public void onGeoHRUpdatedLocation(GeoLocation updatedLocation) {
+                            oldGeoLocation.put(key, updatedLocation);
+                        }
+                    }).animateMarkerGeo(mGeoLastLocation.get(key), oldGeoLocation.get(key), markerGeo.get(key), isCamera);
+                } else {
+                    oldGeoLocation.put(key, mGeoLastLocation.get(key));
+                }
+            } else if (markerCountGeo.get(key) == 0) {
+                if (markerGeo.get(key) != null) {
+                    markerGeo.get(key).remove();
+                }
+                mMap = googleMap;
+
+                LatLng latLng = new LatLng(lat, lon);
+
+                markerGeo.put(key, mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(drawable))));
+                markerGeo.get(key).setTitle(title);
+                mMap.setPadding(2000, 4000, 2000, 4000);
+                if (isCamera)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
+
+                /*################### Set Marker Count to 1 after first marker is created ###################*/
+
+                markerCountGeo.put(key, 1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getListNearbyCars() {
+        GeoQuery geoQuery = Utils.geo_car.queryAtLocation(new GeoLocation(Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude()), Utils.geo_radius);
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                getNearByInfo(key, location, false);
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+                getNearByInfo(key, null, true);
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+                getNearByInfo(key, location, false);
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+            }
+        });
     }
     private void rideCar() {
         changeTopViewState();
         txt_state.setText("Which taxi to ride?");
-        if (timer != null) {
-            timer.purge();
-            timer.cancel();
-        }
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                activity.runOnUiThread(blinkCarPin);
-            }
 
-        }, 0, 500);
     }
     private void openDatePicker() {
 //        txt_state.setText("Please select your order day");
@@ -341,27 +515,6 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
             }
         }, 3000);
     }
-    private Runnable blinkCarPin = new Runnable() {
-        public void run() {
-            toggle = !toggle;
-            for (int i = 0; i < arrayMarker.size(); i++) {
-                arrayMarker.get(i).remove();
-                Marker marker;
-                if (toggle) {
-                    marker = mMap.addMarker(new MarkerOptions()
-                            .position(new com.google.android.gms.maps.model.LatLng(latLngList_driver.get(i).lat, latLngList_driver.get(i).lng))
-                            .title("Taxi "+String.valueOf(i))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_taxi1)));
-                } else {
-                    marker = mMap.addMarker(new MarkerOptions()
-                            .position(new com.google.android.gms.maps.model.LatLng(latLngList_driver.get(i).lat, latLngList_driver.get(i).lng))
-                            .title("Taxi 1"+String.valueOf(i))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_taxi)));
-                }
-                arrayMarker.set(i, marker);
-            }
-        }
-    };
     public void openTopView() {
         ly_topContent.setVisibility(View.VISIBLE);
         App.RunAnimation(ly_top, AnimationUtils.loadAnimation(activity, R.anim.slidedown));
@@ -369,184 +522,6 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
     public void closeTopView() {
         App.RunAnimation(ly_top, AnimationUtils.loadAnimation(activity, R.anim.slideup1));
         ly_topContent.setVisibility(View.GONE);
-    }
-    /*
-    private void addPulsatingEffect(LatLng userLatlng){
-        if(lastPulseAnimator != null){
-            lastPulseAnimator.cancel();
-            Log.d("onLocationUpdated: ","cancelled" );
-        }
-        if(circle_me != null)
-            circle_me.setCenter(userLatlng);
-        lastPulseAnimator = valueAnimate(userLatlng.getAccuracy(), pulseDuration, new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                if(lastUserCircle != null)
-                    lastUserCircle.setRadius((Float) animation.getAnimatedValue());
-                else {
-                    lastUserCircle = map.addCircle(new CircleOptions()
-                            .center(userLatlng)
-                            .radius((Float) animation.getAnimatedValue())
-                            .strokeColor(Color.RED)
-                            .fillColor(Color.BLUE));
-                }
-            }
-        });
-
-    }
-    protected ValueAnimator valueAnimate(float accuracy,long duration, ValueAnimator.AnimatorUpdateListener updateListener){
-        Log.d( "valueAnimate: ", "called");
-        ValueAnimator va = ValueAnimator.ofFloat(0,accuracy);
-        va.setDuration(duration);
-        va.addUpdateListener(updateListener);
-        va.setRepeatCount(ValueAnimator.INFINITE);
-        va.setRepeatMode(ValueAnimator.RESTART);
-
-        va.start();
-        return va;
-    }
-     */
-    void findMyLocation() {
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Snackbar.make(getView(), "Please enable location service.", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
-            }
-            return;
-        }
-        mMap.setMyLocationEnabled(true);
-        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-            @Override
-            public void onMyLocationChange(Location arg0) {
-                if (marker_me != null) {
-                    marker_me.remove();
-                }
-                if (circle_me != null) {
-                    circle_me.remove();
-                }
-                marker_me = mMap.addMarker(new MarkerOptions().position(new com.google.android.gms.maps.model.LatLng(arg0.getLatitude(), arg0.getLongitude())).title("It's Me!").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin0)));
-                circle_me = mMap.addCircle(new CircleOptions()
-                        .center(new com.google.android.gms.maps.model.LatLng(arg0.getLatitude(), arg0.getLongitude()))
-                        .radius(1000)
-                        .strokeColor(Color.TRANSPARENT)
-                        .fillColor(Color.argb(100, 0, 255, 0)));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new com.google.android.gms.maps.model.LatLng(arg0.getLatitude(), arg0.getLongitude()), 14));
-                if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-                mMap.setMyLocationEnabled(false);
-            }
-        });
-    }
-
-    private List<SnappedPoint> snapToRoads(GeoApiContext context) throws Exception {
-        List<SnappedPoint> snappedPoints = new ArrayList<>();
-
-        int offset = 0;
-        while (offset < latLngList_place.size()) {
-            // Calculate which points to include in this request. We can't exceed the APIs
-            // maximum and we want to ensure some overlap so the API can infer a good location for
-            // the first few points in each request.
-            if (offset > 0) {
-                offset -= PAGINATION_OVERLAP;   // Rewind to include some previous points
-            }
-            int lowerBound = offset;
-            int upperBound = Math.min(offset + PAGE_SIZE_LIMIT, latLngList_place.size());
-
-            // Grab the data we need for this page.
-            LatLng[] page = latLngList_place
-                    .subList(lowerBound, upperBound)
-                    .toArray(new LatLng[upperBound - lowerBound]);
-
-            // Perform the request. Because we have interpolate=true, we will get extra data points
-            // between our originally requested path. To ensure we can concatenate these points, we
-            // only start adding once we've hit the first new point (i.e. skip the overlap).
-            SnappedPoint[] points = RoadsApi.snapToRoads(context, true, page).await();
-            boolean passedOverlap = false;
-            for (SnappedPoint point : points) {
-                if (offset == 0 || point.originalIndex >= PAGINATION_OVERLAP) {
-                    passedOverlap = true;
-                }
-                if (passedOverlap) {
-                    snappedPoints.add(point);
-                }
-            }
-
-            offset = upperBound;
-        }
-
-        return snappedPoints;
-    }
-
-    AsyncTask<Void, Void, List<SnappedPoint>> mTaskSnapToRoads =
-            new AsyncTask<Void, Void, List<SnappedPoint>>() {
-                @Override
-                protected void onPreExecute() {
-                    mProgressBar.setVisibility(View.VISIBLE);
-                    mProgressBar.setIndeterminate(true);
-                }
-
-                @Override
-                protected List<SnappedPoint> doInBackground(Void... params) {
-                    try {
-                        return snapToRoads(mContext);
-                    } catch (final Exception ex) {
-                        Snackbar.make(getView(), ex.toString(), Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-                        ex.printStackTrace();
-                        return null;
-                    }
-                }
-
-                @Override
-                protected void onPostExecute(List<SnappedPoint> snappedPoints) {
-                    mProgressBar.setVisibility(View.INVISIBLE);
-                    com.google.android.gms.maps.model.LatLng[] mapPoints =
-                            new com.google.android.gms.maps.model.LatLng[snappedPoints.size()];
-                    int i = 0;
-                    LatLngBounds.Builder bounds = new LatLngBounds.Builder();
-                    for (SnappedPoint point : snappedPoints) {
-                        mapPoints[i] = new com.google.android.gms.maps.model.LatLng(point.location.lat,
-                                point.location.lng);
-                        bounds.include(mapPoints[i]);
-                        i += 1;
-                    }
-
-                    mMap.addPolyline(new PolylineOptions().add(mapPoints).color(Color.BLUE));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 0));
-                }
-            };
-    void removeRoad() {
-        if (marker_start != null) marker_start.remove();
-        if (marker_target != null) marker_target.remove();
-        if (roadLine != null) roadLine.remove();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] _permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, _permissions, grantResults);
-
-        if (grantResults.length > 0) {
-
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
-                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
-                    }
-                } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
-                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
-                                Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
-                    }
-                } else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION))
-                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
-                }
-            }
-        }
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -556,66 +531,23 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         googleMap.getUiSettings().setRotateGesturesEnabled(true);
         googleMap.setTrafficEnabled(true);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
-
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
-        findMyLocation();
-
-        Marker marker1 = googleMap.addMarker(new MarkerOptions()
-                .position(new com.google.android.gms.maps.model.LatLng(latLngList_driver.get(0).lat, latLngList_driver.get(0).lng))
-                .title("Taxi 1")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_taxi)));
-
-        Marker marker2 = googleMap.addMarker(new MarkerOptions()
-                .position(new com.google.android.gms.maps.model.LatLng(latLngList_driver.get(1).lat, latLngList_driver.get(1).lng))
-                .title("Taxi 2")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_taxi)));
-
-        arrayMarker.add(marker1); arrayMarker.add(marker2);
-/*
-        Marker marker = googleMap.addMarker(new MarkerOptions()
-                .position(new com.google.android.gms.maps.model.LatLng(latLngList_user.get(0).lat, latLngList_user.get(0).lng))
-                .title("Allen Deal")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_passenger)));
-
-
-        googleMap.addMarker(new MarkerOptions()
-                .position(new com.google.android.gms.maps.model.LatLng(latLngList_user.get(1).lat, latLngList_user.get(1).lng))
-                .title("Moril Bictor")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_passenger)));
-
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new com.google.android.gms.maps.model.LatLng(latLngList_user.get(0).lat, latLngList_user.get(0).lng), 14));
-
-        Circle circle = mMap.addCircle(new CircleOptions()
-                .center(new com.google.android.gms.maps.model.LatLng(latLngList_user.get(0).lat, latLngList_user.get(0).lng))
-                .radius(1000)
-                .strokeColor(Color.TRANSPARENT)
-                .fillColor(Color.argb(100, 0, 255, 0)));
-
-        mMap.addCircle(new CircleOptions()
-                .center(new com.google.android.gms.maps.model.LatLng(latLngList_user.get(1).lat, latLngList_user.get(0).lng))
-                .radius(1000)
-                .strokeColor(Color.TRANSPARENT)
-                .fillColor(Color.argb(100, 255, 0, 0)));
-
-*/
+        LatLng latLng = new LatLng(37.422f, -122.12f);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
+        addMarkerMe();
     }
+
     @Override
     public boolean onMarkerClick(final Marker marker) {
-
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        removeRoad();
-//        mTaskSnapToRoads.execute();
         return false;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (timer != null) {
-            timer.purge();
-            timer.cancel();
-        }
+
     }
     public void onAttach(Context context) {
         super.onAttach(context);

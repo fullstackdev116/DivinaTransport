@@ -456,22 +456,22 @@
                     android:src="@drawable/ic_down"
                     app:tint="@color/white" />
             </LinearLayout>
+
             <ImageButton
                 android:id="@+id/btn_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/transparent"
                 android:src="@drawable/ic_menu"
-                app:tint="@color/white" />
+                app:tint="@color/red_dark" />
 
             <ImageButton
                 android:id="@+id/btn_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/ic_location"
-                android:backgroundTint="@android:color/transparent"
-                app:tint="@color/white" />
+                android:background="@drawable/ic_location_view"
+                />
         </RelativeLayout>
 
     </LinearLayout>

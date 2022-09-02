@@ -24,12 +24,12 @@
             android:layout_marginLeft="0dp"
             android:orientation="vertical">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/img_photo"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:contentDescription="@string/nav_header_desc"
-                app:srcCompat="@drawable/supporter1" />
+                android:src="@drawable/ic_avatar"
+                />
 
             <RatingBar
                 android:id="@+id/rate"
@@ -64,6 +64,7 @@
                 android:textSize="17dp"
                 />
             <TextView
+                android:id="@+id/txt_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Jordan"

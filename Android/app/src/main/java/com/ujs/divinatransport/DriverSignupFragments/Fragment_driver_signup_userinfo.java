@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -55,6 +56,7 @@ import com.jkb.vcedittext.VerificationAction;
 import com.jkb.vcedittext.VerificationCodeEditText;
 import com.ujs.divinatransport.App;
 import com.ujs.divinatransport.R;
+import com.ujs.divinatransport.SignupActivityCustomer;
 import com.ujs.divinatransport.SignupActivityDriver;
 import com.ujs.divinatransport.Utils.Utils;
 import com.ujs.divinatransport.idcamera.utils.PermissionUtils;
@@ -62,6 +64,7 @@ import com.ujs.divinatransport.idcamera.utils.PermissionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -288,27 +291,32 @@ public class Fragment_driver_signup_userinfo extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Utils.mUser = Utils.auth.getCurrentUser();
                             Utils.mDatabase.child(Utils.tbl_user).orderByChild(Utils.PHONE).equalTo(country_code+number)
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                             activity.dismissProgress();
-                                            Snackbar.make(getView(), getResources().getString(R.string.phone_verified_successfully), 2000).show();
-                                            btn_verify.setText("Verified ✅");
-                                            btn_verify.setEnabled(false);
-                                            btn_verify.setTextColor(getResources().getColor(R.color.teal_200));
-                                            edit_phone.setEnabled(false);
-                                            txt_countryCode.setEnabled(false);
-                                            txt_countryCode.setCcpClickable(false);
-                                            activity.btn_next.setEnabled(true);
-                                            activity.user_phone = country_code + number;
+                                            if (dataSnapshot.getValue() != null) {
+                                                Utils.FirebaseLogout();
+                                                Utils.showAlert(activity, getResources().getString(R.string.warning), getResources().getString(R.string.phone_number_already_exists));
+                                            } else {
+                                                activity.dismissProgress();
+                                                Snackbar.make(getView(), getResources().getString(R.string.phone_verified_successfully), 2000).show();
+                                                btn_verify.setText("Verified ✅");
+                                                btn_verify.setEnabled(false);
+                                                btn_verify.setTextColor(getResources().getColor(R.color.teal_200));
+                                                edit_phone.setEnabled(false);
+                                                txt_countryCode.setEnabled(false);
+                                                txt_countryCode.setCcpClickable(false);
+                                                activity.btn_next.setEnabled(true);
+                                                activity.user_phone = country_code + number;
+                                            }
                                         }
 
                                         @Override
                                         public void onCancelled(DatabaseError databaseError) {
                                             activity.dismissProgress();
-                                            Snackbar.make(getView(), getResources().getString(R.string.sms_verification_failed_please_try_again), 2000).show();
+                                            Snackbar.make(getView(), getResources().getString(R.string.sms_verification_failed_please_try_again), 3000).show();
 
                                             Log.w( "loadPost:onCancelled", databaseError.toException());
                                             // ...
@@ -367,7 +375,12 @@ public class Fragment_driver_signup_userinfo extends Fragment {
         Glide.with(this).load(uri)
                 .apply(new RequestOptions()
                         .placeholder(R.drawable.ic_avatar).centerCrop().dontAnimate()).into(img_photo);
-        activity.user_photo = Uri.parse(uri);
+        try {
+            Uri uriContent = Uri.parse(MediaStore.Images.Media.insertImage(activity.getContentResolver(), uri, null, null));
+            activity.user_photo = uriContent;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
     public void onCropImageResult(@NonNull CropImageView.CropResult result) {
         if (result.isSuccessful()) {

@@ -16,12 +16,15 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.ujs.divinatransport.DriverSignupFragments.Fragment_driver_signup_intro;
 import com.ujs.divinatransport.DriverSignupFragments.Fragment_driver_signup_license;
+import com.ujs.divinatransport.DriverSignupFragments.Fragment_driver_signup_setcar;
 import com.ujs.divinatransport.DriverSignupFragments.Fragment_driver_signup_userinfo;
+import com.ujs.divinatransport.Model.Car;
 import com.ujs.divinatransport.Model.DrivingLicense;
 import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.Utils.Utils;
@@ -52,6 +55,11 @@ public class SignupActivityDriver extends AppCompatActivity {
     public String license_expiry_date = "";
     public String license_number = "";
 
+    public Uri car_photo;
+    public String car_type;
+    public int car_seats;
+    public float car_price = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +73,7 @@ public class SignupActivityDriver extends AppCompatActivity {
         arr_step.add("How does it work?");
         arr_step.add("Personal Information");
         arr_step.add("Driver License");
+        arr_step.add("Car Information");
 
         txt_title = findViewById(R.id.txt_title);
         btn_back = findViewById(R.id.btn_back);
@@ -72,18 +81,19 @@ public class SignupActivityDriver extends AppCompatActivity {
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                App.hideKeyboard(SignupActivityDriver.this);
                 if (btn_next.getText().equals("Submit")) {
-                    if (license_first_name.length()*license_last_name.length()*license_gender.length()*license_number.length()*license_birth_date.length()*
-                    license_issue_date.length()*license_expiry_date.length() == 0) {
+                    if (car_price == 0) {
                         Utils.showAlert(SignupActivityDriver.this, getResources().getString(R.string.warning), getResources().getString(R.string.please_fill_in_blank_field));
+                        index_step--;
                         return;
                     }
-                    if (license_photo == null) {
+                    if (car_photo == null) {
                         Utils.showAlert(SignupActivityDriver.this, getResources().getString(R.string.warning), getResources().getString(R.string.please_select_a_photo));
+                        index_step--;
                         return;
                     }
-                    uploadLicensePhotoToFirebase();
-
+                    uploadCarPhotoToFirebase();
                 } else {
                     switchStep(true);
                 }
@@ -92,18 +102,38 @@ public class SignupActivityDriver extends AppCompatActivity {
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchStep(false);
+                if (index_step > 1) {
+                    new AlertDialog.Builder(SignupActivityDriver.this)
+                            .setTitle(getResources().getString(R.string.warning))
+                            .setMessage(getResources().getString(R.string.former_info_will_be_reset))
+                            .setCancelable(true)
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switchStep(false);
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })
+                            .show();
+                } else {
+                    switchStep(false);
+                }
             }
         });
         if (index_step == 0) {
             selectFragment(new Fragment_driver_signup_intro());
-        } else {
+        } else if (index_step == 2) {
             selectFragment(new Fragment_driver_signup_license());
-            Snackbar.make(parentLayout, getResources().getString(R.string.driving_license_missed), 2000).show();
+            Snackbar.make(parentLayout, getResources().getString(R.string.driving_license_missed), 3000).show();
+        } else if (index_step == 3)  {
+            selectFragment(new Fragment_driver_signup_setcar());
+            Snackbar.make(parentLayout, getResources().getString(R.string.car_info_missed), 3000).show();
         }
-    }
-    void searchUserState() {
-
     }
 
     private void switchStep(boolean isIncreasing) {
@@ -137,7 +167,22 @@ public class SignupActivityDriver extends AppCompatActivity {
                     }
                     uploadUserPhotoToFirebase();
                 }
-
+                break;
+            case 3:
+                if (isIncreasing) {
+                    if (license_first_name.length()*license_last_name.length()*license_gender.length()*license_number.length()*license_birth_date.length()*
+                            license_issue_date.length()*license_expiry_date.length() == 0) {
+                        Utils.showAlert(SignupActivityDriver.this, getResources().getString(R.string.warning), getResources().getString(R.string.please_fill_in_blank_field));
+                        index_step--;
+                        return;
+                    }
+                    if (license_photo == null) {
+                        Utils.showAlert(SignupActivityDriver.this, getResources().getString(R.string.warning), getResources().getString(R.string.please_select_a_photo));
+                        index_step--;
+                        return;
+                    }
+                    uploadLicensePhotoToFirebase();
+                }
                 break;
         }
     }
@@ -203,17 +248,8 @@ public class SignupActivityDriver extends AppCompatActivity {
                         Utils.mDatabase.child(Utils.tbl_driving_license).push().setValue(license);
                         Utils.cur_user.state = 1;
                         Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("state").setValue(1);
-                        Snackbar.make(parentLayout, getResources().getString(R.string.driving_license_registered_successfully), 2000).show();
-                        new AlertDialog.Builder(SignupActivityDriver.this)
-                                .setTitle("Success")
-                                .setMessage(getResources().getString(R.string.please_wait_admin_enable_login))
-                                .setCancelable(false)
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        finish();
-                                    }
-                                }).show();
+                        Snackbar.make(parentLayout, getResources().getString(R.string.driving_license_registered_successfully), 3000).show();
+                        selectFragment(new Fragment_driver_signup_setcar());
                     }
                 });
             }
@@ -238,12 +274,53 @@ public class SignupActivityDriver extends AppCompatActivity {
                         String downloadUrl = uri.toString();
                         String token = Utils.getDeviceToken(SignupActivityDriver.this);
                         User user = new User("", user_email, user_name, user_phone, downloadUrl, 0, 0, "DRIVER", 0, token);
-                        Utils.mDatabase.child(Utils.tbl_user).push().setValue(user);
-
-                        Snackbar.make(parentLayout, getResources().getString(R.string.user_registered_successfully), 2000).show();
+//                        Utils.mDatabase.child(Utils.tbl_user).push().setValue(user);
+                        String pushKey = Utils.mDatabase.child(Utils.tbl_user).push().getKey();
+                        Utils.mDatabase.child(Utils.tbl_user).child(pushKey).setValue(user);
+                        user.uid = pushKey;
+                        Utils.cur_user = user;
+                        Snackbar.make(parentLayout, getResources().getString(R.string.user_registered_successfully), 3000).show();
 
                         selectFragment(new Fragment_driver_signup_license());
 
+                    }
+                });
+            }
+
+        });
+    }
+    public void uploadCarPhotoToFirebase() {
+        showProgress();
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setContentType("image/jpeg")
+                .build();
+        Long tsLong = System.currentTimeMillis();
+        String ts = tsLong.toString();
+        final StorageReference file_refer = Utils.mStorage.child(Utils.storage_car+ts);
+        file_refer.putFile(car_photo, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                file_refer.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        dismissProgress();
+                        String downloadUrl = uri.toString();
+                        Car car = new Car("", Utils.cur_user.uid, downloadUrl, car_type, car_seats, car_price);
+                        Utils.mDatabase.child(Utils.tbl_car).push().setValue(car);
+                        Utils.cur_user.state = 2;
+                        Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("state").setValue(2);
+                        Snackbar.make(parentLayout, getResources().getString(R.string.car_registered_successfully), 3000).show();
+                        new AlertDialog.Builder(SignupActivityDriver.this)
+                                .setTitle("Success")
+                                .setMessage(getResources().getString(R.string.please_wait_admin_enable_login))
+                                .setCancelable(false)
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Utils.FirebaseLogout();
+                                        finish();
+                                    }
+                                }).show();
                     }
                 });
             }

@@ -4,6 +4,7 @@ import static android.content.ContentValues.TAG;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,8 +32,14 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.ujs.divinatransport.Model.User;
+import com.ujs.divinatransport.Utils.Utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -54,6 +61,64 @@ public class App extends Application {
 
         getFCMToken();
     }
+    public static void goToMainPage(final Activity activity, ProgressDialog progressDialog) {
+        //get user info into model
+        if (Utils.auth == null) return;
+        Utils.mUser = Utils.auth.getCurrentUser();
+        String phone_num = Utils.mUser.getPhoneNumber();
+        if (phone_num.length() == 0) {
+            Utils.FirebaseLogout();
+            progressDialog.dismiss();
+            return;
+        }
+        phone_num = phone_num.substring(1);
+        Utils.mDatabase.child(Utils.tbl_user).orderByChild(Utils.PHONE).equalTo(phone_num)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() != null) {
+                            progressDialog.dismiss();
+                            for(DataSnapshot datas: dataSnapshot.getChildren()){
+                                Utils.cur_user = datas.getValue(User.class);
+                                Utils.cur_user.uid = datas.getKey();
+                                if (Utils.cur_user.type.equals("DRIVER")) {
+                                    if (Utils.cur_user.state == 0) { // missing signup license
+                                        Intent myIntent = new Intent(activity, SignupActivityDriver.class);
+                                        myIntent.putExtra("index_step", 2);
+                                        activity.startActivity(myIntent);
+                                    } else if (Utils.cur_user.state == 1) { // missing car info
+                                        Intent myIntent = new Intent(activity, SignupActivityDriver.class);
+                                        myIntent.putExtra("index_step", 3);
+                                        activity.startActivity(myIntent);
+                                    } else if (Utils.cur_user.state == 2) { // disabled
+                                        Utils.FirebaseLogout();
+                                        Utils.showAlert(activity, activity.getResources().getString(R.string.warning), activity.getResources().getString(R.string.please_wait_admin_enable_login));
+                                    } else {  // enabled
+                                        Intent myIntent = new Intent(activity, MainActivityDriver.class);
+                                        activity.startActivity(myIntent);
+                                        activity.finishAffinity();
+                                    }
+                                } else if (Utils.cur_user.type.equals("CUSTOMER")) {
+                                    Intent myIntent = new Intent(activity, MainActivityCustomer.class);
+                                    activity.startActivity(myIntent);
+                                    activity.finishAffinity();
+                                }
+                            }
+                        } else { // go to signup intro
+                            Utils.FirebaseLogout();
+                            progressDialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w( "loadPost:onCancelled", databaseError.toException());
+                        // ...
+                    }
+                });
+
+    }
+
     void getFCMToken() {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {

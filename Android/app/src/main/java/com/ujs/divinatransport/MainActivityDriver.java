@@ -1,17 +1,36 @@
 package com.ujs.divinatransport;
 
+import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
-import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.databinding.ActivityDriverMainBinding;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.DatabaseError;
+import com.ujs.divinatransport.Utils.LocationService;
+import com.ujs.divinatransport.Utils.Utils;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -26,24 +45,35 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivityDriver extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
-//    private ActivityDriverMainBinding binding;
     View header;
     DrawerLayout drawer;
     Toolbar mtoolbar;
+    public View parentLayout;
+
+    private final static int MY_PERMISSION_FINE_LOCATION = 101;
+    Intent locationIntent;
+
+    public interface LocationUpdateCallback {
+        void locationUpdateCallback();
+    }
+    public LocationUpdateCallback locationUpdateCallback;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_main);
-//        binding = ActivityDriverMainBinding.inflate(getLayoutInflater());
-//        setContentView(binding.getRoot());
 
+        parentLayout = findViewById(android.R.id.content);
         mtoolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mtoolbar);//(binding.appBarMain.toolbar);
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-//        NavigationView navigationView = binding.navView;
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, mtoolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -85,31 +115,70 @@ public class MainActivityDriver extends AppCompatActivity {
                 do_logout();
             }
         });
-        header.findViewById(R.id.img_photo).setOnClickListener(new View.OnClickListener() {
+        RatingBar ratingBar = header.findViewById(R.id.rate);
+        ratingBar.setRating(Utils.cur_user.rate);
+        ((TextView) header.findViewById(R.id.txt_name)).setText(Utils.cur_user.name);
+        CircleImageView img_photo = header.findViewById(R.id.img_photo);
+        Glide.with(this).load(Utils.cur_user.photo)
+                .apply(new RequestOptions()
+                        .placeholder(R.drawable.ic_avatar).centerCrop().dontAnimate()).into(img_photo);
+        img_photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 navController.navigate(R.id.nav_profile);
                 closeDrawer();
             }
         });
+
+        IntentFilter locationIntent = new IntentFilter("LocationIntent");
+        registerReceiver(myReceiver, locationIntent);
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Snackbar.make(parentLayout, getResources().getString(R.string.please_enable_location_service), Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+            requestPermissionLocation();
+            return;
+        }
+        locationIntent = new Intent(this, LocationService.class);
+        startForegroundService(locationIntent);
+    }
+    private BroadcastReceiver myReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Location location = (Location) intent.getParcelableExtra("loc");
+            Utils.cur_location = location;
+            locationUpdateCallback.locationUpdateCallback();
+        }
+    };
+
     void do_logout() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure to logout?");
-        builder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,int id) {
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                if (locationIntent != null) {
+                    unregisterReceiver(myReceiver);
+                    stopService(locationIntent);
+                }
+                Utils.FirebaseLogout();
+                Utils.mUser = null;
                 Intent intent = new Intent(MainActivityDriver.this, SplashActivity.class);
                 startActivity(intent);
                 ActivityCompat.finishAffinity(MainActivityDriver.this);
             }
         });
-        builder.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
             }
         });
         AlertDialog alert = builder.create();
         alert.show();
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -118,13 +187,13 @@ public class MainActivityDriver extends AppCompatActivity {
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Are you sure to quite the app?");
-            builder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog,int id) {
+            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
                     ActivityCompat.finishAffinity(MainActivityDriver.this);
                     System.exit(0);
                 }
             });
-            builder.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                 }
             });
@@ -133,12 +202,14 @@ public class MainActivityDriver extends AppCompatActivity {
         }
     }
 
-    public void openDrawer(){
+    public void openDrawer() {
         drawer.openDrawer(GravityCompat.START);
     }
+
     public void closeDrawer() {
         drawer.closeDrawer(GravityCompat.START);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -153,11 +224,47 @@ public class MainActivityDriver extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startLocationUpdates();
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
+        assert fragment != null;
         fragment.onActivityResult(requestCode, resultCode, data);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] _permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, _permissions, grantResults);
+        if (grantResults.length > 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startLocationUpdates();
+            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                requestPermissionLocation();
+            }
+        }
+    }
+
+    void requestPermissionLocation() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
+            }
+        } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
+            }
+        } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
+        }
+    }
 }

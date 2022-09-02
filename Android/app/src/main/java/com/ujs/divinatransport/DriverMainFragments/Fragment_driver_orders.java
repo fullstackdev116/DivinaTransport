@@ -29,14 +29,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.maps.GeoApiContext;
 
 public class Fragment_driver_orders extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     ListView listView;
     MainActivityDriver activity;
     RelativeLayout ly_bottom;
     SupportMapFragment mapFragment;
-    GeoApiContext mContext;
+//    GeoApiContext mContext;
     private GoogleMap mMap;
     Marker markerFrom, markerTo;
     Polyline roadLine;
@@ -68,7 +67,7 @@ public class Fragment_driver_orders extends Fragment implements OnMapReadyCallba
             getChildFragmentManager().beginTransaction().replace(R.id.map, mapFragment).commit();
         }
         mapFragment.getMapAsync(this);
-        mContext = new GeoApiContext().setApiKey(getString(R.string.google_api_key));
+//        mContext = new GeoApiContext().setApiKey(getString(R.string.google_api_key));
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {

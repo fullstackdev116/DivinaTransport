@@ -40,6 +40,7 @@
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/round_frame"
+            android:focusable="false"
             android:text="Back" />
 
         <Button
@@ -52,6 +53,7 @@
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/round_frame"
+            android:focusable="false"
             android:text="Next" />
     </RelativeLayout>
 </RelativeLayout>
