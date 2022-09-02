@@ -317,49 +317,56 @@
                     >
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:background="@drawable/frame_border_round"
                         android:layout_marginLeft="10dp"
-                        android:padding="7dp"
+                        android:padding="5dp"
                         >
+
                         <ImageView
                             android:id="@+id/img_location"
-                            android:layout_width="23dp"
-                            android:layout_height="23dp"
-                            android:background="@drawable/ic_location"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             android:layout_centerVertical="true"
-                            />
-                        <EditText
+                            android:background="@drawable/ic_location" />
+
+                        <AutoCompleteTextView
+                            android:id="@+id/edit_start"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:layout_marginLeft="5dp"
-                            android:layout_marginRight="15dp"
-                            android:layout_toRightOf="@+id/img_location"
+                            android:layout_marginRight="5dp"
+                            android:layout_toEndOf="@+id/img_location"
+                            android:layout_toStartOf="@id/ly_tool_start"
                             android:background="@android:color/transparent"
                             android:hint="Departure address here ..."
+                            android:lines="1"
                             android:singleLine="true"
                             android:textColor="#555555"
                             android:textSize="15dp" />
                         <LinearLayout
+                            android:id="@+id/ly_tool_start"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:gravity="center_vertical"
-                            android:layout_marginRight="10dp"
+                            android:layout_marginRight="5dp"
                             >
                             <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
+                                android:id="@+id/img_cancel_start"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
                                 android:background="@android:color/transparent"
                                 android:src="@drawable/ic_close_white"
                                 android:visibility="gone"
                                 app:tint="#555555" />
 
                             <ImageView
-                                android:layout_width="23dp"
-                                android:layout_height="23dp"
-                                android:layout_marginLeft="10dp"
+                                android:id="@+id/img_record_start"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
                                 android:background="@android:color/transparent"
                                 android:src="@drawable/ic_record"
                                 />
@@ -367,44 +374,50 @@
                     </RelativeLayout>
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:background="@drawable/frame_border_round"
                         android:layout_marginLeft="10dp"
-                        android:padding="7dp"
+                        android:padding="5dp"
                         android:layout_marginTop="5dp"
                         >
 
-                        <EditText
+                        <AutoCompleteTextView
+                            android:id="@+id/edit_target"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:layout_marginLeft="15dp"
-                            android:layout_marginRight="15dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_toStartOf="@id/ly_tool_target"
                             android:background="@android:color/transparent"
                             android:hint="Target address here ..."
+                            android:lines="1"
                             android:singleLine="true"
-                            android:textColor="#555555"
                             android:text=""
+                            android:textColor="#555555"
                             android:textSize="15dp" />
                         <LinearLayout
+                            android:id="@+id/ly_tool_target"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:gravity="center_vertical"
-                            android:layout_marginRight="10dp"
+                            android:layout_marginRight="5dp"
                             >
                             <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
+                                android:id="@+id/img_cancel_target"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
                                 android:background="@android:color/transparent"
                                 android:src="@drawable/ic_close_white"
                                 android:visibility="gone"
                                 app:tint="#555555" />
 
                             <ImageView
-                                android:layout_width="23dp"
-                                android:layout_height="23dp"
-                                android:layout_marginLeft="10dp"
+                                android:id="@+id/img_record_target"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
                                 android:background="@android:color/transparent"
                                 android:src="@drawable/ic_record"
                                 />

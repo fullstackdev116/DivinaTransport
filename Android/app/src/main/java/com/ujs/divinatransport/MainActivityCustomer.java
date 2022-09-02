@@ -203,7 +203,7 @@ public class MainActivityCustomer extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fl_container);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
         fragment.onActivityResult(requestCode, resultCode, data);
     }
     @RequiresApi(api = Build.VERSION_CODES.O)

@@ -1,12 +1,18 @@
 package com.ujs.divinatransport.CustomerMainFragments;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+
 import android.Manifest;
 import android.animation.ValueAnimator;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -22,6 +28,9 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
+import android.speech.RecognizerIntent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -29,19 +38,34 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
+import com.firebase.geofire.util.Constants;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -70,6 +94,7 @@ import com.ujs.divinatransport.hrmovecarmarkeranimation.location.HRMarkerAnimati
 import com.ujs.divinatransport.hrmovecarmarkeranimation.location.HRUpdateLocationCallBack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -78,7 +103,12 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import in.madapps.placesautocomplete.PlaceAPI;
+import in.madapps.placesautocomplete.adapter.PlacesAutoCompleteAdapter;
+import in.madapps.placesautocomplete.model.Place;
+
 public class Fragment_customer_ride extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+    public int AUTOCOMPLETE_REQUEST_CODE = 1;
     MainActivityCustomer activity;
     BottomSheetBehavior bottomSheetBehavior;
     private GoogleMap mMap;
@@ -96,6 +126,10 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
     boolean toggle = false;
     TextView txt_state;
     ImageButton btn_down;
+    AutoCompleteTextView edit_start, edit_target;
+
+    private static final int VOICE_RECOGNITION_REQUEST_CODE_START = 201;
+    private static final int VOICE_RECOGNITION_REQUEST_CODE_TARGET = 202;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -106,7 +140,24 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
 
         mProgressBar = v.findViewById(R.id.progress_bar);
         txt_state = v.findViewById(R.id.txt_state);
-
+        v.findViewById(R.id.img_record_start).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startVoiceActivity(VOICE_RECOGNITION_REQUEST_CODE_START);
+            }
+        });
+        v.findViewById(R.id.img_record_target).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startVoiceActivity(VOICE_RECOGNITION_REQUEST_CODE_TARGET);
+            }
+        });
+        v.findViewById(R.id.img_location).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edit_start.setText(Utils.getCompleteAddressString(activity, Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude()));
+            }
+        });
         ImageButton btn_menu = v.findViewById(R.id.btn_menu);
         btn_menu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,6 +197,91 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View v) {
                 changeTopViewState();
+            }
+        });
+
+        PlaceAPI placeAPI = new PlaceAPI.Builder().build(activity);
+        placeAPI.setApiKey(getResources().getString(R.string.google_api_key));
+        edit_start = v.findViewById(R.id.edit_start);
+        edit_start.setAdapter(new PlacesAutoCompleteAdapter(activity, placeAPI));
+        edit_start.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    Place place;
+                    place = (Place)parent.getItemAtPosition(position);
+                    edit_start.setText(place.getDescription());
+                }catch (Exception e) {
+                    Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        ImageView img_cancel_start = v.findViewById(R.id.img_cancel_start);
+        img_cancel_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edit_start.setText("");
+            }
+        });
+        edit_start.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().length() > 0) {
+                    img_cancel_start.setVisibility(View.VISIBLE);
+                } else {
+                    img_cancel_start.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        edit_target = v.findViewById(R.id.edit_target);
+        edit_target.setAdapter(new PlacesAutoCompleteAdapter(activity, placeAPI));
+        edit_target.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    Place place;
+                    place = (Place)(parent.getItemAtPosition(position));
+                    edit_target.setText(place.getDescription());
+                }catch (Exception e) {
+                    Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        ImageView img_cancel_target = v.findViewById(R.id.img_cancel_target);
+        img_cancel_target.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edit_target.setText("");
+            }
+        });
+        edit_target.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().length() > 0) {
+                    img_cancel_target.setVisibility(View.VISIBLE);
+                } else {
+                    img_cancel_target.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
@@ -227,7 +363,25 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
             }
         };
 
+
         return v;
+    }
+
+    void startVoiceActivity(int reqCode) {
+        PackageManager pm = activity.getPackageManager();
+        List<ResolveInfo> activities = pm.queryIntentActivities(new Intent(
+                RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
+        if (activities.size() != 0) {
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+//            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US");
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                    "Google Speech recognition \nDivina Transport");
+            startActivityForResult(intent, reqCode);
+        } else {
+            Snackbar.make(getView(), "Google Speech Service not available on your device", 3000).show();
+        }
     }
     void getNearByInfo(String key, GeoLocation location, boolean isRemove) {
         Utils.mDatabase.child(Utils.tbl_user).child(key).addValueEventListener(new ValueEventListener() {
@@ -408,7 +562,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
     }
     public void openPaymentDialog() {
 //        txt_state.setText("Please confirm your payment");
-        final Dialog dlg = new Dialog(activity, R.style.Theme_Transparent);
+        final Dialog dlg = new Dialog(activity);
         Window window = dlg.getWindow();
         View view = getLayoutInflater().inflate(R.layout.dialog_payment, null);
         TextView txt_payment = view.findViewById(R.id.txt_payment);
@@ -552,5 +706,30 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
     public void onAttach(Context context) {
         super.onAttach(context);
         activity = (MainActivityCustomer) context;
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Google place result
+        if (requestCode > 200) {
+            ArrayList<String> matches = new ArrayList<>();
+            if (resultCode == RESULT_OK) {
+                // Fill the list view with the strings the recognizer thought it
+                // could have heard
+                matches = data
+                        .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            } else if (resultCode == RecognizerIntent.RESULT_NO_MATCH) {
+                Snackbar.make(getView(), "No match result", 3000).show();
+            } else if (resultCode == RESULT_CANCELED) {
+//                matches = new ArrayList<>();
+//                matches.add("hello");
+//                matches.add("helloer");
+            }
+            if (matches.size() > 0) {
+                if (requestCode == VOICE_RECOGNITION_REQUEST_CODE_START)
+                    edit_start.setText(matches.get(0));
+                else
+                    edit_target.setText(matches.get(0));
+            }
+        }
     }
 }
