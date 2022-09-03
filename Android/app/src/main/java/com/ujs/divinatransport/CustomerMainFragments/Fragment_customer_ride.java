@@ -3,8 +3,6 @@ package com.ujs.divinatransport.CustomerMainFragments;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
-import android.Manifest;
-import android.animation.ValueAnimator;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -12,17 +10,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
@@ -39,38 +33,29 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
-import com.firebase.geofire.util.Constants;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.ujs.divinatransport.MainActivityCustomer;
-import com.ujs.divinatransport.MainActivityDriver;
+import com.ujs.divinatransport.Model.Car;
 import com.ujs.divinatransport.Model.GeoUser;
 import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
@@ -79,8 +64,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -97,12 +80,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import in.madapps.placesautocomplete.PlaceAPI;
 import in.madapps.placesautocomplete.adapter.PlacesAutoCompleteAdapter;
 import in.madapps.placesautocomplete.model.Place;
@@ -119,6 +100,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
     Polyline polyline;
     long distance = 0, duration = 0, price = 0;
     ArrayList<GeoUser> arr_nearby = new ArrayList<>();
+    GeoUser sel_user;
     boolean location_track = false;
 
     LinearLayout ly_top;
@@ -128,6 +110,11 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
     ImageButton btn_down;
     AutoCompleteTextView edit_start, edit_target;
 
+    CircleImageView img_photo;
+    ImageView img_carType, img_car;
+    TextView txt_name, txt_rate, txt_seats, txt_carPrice, txt_state_driver;
+    RatingBar ratingBar;
+
     private static final int VOICE_RECOGNITION_REQUEST_CODE_START = 201;
     private static final int VOICE_RECOGNITION_REQUEST_CODE_TARGET = 202;
 
@@ -136,10 +123,20 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         View v = inflater.inflate(R.layout.customer_fragment_ride, container, false);
         mapFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-//        mContext = new GeoApiContext().setApiKey(getString(R.string.google_api_key));
 
         mProgressBar = v.findViewById(R.id.progress_bar);
         txt_state = v.findViewById(R.id.txt_state);
+
+        img_photo = v.findViewById(R.id.img_photo);
+        img_carType = v.findViewById(R.id.img_carType);
+        img_car = v.findViewById(R.id.img_car);
+        txt_name = v.findViewById(R.id.txt_name);
+        txt_rate = v.findViewById(R.id.txt_rate);
+        txt_seats = v.findViewById(R.id.txt_seats);
+        txt_carPrice = v.findViewById(R.id.txt_carPrice);
+        ratingBar = v.findViewById(R.id.rate);
+        txt_state_driver = v.findViewById(R.id.txt_state_driver);
+
         v.findViewById(R.id.img_record_start).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -289,7 +286,6 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         bottomSheetBehavior = BottomSheetBehavior.from(v.findViewById(R.id.bottom_sheet));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         bottomSheetBehavior.setSkipCollapsed(true);
-//        bottomSheetBehavior.setPeekHeight(150);
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View view, int i) {
@@ -337,8 +333,8 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         v.findViewById(R.id.btn_view).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                txt_state.setText("What do you want?");
-                displayChoiceDialog();
+                openPickupDialog();
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             }
         });
 
@@ -346,8 +342,6 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         activity.locationUpdateCallback = new MainActivityCustomer.LocationUpdateCallback() {
             @Override
             public void locationUpdateCallback() {
-//                Toast.makeText(activity, String.valueOf(Utils.cur_location.toString()), Toast.LENGTH_SHORT).show();
-//                addMarkerMe();
                 mLastLocation = Utils.cur_location;
                 addMarker(mMap, Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude(), location_track, R.drawable.ic_pin0);
                 Utils.geo_customer.setLocation(Utils.cur_user.uid, new GeoLocation(Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude()), new GeoFire.CompletionListener() {
@@ -366,7 +360,51 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
 
         return v;
     }
+    public void openPickupDialog() {
+        final Dialog dlg = new Dialog(activity);
+        Window window = dlg.getWindow();
+        View view = getLayoutInflater().inflate(R.layout.fragment_bottomsheet, null);
+        CircleImageView img_photo1 = view.findViewById(R.id.img_photo);
+        TextView txt_name1 = view.findViewById(R.id.txt_name);
+        LinearLayout ly_one = view.findViewById(R.id.ly_one);
+        LinearLayout ly_all = view.findViewById(R.id.ly_all);
+        if (sel_user != null) {
+            Glide.with(activity).load(sel_user.user.photo).apply(new RequestOptions().placeholder(R.drawable.ic_avatar_white).centerCrop()).into(img_photo1);
+            txt_name1.setText(sel_user.user.name);
+        } else {
+            ly_one.setVisibility(View.GONE);
+        }
+        ly_one.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ly_one.setBackgroundResource(R.drawable.frame_border_red);
+                ly_all.setBackgroundColor(Color.TRANSPARENT);
+                ly_all.setPadding(10,10,10,10);
+                ly_one.setPadding(10,10,10,10);
+            }
+        });
+        ly_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ly_all.setBackgroundResource(R.drawable.frame_border_red);
+                ly_one.setBackgroundColor(Color.TRANSPARENT);
+                ly_all.setPadding(10,10,10,10);
+                ly_one.setPadding(10,10,10,10);
+            }
+        });
 
+        int width = (int)(getResources().getDisplayMetrics().widthPixels*1);
+        int height = (int)(getResources().getDisplayMetrics().heightPixels*0.3);
+        view.setMinimumWidth(width);
+        view.setMinimumHeight(height);
+        dlg.setCancelable(true);
+        dlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dlg.setContentView(view);
+        window.setGravity(Gravity.BOTTOM);
+        window.setBackgroundDrawableResource(android.R.color.transparent);
+        window.setLayout(width, height);
+        dlg.show();
+    }
     void startVoiceActivity(int reqCode) {
         PackageManager pm = activity.getPackageManager();
         List<ResolveInfo> activities = pm.queryIntentActivities(new Intent(
@@ -419,23 +457,12 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         });
     }
 
-    private Marker marker_me;
-
+    private String select_key = "";
     Map<String, GeoLocation> mGeoLastLocation = new HashMap<String, GeoLocation>();
     Map<String, GeoLocation> oldGeoLocation = new HashMap<String, GeoLocation>();
     Map<String, Integer> markerCountGeo = new HashMap<String, Integer>();
     Map<String, Marker> markerGeo = new HashMap<String, Marker>();
 
-    public void addMarkerMe() {
-        if (Utils.cur_location != null) {
-            if (marker_me != null) marker_me.remove();
-            LatLng latLng = new LatLng(Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude());
-            marker_me = mMap.addMarker(new MarkerOptions().position(latLng)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin0)));
-            marker_me.setTitle("It's me");
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
-        }
-    }
     private Location mLastLocation;
     private Location oldLocation;
     private int markerCount = 0;
@@ -464,6 +491,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                 marker = mMap.addMarker(new MarkerOptions().position(latLng)
                         .icon(BitmapDescriptorFactory.fromResource(drawable)));
                 marker.setTitle("It's me");
+                marker.setTag(Utils.cur_user.uid);
                 if (isCamera)
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
 
@@ -496,8 +524,12 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
 
                 LatLng latLng = new LatLng(lat, lon);
 
+                if (key.equals(select_key)) {
+                    drawable = R.drawable.ic_car_orange;
+                }
                 markerGeo.put(key, mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(drawable))));
                 markerGeo.get(key).setTitle(title);
+                markerGeo.get(key).setTag(key);
                 mMap.setPadding(2000, 4000, 2000, 4000);
                 if (isCamera)
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
@@ -647,7 +679,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         }
     }
     public void openSupportDialog() {
-        final Dialog dlg = new Dialog(activity, R.style.Theme_Transparent);
+        final Dialog dlg = new Dialog(activity);
         Window window = dlg.getWindow();
         View view = getLayoutInflater().inflate(R.layout.dialog_support, null);
         int width = (int)(getResources().getDisplayMetrics().widthPixels*0.80);
@@ -687,15 +719,92 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
-        LatLng latLng = new LatLng(37.422f, -122.12f);
+        LatLng latLng = new LatLng(37.422f, -122.12f);   // basic area for people
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
-        addMarkerMe();
+
+        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            }
+        });
     }
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
+
+
+        if (marker.getTag().toString().equals(Utils.cur_user.uid)) {
+            marker.showInfoWindow();
+            return true;
+        }
+
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        return false;
+        Utils.showTextViewMessage(txt_state_driver, "Thank you for choosing me!");
+
+        if (!select_key.equals("")) {
+            markerCountGeo.put(select_key, 0);
+            select_key = "";
+            sel_user = null;
+        }
+
+        select_key = marker.getTag().toString();
+        String title = marker.getTitle();
+        double lat = marker.getPosition().latitude;
+        double lng = marker.getPosition().longitude;
+
+        marker.remove();
+
+        markerCountGeo.put(select_key, 0);
+        addMarkerGeo(title, select_key, mMap, lat, lng, false, R.drawable.ic_car_orange);
+
+        for (GeoUser geoUser : arr_nearby) {
+            User user = geoUser.user;
+            if (select_key.equals(user.uid)) {
+                sel_user = geoUser;
+                Glide.with(activity).load(user.photo).apply(new RequestOptions().placeholder(R.drawable.ic_avatar_white).centerCrop()).into(img_photo);
+                txt_name.setText(user.name);
+                txt_rate.setText(String.valueOf(user.rate));
+                ratingBar.setRating(user.rate);
+                txt_seats.setText("");
+                txt_carPrice.setText("");
+                img_carType.setImageResource(R.drawable.ic_car2);
+                img_car.setImageResource(R.drawable.ic_car2);
+                getCarInfo(user.uid);
+                break;
+            }
+        }
+        return true;
+    }
+
+    void getCarInfo(String uid) {
+        activity.showProgress();
+        Utils.mDatabase.child(Utils.tbl_car).orderByChild("uid").equalTo(uid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        activity.dismissProgress();
+                        if (dataSnapshot.getValue() != null) {
+                            for(DataSnapshot datas: dataSnapshot.getChildren()){
+                                Car car = datas.getValue(Car.class);
+                                car._id = datas.getKey();
+                                int index = Arrays.asList(Utils.carNames).indexOf(car.type);
+                                Glide.with(activity).load(Utils.carTypes[index]).apply(new RequestOptions().placeholder(R.drawable.ic_car2).centerInside()).into(img_carType);
+                                Glide.with(activity).load(car.photo).apply(new RequestOptions().placeholder(R.drawable.ic_car2).centerInside()).into(img_car);
+                                txt_seats.setText(String.valueOf(car.seats));
+                                txt_carPrice.setText("XOH "+String.valueOf(car.price)+"/mile");
+                            }
+                        } else {
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w( "loadPost:onCancelled", databaseError.toException());
+                        // ...
+                    }
+                });
     }
 
     @Override

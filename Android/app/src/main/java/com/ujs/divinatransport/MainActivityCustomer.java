@@ -18,6 +18,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,6 +43,7 @@ public class MainActivityCustomer extends AppCompatActivity {
     DrawerLayout drawer;
     Toolbar mtoolbar;
     public View parentLayout;
+    public ProgressDialog progressDialog;
 
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     Intent locationIntent;
@@ -56,6 +58,7 @@ public class MainActivityCustomer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_main);
         parentLayout = findViewById(android.R.id.content);
+        progressDialog = new ProgressDialog(this);
         mtoolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mtoolbar);//(binding.appBarMain.toolbar);
         drawer = findViewById(R.id.drawer_layout);
@@ -233,4 +236,17 @@ public class MainActivityCustomer extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
         }
     }
+    public void showProgress() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+        }
+        progressDialog.setMessage(getResources().getString(R.string.please_wait));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+    public void dismissProgress() {
+        if (progressDialog != null && progressDialog.isShowing())
+            progressDialog.dismiss();
+    }
+
 }

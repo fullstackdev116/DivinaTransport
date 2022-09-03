@@ -44,16 +44,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp">
-
             <LinearLayout
                 android:id="@+id/ly_avatar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="5dp"
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/img_photo"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -61,11 +60,12 @@
                     android:src="@drawable/ic_avatar" />
 
                 <TextView
+                    android:id="@+id/txt_name"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:singleLine="true"
-                    android:text="Allen Deal"
+                    android:text=""
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="12dp" />
@@ -73,18 +73,24 @@
             <LinearLayout
                 android:id="@+id/ly_rate"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_centerVertical="true"
-                android:gravity="center_horizontal"
                 android:layout_marginLeft="10dp"
                 android:layout_toRightOf="@+id/ly_avatar"
-                android:orientation="vertical">
+                android:background="#4CAF50"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="5dp">
+
                 <TextView
+                    android:id="@+id/txt_rate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="4.2"
-                    android:textColor="#555555"
-                    />
+                    android:textColor="#ffffff"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
                 <RatingBar
                     android:id="@+id/rate"
                     style="?android:attr/ratingBarStyleSmall"
@@ -92,32 +98,32 @@
                     android:layout_height="15dp"
                     android:layout_marginTop="5dp"
                     android:clickable="false"
-                    android:progressTint="@color/red_dark"
-                    android:progressBackgroundTint="@color/gray"
-                    android:secondaryProgressTint="@color/red_dark"
                     android:max="100"
                     android:numStars="5"
-                    android:rating="4.2"
+                    android:progressBackgroundTint="@color/black"
+                    android:progressTint="@color/red_dark"
+                    android:rating="2.2"
+                    android:secondaryProgressTint="@color/red_dark"
                     android:stepSize="0.0" />
             </LinearLayout>
-
-
             <ImageView
-                android:id="@+id/ly_carType"
+                android:id="@+id/img_carType"
                 android:layout_width="100dp"
                 android:layout_height="60dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:layout_toRightOf="@+id/ly_rate"
-                android:scaleType="fitXY"
-                android:src="@drawable/car_auris" />
+                android:background="@color/gray"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_car2"
+                />
             <LinearLayout
                 android:id="@+id/ly_seats"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="5dp"
-                android:layout_toEndOf="@+id/ly_carType"
+                android:layout_toEndOf="@+id/img_carType"
                 android:background="@drawable/frame_border"
                 android:gravity="center"
                 android:orientation="vertical"
@@ -130,13 +136,13 @@
                     android:src="@drawable/ic_seats_dark" />
 
                 <TextView
+                    android:id="@+id/txt_seats"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3"
+                    android:text=""
                     android:textColor="@color/black"
                     android:textSize="17dp" />
             </LinearLayout>
-
             <ImageView
                 android:id="@+id/expand_icon"
                 android:layout_width="wrap_content"
@@ -149,6 +155,20 @@
                 android:tintMode="src_in"
                 app:tint="@color/red_dark" />
 
+            <TextView
+                android:id="@+id/txt_state_driver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:background="@drawable/bubble_incoming"
+                android:backgroundTint="@color/red_dark"
+                android:paddingLeft="15dp"
+                android:paddingTop="5dp"
+                android:paddingRight="5dp"
+                android:paddingBottom="5dp"
+                android:text="Thank you for choosing me"
+                android:textColor="@color/white"
+                android:textSize="13dp" />
         </RelativeLayout>
 
         <View
@@ -166,28 +186,45 @@
             android:minHeight="1px"
             android:background="@color/white"
             android:layout_marginBottom="20dp"
-            android:padding="15dp">
+            android:padding="5dp">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="10.4 Km / 10 min     $3"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
-                    android:layout_gravity="center_horizontal"
-                    />
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:background="@android:color/darker_gray" />
+                    android:layout_height="wrap_content"
+                    >
+
+                    <ImageView
+                        android:id="@+id/img_car"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_car2" />
+                    <RelativeLayout
+                        android:layout_width="120dp"
+                        android:layout_height="30dp"
+                        >
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:alpha="0.8"
+                            android:background="@color/black" />
+                        <TextView
+                            android:id="@+id/txt_carPrice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_centerInParent="true"
+                            android:text="XOH 1000/mile"
+                            android:layout_marginTop="10dp"
+                            android:textColor="@color/white"
+                            />
+                    </RelativeLayout>
+                </RelativeLayout>
                 <LinearLayout
                     android:id="@+id/ly_driver"
                     android:layout_width="match_parent"
@@ -221,35 +258,11 @@
                         android:src="@android:drawable/stat_notify_chat"
                         android:backgroundTint="@color/red"
                         android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
                         />
 
                 </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
-                    <Button
-                        android:id="@+id/btn_cancel"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="25dp"
-                        android:textColor="@color/red_dark"
-                        android:background="@drawable/frame_border_round"
-                        android:text="Reject" />
-                    <Button
-                        android:id="@+id/btn_apply"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="25dp"
-                        android:layout_marginLeft="10dp"
-                        android:background="@drawable/round_frame"
-                        android:text="PickUp" />
-                </LinearLayout>
+
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

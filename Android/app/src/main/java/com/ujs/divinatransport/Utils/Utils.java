@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -86,6 +88,17 @@ public class Utils {
 
                     }
                 }).show();
+    }
+    public static void showTextViewMessage(TextView textView, String message) {
+        textView.setText(message);
+        textView.setVisibility(View.VISIBLE);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                textView.setVisibility(View.GONE);
+            }
+        }, 3000);
     }
     public static Boolean isEmptyEditText(EditText editText) {
         String text = editText.getText().toString().trim();
