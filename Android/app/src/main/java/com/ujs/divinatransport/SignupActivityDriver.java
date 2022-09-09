@@ -305,7 +305,7 @@ public class SignupActivityDriver extends AppCompatActivity {
                     public void onSuccess(Uri uri) {
                         dismissProgress();
                         String downloadUrl = uri.toString();
-                        Car car = new Car("", Utils.cur_user.uid, downloadUrl, car_type, car_seats, car_price);
+                        Car car = new Car("", Utils.cur_user.uid, downloadUrl, car_type, car_seats, car_price, true);
                         Utils.mDatabase.child(Utils.tbl_car).push().setValue(car);
                         Utils.cur_user.state = 2;
                         Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("state").setValue(2);

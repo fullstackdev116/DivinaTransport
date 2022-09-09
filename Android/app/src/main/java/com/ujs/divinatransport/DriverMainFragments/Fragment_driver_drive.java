@@ -1,9 +1,8 @@
 package com.ujs.divinatransport.DriverMainFragments;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,16 +12,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
+import com.arsy.maps_library.MapRipple;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
@@ -32,8 +34,11 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.ujs.divinatransport.App;
 import com.ujs.divinatransport.MainActivityDriver;
 import com.ujs.divinatransport.Model.GeoUser;
+import com.ujs.divinatransport.Model.Ride;
+import com.ujs.divinatransport.Model.RideReject;
 import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -47,17 +52,27 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.kienht.bottomsheetbehavior.BottomSheetBehavior;
 import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.directionhelpers.FetchURL;
 import com.ujs.divinatransport.directionhelpers.TaskLoadedCallback;
 import com.ujs.divinatransport.hrmovecarmarkeranimation.geolocation.GeoHRMarkerAnimation;
 import com.ujs.divinatransport.hrmovecarmarkeranimation.geolocation.GeoHRUpdateLocationCallBack;
+import com.ujs.divinatransport.hrmovecarmarkeranimation.latlng.MyMarkerAnimation;
+import com.ujs.divinatransport.hrmovecarmarkeranimation.latlng.MyUpdateLocationCallBack;
 import com.ujs.divinatransport.hrmovecarmarkeranimation.location.HRMarkerAnimation;
 import com.ujs.divinatransport.hrmovecarmarkeranimation.location.HRUpdateLocationCallBack;
+import com.ujs.divinatransport.service.NotificationCallbackDriver;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class Fragment_driver_drive extends Fragment implements OnMapReadyCallback, TaskLoadedCallback, GoogleMap.OnMarkerClickListener {
@@ -68,10 +83,18 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
     ProgressBar mProgressBar;
     Polyline polyline;
     long distance = 0, duration = 0, price = 0;
+    CircleImageView img_photo;
+    TextView txt_name, txt_cur_location, txt_start, txt_target, txt_distance, txt_duration, txt_price, txt_phone;
+    LatLng pos_start, pos_target, pos_current;
+    Marker marker_start, marker_target;
+    LinearLayout ly_address, ly_sos, ly_ride, ly_button, ly_step_message1, ly_step_message2, ly_step_message3, ly_step_message4;
+    RelativeLayout ly_ridingSteps;
+    Ride sel_ride;
+    User sel_passenger;
 
-
-//    GeoQuery geoQuery;
-    ArrayList<GeoUser> arr_nearby = new ArrayList<>();
+    ArrayList<GeoUser> arr_nearbyCar = new ArrayList<>();
+    ArrayList<String> arr_nearbyPassengerKey = new ArrayList<>();
+    ArrayList<String> arr_rejectRideKey = new ArrayList<>();
     boolean location_track = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -81,6 +104,25 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         mProgressBar = v.findViewById(R.id.progress_bar);
+        img_photo = v.findViewById(R.id.img_photo);
+        txt_name = v.findViewById(R.id.txt_name);
+        txt_cur_location = v.findViewById(R.id.txt_cur_location);
+        txt_target = v.findViewById(R.id.txt_target);
+        txt_start = v.findViewById(R.id.txt_start);
+        txt_phone = v.findViewById(R.id.txt_phone);
+        txt_distance = v.findViewById(R.id.txt_distance);
+        txt_duration = v.findViewById(R.id.txt_duration);
+        txt_price = v.findViewById(R.id.txt_price);
+        ly_address = v.findViewById(R.id.ly_address);
+        ly_sos = v.findViewById(R.id.ly_sos);
+        ly_ride = v.findViewById(R.id.ly_ride);
+        ly_ridingSteps = v.findViewById(R.id.ly_ridingSteps);
+        ly_step_message1 = v.findViewById(R.id.ly_step_message1);
+        ly_step_message2 = v.findViewById(R.id.ly_step_message2);
+        ly_step_message3 = v.findViewById(R.id.ly_step_message3);
+        ly_step_message4 = v.findViewById(R.id.ly_step_message4);
+        ly_button = v.findViewById(R.id.ly_button);
+
 
         ImageButton btn_menu = v.findViewById(R.id.btn_menu);
         btn_menu.setOnClickListener(new View.OnClickListener() {
@@ -163,7 +205,13 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    }
+                        sel_ride.driver_id = Utils.cur_user.uid;
+                        sel_ride.state = 1;
+                        Utils.mDatabase.child(Utils.tbl_ride).child(sel_ride._id).setValue(sel_ride);
+                        App.setObjectPreference(Utils.MY_PASSENGER, sel_passenger);
+                        App.setObjectPreference(Utils.MY_RIDE, sel_ride);
+                        goMyRide();
+                   }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -174,12 +222,30 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
 
             }
         });
-        Button btn_cancel = v.findViewById(R.id.btn_cancel);
-        btn_cancel.setOnClickListener(new View.OnClickListener() {
+        Button btn_reject = v.findViewById(R.id.btn_reject);
+        btn_reject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                removeRoad();
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setMessage("Are you sure to reject?");
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                        arr_rejectRideKey.add(sel_ride._id);
+                        RideReject rideReject = new RideReject("", sel_ride._id, Utils.cur_user.uid, new Date());
+                        String key = Utils.mDatabase.child(Utils.tbl_ride_reject).push().getKey();
+                        Utils.mDatabase.child(Utils.tbl_ride_reject).child(key).setValue(rideReject);
+                        marker_start.remove();
+                        marker_target.remove();
+                        polyline.remove();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
             }
         });
 
@@ -188,23 +254,25 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
             public void locationUpdateCallback() {
 //                Toast.makeText(activity, String.valueOf(Utils.cur_location.toString()), Toast.LENGTH_SHORT).show();
                 mLastLocation = Utils.cur_location;
-                addMarker(mMap, Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude(), location_track, R.drawable.ic_car_orange);
-                Utils.geo_car.setLocation(Utils.cur_user.uid, new GeoLocation(Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude()), new GeoFire.CompletionListener() {
+                addMarker(mMap, Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude(), location_track, R.drawable.ic_car_green);
+                Utils.geo_driver.setLocation(Utils.cur_user.uid, new GeoLocation(Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude()), new GeoFire.CompletionListener() {
                     @Override
                     public void onComplete(String key, DatabaseError error) {
                         if (error != null) {
                             Snackbar.make(getView(), error.getMessage(), 3000).show();
                         } else {
                             getListNearbyCars();
+                            getListNearbyPassengers();
                         }
                     }
                 });
             }
         };
+
         return v;
     }
 
-    void getNearByInfo(String key, GeoLocation location, boolean isRemove) {
+    void getNearByCarInfo(String key, GeoLocation location, boolean isRemove) {
         Utils.mDatabase.child(Utils.tbl_user).child(key).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -212,26 +280,78 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
                     User user = snapshot.getValue(User.class);
                     user.uid = snapshot.getKey();
                     if (!user.uid.equals(Utils.cur_user.uid)) {
-                        for (GeoUser geoUser : arr_nearby) {
+                        for (GeoUser geoUser : arr_nearbyCar) {
                             if (geoUser.user.uid.equals(user.uid)) {
-                                arr_nearby.remove(geoUser);
+                                arr_nearbyCar.remove(geoUser);
                                 break;
                             }
                         }
                         if (!isRemove) {
                             GeoUser n_geoUser = new GeoUser(user, location);
-                            arr_nearby.add(n_geoUser);
+                            arr_nearbyCar.add(n_geoUser);
 
-                            mGeoLastLocation.put(key, location);
-                            if (markerCountGeo.get(key) == null) {
-                                markerCountGeo.put(key, 0);
+                            mGeoLastLocationCar.put(key, location);
+                            if (markerCountGeoCar.get(key) == null) {
+                                markerCountGeoCar.put(key, 0);
                             }
-                            addMarkerGeo(user.name, key, mMap, location.latitude, location.longitude, false, R.drawable.ic_car_dark);
+                            addMarkerGeoCar(user.name, key, mMap, location.latitude, location.longitude, false, R.drawable.ic_car_yellow);
                         } else {
-                            markerGeo.get(key).remove();
-                            markerCountGeo.put(key, 0);
+                            if (markerGeoCar.get(key) != null) {
+                                markerGeoCar.get(key).remove();
+                            }
+                            markerCountGeoCar.put(key, 0);
                         }
                     }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("color", "Error: " + error.getMessage());
+            }
+        });
+    }
+    void getNearByPassengerInfo(String key, GeoLocation location, boolean isRemove) {
+        Utils.mDatabase.child(Utils.tbl_ride).orderByChild("passenger_id").equalTo(key).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    for(DataSnapshot datas: snapshot.getChildren()){
+                        Ride ride = datas.getValue(Ride.class);
+                        ride._id = datas.getKey();
+                        for (String pKey : arr_nearbyPassengerKey) {
+                            if (ride.passenger_id.equals(pKey)) {
+                                arr_nearbyPassengerKey.remove(pKey);
+                                break;
+                            }
+                        }
+                        if (!isRemove && !arr_rejectRideKey.contains(ride._id) && ride.state == 0) {
+                            arr_nearbyPassengerKey.add(key);
+
+                            mGeoLastLocationPassenger.put(key, location);
+                            if (markerCountGeoPassenger.get(key) == null) {
+                                markerCountGeoPassenger.put(key, 0);
+                            }
+                            addMarkerGeoPassenger(Utils.PASSENGER, key, mMap, location.latitude, location.longitude, false, R.drawable.ic_passenger);
+                            int color = Color.GREEN;
+                            if (ride.isSOS) color = Color.RED;
+                            if (rippleGeoPassenger.get(key) == null)
+                                rippleGeoPassenger.put(key, Utils.initRadar(mMap, new LatLng(location.latitude, location.longitude), getContext(), color));
+                            else
+                                rippleGeoPassenger.get(key).withLatLng(new LatLng(location.latitude, location.longitude));
+
+                        } else {
+                            if (markerGeoPassenger.get(key) != null) {
+                                markerGeoPassenger.get(key).remove();
+                            }
+                            if (rippleGeoPassenger.get(key) != null) {
+                                rippleGeoPassenger.get(key).stopRippleMapAnimation();
+                                rippleGeoPassenger.put(key, null);
+                            }
+                            markerCountGeoPassenger.put(key, 0);
+                        }
+                    }
+
                 }
             }
 
@@ -247,10 +367,16 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
     private int markerCount = 0;
     private Marker marker;
 
-    Map<String, GeoLocation> mGeoLastLocation = new HashMap<String, GeoLocation>();
-    Map<String, GeoLocation> oldGeoLocation = new HashMap<String, GeoLocation>();
-    Map<String, Integer> markerCountGeo = new HashMap<String, Integer>();
-    Map<String, Marker> markerGeo = new HashMap<String, Marker>();
+    Map<String, GeoLocation> mGeoLastLocationCar = new HashMap<String, GeoLocation>();
+    Map<String, GeoLocation> oldGeoLocationCar = new HashMap<String, GeoLocation>();
+    Map<String, Integer> markerCountGeoCar = new HashMap<String, Integer>();
+    Map<String, Marker> markerGeoCar = new HashMap<String, Marker>();
+
+    Map<String, GeoLocation> mGeoLastLocationPassenger = new HashMap<String, GeoLocation>();
+    Map<String, GeoLocation> oldGeoLocationPassenger = new HashMap<String, GeoLocation>();
+    Map<String, Integer> markerCountGeoPassenger = new HashMap<String, Integer>();
+    Map<String, Marker> markerGeoPassenger = new HashMap<String, Marker>();
+    Map<String, MapRipple> rippleGeoPassenger = new HashMap<String, MapRipple>();
 
     public void addMarker(GoogleMap googleMap, double lat, double lon, boolean isCamera, int drawable) {
         try {
@@ -276,6 +402,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
                 marker = mMap.addMarker(new MarkerOptions().position(latLng)
                         .icon(BitmapDescriptorFactory.fromResource(drawable)));
                 marker.setTitle("It's me");
+                marker.setTag(Utils.cur_user.uid);
                 if (isCamera)
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
 
@@ -287,57 +414,119 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
             e.printStackTrace();
         }
     }
-    public void addMarkerGeo(String title, String key, GoogleMap googleMap, double lat, double lon, boolean isCamera, int drawable) {
+    public void addMarkerGeoCar(String title, String key, GoogleMap googleMap, double lat, double lon, boolean isCamera, int drawable) {
         try {
-            if (markerCountGeo.get(key) == 1) {
-                if (oldGeoLocation.get(key) != null) {
+            if (markerCountGeoCar.get(key) == 1) {
+                if (oldGeoLocationCar.get(key) != null) {
                     new GeoHRMarkerAnimation(googleMap, 1000, new GeoHRUpdateLocationCallBack() {
                         @Override
                         public void onGeoHRUpdatedLocation(GeoLocation updatedLocation) {
-                            oldGeoLocation.put(key, updatedLocation);
+                            oldGeoLocationCar.put(key, updatedLocation);
                         }
-                    }).animateMarkerGeo(mGeoLastLocation.get(key), oldGeoLocation.get(key), markerGeo.get(key), isCamera);
+                    }).animateMarkerGeo(mGeoLastLocationCar.get(key), oldGeoLocationCar.get(key), markerGeoCar.get(key), isCamera, true);
                 } else {
-                    oldGeoLocation.put(key, mGeoLastLocation.get(key));
+                    oldGeoLocationCar.put(key, mGeoLastLocationCar.get(key));
                 }
-            } else if (markerCountGeo.get(key) == 0) {
-                if (markerGeo.get(key) != null) {
-                    markerGeo.get(key).remove();
+            } else if (markerCountGeoCar.get(key) == 0) {
+                if (markerGeoCar.get(key) != null) {
+                    markerGeoCar.get(key).remove();
                 }
                 mMap = googleMap;
 
                 LatLng latLng = new LatLng(lat, lon);
 
-                markerGeo.put(key, mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(drawable))));
-                markerGeo.get(key).setTitle(title);
+                markerGeoCar.put(key, mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(drawable))));
+                markerGeoCar.get(key).setTitle(title);
+                markerGeoCar.get(key).setTag(key);
                 if (isCamera)
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
 
                 /*################### Set Marker Count to 1 after first marker is created ###################*/
 
-                markerCountGeo.put(key, 1);
+                markerCountGeoCar.put(key, 1);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    public void addMarkerGeoPassenger(String title, String key, GoogleMap googleMap, double lat, double lon, boolean isCamera, int drawable) {
+        try {
+            if (markerCountGeoPassenger.get(key) == 1) {
+                if (oldGeoLocationPassenger.get(key) != null) {
+                    new GeoHRMarkerAnimation(googleMap, 1000, new GeoHRUpdateLocationCallBack() {
+                        @Override
+                        public void onGeoHRUpdatedLocation(GeoLocation updatedLocation) {
+                            oldGeoLocationPassenger.put(key, updatedLocation);
+                        }
+                    }).animateMarkerGeo(mGeoLastLocationPassenger.get(key), oldGeoLocationPassenger.get(key), markerGeoPassenger.get(key), isCamera, false);
+                } else {
+                    oldGeoLocationPassenger.put(key, mGeoLastLocationPassenger.get(key));
+                }
+            } else if (markerCountGeoPassenger.get(key) == 0) {
+                if (markerGeoPassenger.get(key) != null) {
+                    markerGeoPassenger.get(key).remove();
+                }
+                mMap = googleMap;
 
+                LatLng latLng = new LatLng(lat, lon);
+
+                markerGeoPassenger.put(key, mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(drawable))));
+                markerGeoPassenger.get(key).setTitle(title);
+                markerGeoPassenger.get(key).setTag(key);
+                if (isCamera)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
+
+                /*################### Set Marker Count to 1 after first marker is created ###################*/
+
+                markerCountGeoPassenger.put(key, 1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private void getListNearbyCars() {
-        GeoQuery geoQuery = Utils.geo_car.queryAtLocation(new GeoLocation(Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude()), Utils.geo_radius);
+        GeoQuery geoQuery = Utils.geo_driver.queryAtLocation(new GeoLocation(Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude()), Utils.geo_radius/1000);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                getNearByInfo(key, location, false);
+                getNearByCarInfo(key, location, false);
             }
 
             @Override
             public void onKeyExited(String key) {
-                getNearByInfo(key, null, true);
+                getNearByCarInfo(key, null, true);
             }
 
             @Override
             public void onKeyMoved(String key, GeoLocation location) {
-                getNearByInfo(key, location, false);
+                getNearByCarInfo(key, location, false);
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+            }
+        });
+    }
+    private void getListNearbyPassengers() {
+        GeoQuery geoQuery = Utils.geo_passenger.queryAtLocation(new GeoLocation(Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude()), Utils.geo_radius/1000);
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                getNearByPassengerInfo(key, location, false);
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+                getNearByPassengerInfo(key, null, true);
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+                getNearByPassengerInfo(key, location, false);
             }
 
             @Override
@@ -365,6 +554,14 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
         if (Utils.cur_location != null) {
             addMarker(mMap, Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude(), true, R.drawable.ic_car_orange);
         }
+        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+            }
+        });
+        if (sel_passenger != null) goMyRide();
     }
     private String getDirectionUrl(LatLng origin, LatLng dest, String directionMode) {
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
@@ -372,7 +569,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
         String mode = "mode=" + directionMode;
         String parameters = str_origin + "&" + str_dest + "&" + mode;
         String output = "json";
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getResources().getString(R.string.google_api_key);
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getResources().getString(R.string.google_api_key_billed);
         return url;
     }
     @Override
@@ -384,22 +581,173 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
         // go to step1
         distance = distanceVal;
         duration = durationVal;
-        price = Math.round(((float)distance/1000) * 2 + 5);
-        Toast.makeText(activity, String.valueOf(distance/1000), Toast.LENGTH_SHORT).show();
-//        txt_price.setText("RM " + String.valueOf(price));
-//        btn_dest_confirm.setVisibility(View.GONE);
-//        ly_step1.setVisibility(View.VISIBLE);
+        price = Math.round(((float)distance/1000) * 100);
+
+        DecimalFormat df = new DecimalFormat("0.00");
+        txt_distance.setText(String.valueOf(df.format((float)distance/1000))+ " Km");
+        txt_duration.setText(Utils.getDurationStr(duration));
+        txt_price.setText(String.valueOf(price)+ " XOF");
     }
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-//        removeRoad();
-//        mTaskSnapToRoads.execute();
-//        new FetchURL(activity, this).execute(getDirectionUrl(marker_start.getPosition(), marker_target.getPosition(), "driving"), "driving");
+        if (marker.getTag() == null) return false;
+
+        if (marker.getTag().toString().equals(Utils.cur_user.uid)) {
+            marker.showInfoWindow();
+            return true;
+        }
+        String key = marker.getTag().toString();
+        if (arr_nearbyPassengerKey.contains(key)) {
+            getPassengerInfo(key);
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
+        if (sel_ride != null) {
+            ly_button.setVisibility(View.GONE);
+        }
         return false;
     }
 
+    void getRideInfo(String key) {
+//        activity.showProgress();
+        Utils.mDatabase.child(Utils.tbl_ride).orderByChild("passenger_id").equalTo(key).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                activity.dismissProgress();
+                if (snapshot.getValue() != null) {
+                    for(DataSnapshot datas: snapshot.getChildren()){
+                        sel_ride = datas.getValue(Ride.class);
+                        sel_ride._id = datas.getKey();
+                        goMyRide();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("color", "Error: " + error.getMessage());
+                activity.dismissProgress();
+            }
+        });
+    }
+
+    void goMyRide() {
+        pos_start = new LatLng(sel_ride.from_lat, sel_ride.from_lng);
+        pos_target = new LatLng(sel_ride.to_lat, sel_ride.to_lng);
+        pos_current = new LatLng(sel_ride.cur_lat, sel_ride.cur_lng);
+
+        new Utils.GetAddressTask(getContext(), txt_start, pos_start).execute();
+        new Utils.GetAddressTask(getContext(), txt_target, pos_start).execute();
+        new Utils.GetAddressTask(getContext(), txt_cur_location, pos_current).execute();
+
+        if (sel_ride.state > 0) {
+            ly_ridingSteps.setVisibility(View.VISIBLE);
+            ly_button.setVisibility(View.GONE);
+            ly_step_message1.setVisibility(View.GONE);
+            ly_step_message2.setVisibility(View.GONE);
+            ly_step_message3.setVisibility(View.GONE);
+            ly_step_message4.setVisibility(View.GONE);
+            switch (sel_ride.state) {
+                case 1:
+                    ly_step_message1.setVisibility(View.VISIBLE);
+                    break;
+                case 2:
+                    ly_step_message2.setVisibility(View.VISIBLE);
+                    break;
+                case 3:
+                    ly_step_message3.setVisibility(View.VISIBLE);
+                    break;
+                case 4:
+                    ly_step_message4.setVisibility(View.VISIBLE);
+                    break;
+            }
+        } else {
+            ly_button.setVisibility(View.VISIBLE);
+            ly_ridingSteps.setVisibility(View.GONE);
+            ly_step_message1.setVisibility(View.GONE);
+            ly_step_message2.setVisibility(View.GONE);
+            ly_step_message3.setVisibility(View.GONE);
+            ly_step_message4.setVisibility(View.GONE);
+        }
+
+        if (sel_ride.isSOS) {
+            ly_address.setVisibility(View.GONE);
+            ly_ride.setVisibility(View.GONE);
+            ly_sos.setVisibility(View.VISIBLE);
+        } else {
+            ly_address.setVisibility(View.VISIBLE);
+            ly_ride.setVisibility(View.VISIBLE);
+            ly_sos.setVisibility(View.GONE);
+
+            if (marker_start != null) marker_start.remove();
+            marker_start = mMap.addMarker(new MarkerOptions().position(pos_start)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            marker_start.setTitle(txt_start.getText().toString());
+
+            if (marker_target != null) marker_target.remove();
+            marker_target = mMap.addMarker(new MarkerOptions().position(pos_target)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+            marker_target.setTitle(txt_target.getText().toString());
+
+            new FetchURL(activity, Fragment_driver_drive.this).execute(getDirectionUrl(pos_start, pos_target, "driving"), "driving");
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos_start, 15f));
+        }
+    }
+    void getPassengerInfo(String key) {
+        activity.showProgress();
+        Utils.mDatabase.child(Utils.tbl_user).child(key).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                activity.dismissProgress();
+                if (snapshot.getValue() != null) {
+                    sel_passenger = snapshot.getValue(User.class);
+                    sel_passenger.uid = snapshot.getKey();
+
+                    Glide.with(activity).load(sel_passenger.photo).apply(new RequestOptions().placeholder(R.drawable.ic_avatar).centerCrop()).into(img_photo);
+                    txt_name.setText(sel_passenger.name);
+                    txt_phone.setText("+"+sel_passenger.phone);
+                    getRideInfo(key);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("color", "Error: " + error.getMessage());
+                activity.dismissProgress();
+            }
+        });
+    }
+
+    void getRideRejects() {
+        arr_rejectRideKey = new ArrayList<>();
+        Utils.mDatabase.child(Utils.tbl_ride_reject).orderByChild("driver_id").equalTo(Utils.cur_user.uid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    for(DataSnapshot datas: snapshot.getChildren()) {
+                        RideReject rideReject = datas.getValue(RideReject.class);
+                        rideReject._id = snapshot.getKey();
+                        arr_rejectRideKey.add(rideReject.ride_id);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("color", "Error: " + error.getMessage());
+            }
+        });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        getRideRejects();
+        sel_ride = (Ride) App.readObjectPreference(Utils.MY_RIDE, Ride.class);
+        sel_passenger = (User) App.readObjectPreference(Utils.MY_PASSENGER, User.class);
+//        getPassengerInfo(App.readPreference(Utils.MY_PASSENGER_KEY, ""));
+//        getRideInfo(App.readPreference(Utils.MY_PASSENGER_KEY, ""));
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();

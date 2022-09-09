@@ -1,6 +1,7 @@
 package com.ujs.divinatransport;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.widget.RatingBar;
@@ -18,15 +18,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
-import com.firebase.geofire.GeoQuery;
-import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.database.DatabaseError;
-import com.ujs.divinatransport.Utils.LocationService;
+import com.ujs.divinatransport.service.LocationService;
 import com.ujs.divinatransport.Utils.Utils;
 import com.google.android.material.navigation.NavigationView;
+import com.ujs.divinatransport.service.NotificationCallbackDriver;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,8 +41,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import java.util.ArrayList;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivityDriver extends AppCompatActivity {
@@ -55,6 +49,7 @@ public class MainActivityDriver extends AppCompatActivity {
     DrawerLayout drawer;
     Toolbar mtoolbar;
     public View parentLayout;
+    public ProgressDialog progressDialog;
 
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     Intent locationIntent;
@@ -68,7 +63,7 @@ public class MainActivityDriver extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_main);
-
+        progressDialog = new ProgressDialog(this);
         parentLayout = findViewById(android.R.id.content);
         mtoolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mtoolbar);//(binding.appBarMain.toolbar);
@@ -129,6 +124,7 @@ public class MainActivityDriver extends AppCompatActivity {
                 closeDrawer();
             }
         });
+
 
         IntentFilter locationIntent = new IntentFilter("LocationIntent");
         registerReceiver(myReceiver, locationIntent);
@@ -266,5 +262,17 @@ public class MainActivityDriver extends AppCompatActivity {
         } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
         }
+    }
+    public void showProgress() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+        }
+        progressDialog.setMessage(getResources().getString(R.string.please_wait));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+    public void dismissProgress() {
+        if (progressDialog != null && progressDialog.isShowing())
+            progressDialog.dismiss();
     }
 }

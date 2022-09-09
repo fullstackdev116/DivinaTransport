@@ -15,6 +15,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
@@ -38,19 +39,35 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.gson.Gson;
+import com.ujs.divinatransport.Model.Ride;
 import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.service.NotificationCallbackCustomer;
+import com.ujs.divinatransport.service.NotificationCallbackDriver;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class App extends Application {
 
     public static App app;
     public static SharedPreferences prefs;
     private static Context mContext;
-    public static String is_checked = "IS_CHECKED";
-    public static String ripple_url = "https://www.ripplesearch.com";
+    public static NotificationCallbackDriver notificationCallbackDriver;
+    public static NotificationCallbackCustomer notificationCallbackCustomer;
+    public static String App_launched = "App_launched";
 
     @Override
     public void onCreate() {
@@ -81,7 +98,7 @@ public class App extends Application {
                             for(DataSnapshot datas: dataSnapshot.getChildren()){
                                 Utils.cur_user = datas.getValue(User.class);
                                 Utils.cur_user.uid = datas.getKey();
-                                if (Utils.cur_user.type.equals("DRIVER")) {
+                                if (Utils.cur_user.type.equals(Utils.DRIVER)) {
                                     if (Utils.cur_user.state == 0) { // missing signup license
                                         Intent myIntent = new Intent(activity, SignupActivityDriver.class);
                                         myIntent.putExtra("index_step", 2);
@@ -98,7 +115,7 @@ public class App extends Application {
                                         activity.startActivity(myIntent);
                                         activity.finishAffinity();
                                     }
-                                } else if (Utils.cur_user.type.equals("CUSTOMER")) {
+                                } else if (Utils.cur_user.type.equals(Utils.PASSENGER)) {
                                     Intent myIntent = new Intent(activity, MainActivityCustomer.class);
                                     activity.startActivity(myIntent);
                                     activity.finishAffinity();
@@ -118,7 +135,62 @@ public class App extends Application {
                 });
 
     }
+    public static void sendPushMessage(final String token, final String title, final String body, final String key, final Context context, String push_type, String user_id) {
 
+        new AsyncTask<String, String, String>() {
+            @Override
+            protected String doInBackground(String... params) {
+                try {
+                    JSONObject root = new JSONObject();
+                    JSONObject data = new JSONObject();
+                    data.put("push_type", push_type);
+                    data.put("user_id", user_id);
+                    data.put("body", body);
+                    data.put("title", title);
+                    data.put("key", key);
+                    root.put("data", data);
+                    root.put("to", token);
+
+                    String result = postToFCM(root.toString());
+                    Log.d("Main Activity", "Result: " + result);
+                    return result;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                try {
+                    JSONObject resultJson = new JSONObject(result);
+                    int success, failure;
+                    success = resultJson.getInt("success");
+                    failure = resultJson.getInt("failure");
+//                    Toast.makeText(context, "Message Success: " + success + "Message Failed: " + failure, Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+//                    Toast.makeText(context, "Message Failed, Unknown error occurred.", Toast.LENGTH_LONG).show();
+                }
+            }
+        }.execute();
+    }
+
+    static String postToFCM(String bodyString) throws IOException {
+        final String FCM_MESSAGE_URL = "https://fcm.googleapis.com/fcm/send";
+        final MediaType JSON
+                = MediaType.parse("application/json; charset=utf-8");
+
+        RequestBody body = RequestBody.create(JSON, bodyString);
+        Request request = new Request.Builder()
+                .url(FCM_MESSAGE_URL)
+                .post(body)
+                .addHeader("Authorization", "key=" + Utils.fbServerKey)
+                .build();
+        OkHttpClient mClient = new OkHttpClient();
+        Response response = mClient.newCall(request).execute();
+        return response.body().string();
+    }
     void getFCMToken() {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -170,6 +242,19 @@ public class App extends Application {
         SharedPreferences.Editor editor = prefs.edit();
         editor.remove(key);
         editor.apply();
+    }
+    public static void setObjectPreference(String key, Object myObject) {
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(myObject);
+        prefsEditor.putString(key, json);
+        prefsEditor.commit();
+    }
+    public static Object readObjectPreference(String key, Type typeofT) {
+        Gson gson = new Gson();
+        String json = prefs.getString(key, "");
+        Object obj = gson.fromJson(json, typeofT);
+        return obj;
     }
 
     public static void social_share(Context context, String url) {

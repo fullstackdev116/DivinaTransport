@@ -1,36 +1,35 @@
-package com.ujs.divinatransport.hrmovecarmarkeranimation.geolocation;
+package com.ujs.divinatransport.hrmovecarmarkeranimation.latlng;
 
 import android.animation.ValueAnimator;
 import android.location.Location;
 import android.view.animation.LinearInterpolator;
 
-import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.ujs.divinatransport.hrmovecarmarkeranimation.location.HRUpdateLocationCallBack;
 import com.ujs.divinatransport.hrmovecarmarkeranimation.Utilities;
+import com.ujs.divinatransport.hrmovecarmarkeranimation.location.HRUpdateLocationCallBack;
 
 
-public class GeoHRMarkerAnimation {
+public class MyMarkerAnimation {
 
-    private GeoHRUpdateLocationCallBack updateLocation;
+    private MyUpdateLocationCallBack updateLocation;
     private ValueAnimator valueAnimator;
     private GoogleMap googleMap;
     private long animationDuration;
 
-    public GeoHRMarkerAnimation(GoogleMap googleMap, long duration , GeoHRUpdateLocationCallBack updateLocation) {
+    public MyMarkerAnimation(GoogleMap googleMap, long duration , MyUpdateLocationCallBack updateLocation) {
         this.updateLocation = updateLocation;
         this.googleMap =googleMap;
         this.animationDuration=duration;
     }
 
-    public void animateMarkerGeo(final GeoLocation destination, final GeoLocation oldLocation, final Marker marker, boolean isCamera, boolean is_rotate) {
+    public void animateMarker(final LatLng destination, final LatLng oldLocation, final Marker marker, boolean isCamera, boolean is_rotate) {
         if (marker != null) {
             final LatLng startPosition = marker.getPosition();
-            final LatLng endPosition = new LatLng(destination.latitude, destination.longitude);
+//            final LatLng endPosition = destination;
 
             if (valueAnimator != null)
                 valueAnimator.end();
@@ -44,7 +43,7 @@ public class GeoHRMarkerAnimation {
                 public void onAnimationUpdate(ValueAnimator animation) {
                     try {
                         float v = animation.getAnimatedFraction();
-                        LatLng newPosition = latLngInterpolator.interpolate(v, startPosition, endPosition);
+                        LatLng newPosition = latLngInterpolator.interpolate(v, startPosition, destination);
                         marker.setPosition(newPosition);
                         //marker.setRotation(computeRotation(v, startRotation, destination.getBearing()));
                         float angle = Utilities.computeRotation(v, marker.getRotation(),
@@ -57,7 +56,7 @@ public class GeoHRMarkerAnimation {
 
 
                         // add new location into old location
-                        updateLocation.onGeoHRUpdatedLocation(destination);
+                        updateLocation.onMyUpdatedLocation(destination);
 
 
                         //when marker goes out from screen it automatically move into center

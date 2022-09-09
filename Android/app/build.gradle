@@ -20,6 +20,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'rebel.xml'
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -43,17 +51,19 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.13.2'
     implementation 'com.github.CanHub:Android-Image-Cropper:4.3.1'
     implementation 'me.zhanghai.android.materialratingbar:library:1.4.0'
+    implementation 'com.google.code.gson:gson:2.9.0'
 
-    implementation 'com.google.android.gms:play-services-maps:16.1.0'
-    implementation 'com.google.android.gms:play-services-location:16.0.0'
-    implementation 'com.google.android.gms:play-services-places:16.0.0'
-//    implementation 'com.google.android.gms:play-services-maps:18.1.0'
-//    implementation 'com.google.android.gms:play-services-location:20.0.0'
-//    implementation 'com.google.android.gms:play-services-places:17.0.0'
+//    implementation 'com.google.android.gms:play-services-maps:16.1.0'
+//    implementation 'com.google.android.gms:play-services-location:16.0.0'
+//    implementation 'com.google.android.gms:play-services-places:16.0.0'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-location:20.0.0'
+    implementation 'com.google.android.gms:play-services-places:17.0.0'
     implementation 'com.google.android.libraries.places:places:2.6.0'
 //    implementation 'joda-time:joda-time:2.4'
 //    implementation 'com.google.maps:google-maps-services:2.1.0'
-//    implementation 'com.google.maps.android:android-maps-utils:2.4.0'
+    implementation 'com.google.maps.android:android-maps-utils:2.4.0'
+
     implementation 'com.github.hantrungkien:BottomSheetBehavior:1.0.3'
     implementation 'com.github.DavidProdinger:weekdays-selector:1.1.1'
     implementation 'ca.antonious:materialdaypicker:0.7.4'
@@ -64,6 +74,10 @@ dependencies {
     implementation 'com.justkiddingbaby:vercodeedittext:1.1.0'
     implementation 'com.github.travijuu:numberpicker:1.0.7'
     implementation 'com.github.mukeshsolanki:Google-Places-AutoComplete-EditText:0.0.8'
+    implementation 'com.github.aarsy.googlemapsanimations:googlemapsanimations:1.0.5'
+//    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.7'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
 
     implementation 'com.firebase:geofire-android:3.0.0'
     implementation 'com.google.firebase:firebase-database:20.0.5'

@@ -19,14 +19,6 @@
         android:background="@color/black"
         android:alpha="0.2"
         />
-    <ProgressBar
-        android:layout_width="fill_parent"
-        android:layout_height="5dp"
-        android:id="@+id/progress_bar"
-        android:layout_gravity="top|center"
-        android:visibility="invisible"
-        style="?android:attr/progressBarStyleHorizontal"/>
-
     <LinearLayout
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
@@ -106,6 +98,7 @@
                     android:secondaryProgressTint="@color/red_dark"
                     android:stepSize="0.0" />
             </LinearLayout>
+
             <ImageView
                 android:id="@+id/img_carType"
                 android:layout_width="100dp"
@@ -115,8 +108,7 @@
                 android:layout_toRightOf="@+id/ly_rate"
                 android:background="@color/gray"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_car2"
-                />
+                android:src="@drawable/ic_car2" />
             <LinearLayout
                 android:id="@+id/ly_seats"
                 android:layout_width="wrap_content"
@@ -167,6 +159,7 @@
                 android:paddingRight="5dp"
                 android:paddingBottom="5dp"
                 android:text="Thank you for choosing me"
+                android:visibility="gone"
                 android:textColor="@color/white"
                 android:textSize="13dp" />
         </RelativeLayout>
@@ -289,7 +282,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:backgroundTint="@color/red_dark"
-                android:src="@drawable/ic_action_go" />
+                android:src="@drawable/ic_action_go"
+                app:tint="@color/white" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -383,6 +377,14 @@
                                 android:background="@android:color/transparent"
                                 android:src="@drawable/ic_record"
                                 />
+                            <ImageView
+                                android:id="@+id/img_touch_start"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:background="@android:color/transparent"
+                                android:src="@drawable/ic_touch"
+                                app:tint="@color/gray"
+                                />
                         </LinearLayout>
                     </RelativeLayout>
                     <RelativeLayout
@@ -434,6 +436,13 @@
                                 android:background="@android:color/transparent"
                                 android:src="@drawable/ic_record"
                                 />
+                            <ImageView
+                                android:id="@+id/img_touch_target"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:background="@android:color/transparent"
+                                android:src="@drawable/ic_touch"
+                                app:tint="@color/gray" />
                         </LinearLayout>
                     </RelativeLayout>
                 </LinearLayout>
@@ -451,8 +460,10 @@
                 />
 
             <LinearLayout
+                android:id="@+id/ly_topClick"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clickable="true"
                 android:gravity="center_vertical|center_horizontal">
 
                 <ImageView
@@ -477,6 +488,7 @@
                     android:id="@+id/btn_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:clickable="false"
                     android:layout_centerHorizontal="true"
                     android:backgroundTint="@android:color/transparent"
                     android:src="@drawable/ic_down"
@@ -501,4 +513,286 @@
         </RelativeLayout>
 
     </LinearLayout>
+    <ImageButton
+        android:id="@+id/btn_sos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_sos"
+        android:layout_gravity="end|center_vertical"
+        android:backgroundTint="@android:color/darker_gray"
+        />
+    <Button
+        android:id="@+id/btn_cancel_ride"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="50dp"
+        android:text="Cancel"
+        android:visibility="gone"
+        />
+    <RelativeLayout
+        android:id="@+id/ly_ridingSteps"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:background="@drawable/filters_sheet_background"
+            android:layout_alignParentBottom="true"
+            >
+            <LinearLayout
+                android:id="@+id/ly_step1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone"
+                >
+                <TextView
+                    android:id="@+id/txt_accept_step1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Jhon Klak accepted!"
+                    android:textSize="15dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:textColor="@color/white"
+                    android:background="@android:color/holo_green_dark"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    >
+                    <ImageView
+                        android:id="@+id/img_carType_driver"
+                        android:layout_width="100dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/car_auris"
+                        />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="10dp"
+                        >
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            >
+                            <ImageView
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:background="@drawable/ic_seats_dark"
+                                />
+                            <TextView
+                                android:id="@+id/txt_seats_driver"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="2"
+                                android:layout_marginLeft="10dp"
+                                android:textSize="18dp"
+                                />
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/txt_price_driver"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="XOF 1000/mile"
+                            android:layout_marginTop="10dp"
+                            android:textSize="18dp"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center_vertical"
+                    >
+                    <pl.droidsonroids.gif.GifImageView
+                        android:layout_width="100dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/progress"
+                        android:scaleType="centerCrop"
+                        />
+                    <TextView
+                        android:id="@+id/txt_time_remaining_step1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="3 mins remaining"
+                        android:textSize="18dp"
+                        android:textStyle="italic"
+                        android:layout_marginRight="20dp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ly_step2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Please pay for a driving!"
+                    android:textSize="15dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:textColor="@color/red_dark"
+                    android:background="@android:color/holo_green_dark"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:id="@+id/txt_balance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pay Balance: XOF 2000.0"
+                        android:textSize="18dp"
+                        />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        >
+                        <Button
+                            android:id="@+id/btn_ediapay"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="EdiaPay"
+                            android:layout_marginBottom="20dp"
+                            />
+                        <Button
+                            android:id="@+id/btn_cache"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginLeft="20dp"
+                            android:text="Cache"
+                            android:layout_marginBottom="20dp"
+                            />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ly_step3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Enjoy your riding!"
+                    android:textSize="15dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:textColor="@color/white"
+                    android:background="@android:color/holo_green_dark"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="To:"
+                    android:layout_marginTop="10dp"
+                    />
+                <TextView
+                    android:id="@+id/txt_target_step3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="To address here"
+                    android:lines="2"
+                    android:textStyle="bold"
+                    android:layout_marginTop="5dp"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center_vertical"
+                    android:layout_marginTop="10dp"
+                    >
+                    <pl.droidsonroids.gif.GifImageView
+                        android:layout_width="100dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/progress"
+                        android:scaleType="centerCrop"
+                        />
+                    <TextView
+                        android:id="@+id/txt_time_remaining_step3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="3 mins remaining"
+                        android:textSize="18dp"
+                        android:textStyle="italic"
+                        android:layout_marginRight="20dp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="30dp"
+            android:gravity="center_horizontal"
+            >
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_driver"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/supporter1"
+                android:scaleType="centerCrop"
+                />
+            <RatingBar
+                android:id="@+id/rate_driver"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:layout_marginTop="5dp"
+                android:clickable="false"
+                android:progressTint="@color/red_dark"
+                android:progressBackgroundTint="@color/black"
+                android:secondaryProgressTint="@color/red_dark"
+                android:max="100"
+                android:numStars="5"
+                android:rating="4.0"
+                android:stepSize="0.0" />
+            <TextView
+                android:id="@+id/txt_name_driver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Jhon Klak"
+                android:lines="1"
+                android:layout_marginTop="5dp"
+                android:textColor="#555555"
+                android:textSize="13dp"
+                android:textAlignment="center"
+                />
+        </LinearLayout>
+
+    </RelativeLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

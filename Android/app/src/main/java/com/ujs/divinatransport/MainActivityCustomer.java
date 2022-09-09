@@ -32,8 +32,7 @@ import android.view.Menu;
 import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.Utils.LocationService;
+import com.ujs.divinatransport.service.LocationService;
 import com.ujs.divinatransport.Utils.Utils;
 import com.google.android.material.navigation.NavigationView;
 

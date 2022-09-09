@@ -1,4 +1,4 @@
-package com.ujs.divinatransport.Utils;
+package com.ujs.divinatransport.service;
 
 import android.Manifest;
 import android.app.Notification;
@@ -61,7 +61,10 @@ public class LocationService extends Service {
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TWO_MINUTES, 0, listener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TWO_MINUTES, 0, listener);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TWO_MINUTES, 0, listener);
+        }
+
         
     }
 

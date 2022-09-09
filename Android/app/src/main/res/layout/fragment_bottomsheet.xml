@@ -34,6 +34,7 @@
                     app:tint="@color/gray" />
 
                 <TextView
+                    android:id="@+id/txt_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -49,6 +50,7 @@
                     app:tint="@color/gray" />
 
                 <TextView
+                    android:id="@+id/txt_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -64,6 +66,7 @@
                     app:tint="@color/gray" />
 
                 <TextView
+                    android:id="@+id/txt_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -83,10 +86,11 @@
             android:textSize="18dp"
             android:textStyle="bold" />
     </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         >
         <TextView
             android:layout_width="wrap_content"
@@ -143,7 +147,7 @@
                 android:layout_height="wrap_content"
                 android:lines="1"
                 android:textAlignment="center"
-                android:text="ALL"
+                android:text="Nearby"
                 />
         </LinearLayout>
     </LinearLayout>
@@ -154,6 +158,7 @@
         android:layout_marginTop="20dp"
         >
         <Button
+            android:id="@+id/btn_ride"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="40dp"
@@ -162,6 +167,7 @@
             android:background="@drawable/round_frame"
             />
         <Button
+            android:id="@+id/btn_order"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="40dp"
