@@ -163,6 +163,7 @@
                     android:layout_marginLeft="10dp"
                     />
                 <EditText
+                    android:id="@+id/edit_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="0.0"
@@ -170,23 +171,7 @@
                     android:layout_marginLeft="3dp"
                     />
             </LinearLayout>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Available days in a week"
-                android:layout_marginTop="15dp"
-                />
-            <ca.antonious.materialdaypicker.MaterialDayPicker
-                android:id="@+id/day_picker"
-                android:layout_width="match_parent"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:backgroundTint="@color/red"
-                android:foregroundTint="@color/red"
-                app:selectionMode="ca.antonious.materialdaypicker.DefaultSelectionMode"
-                />
+
             <Button
                 android:id="@+id/btn_set"
                 android:layout_width="match_parent"

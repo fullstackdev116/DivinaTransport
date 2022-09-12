@@ -32,6 +32,8 @@ import android.view.Menu;
 import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.DataSnapshot;
+import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.service.LocationService;
 import com.ujs.divinatransport.Utils.Utils;
 import com.google.android.material.navigation.NavigationView;
@@ -56,6 +58,7 @@ public class MainActivityCustomer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_main);
+
         parentLayout = findViewById(android.R.id.content);
         progressDialog = new ProgressDialog(this);
         mtoolbar = findViewById(R.id.toolbar);

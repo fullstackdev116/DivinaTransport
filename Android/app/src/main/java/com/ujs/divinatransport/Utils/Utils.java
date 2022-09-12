@@ -72,6 +72,7 @@ public class Utils {
     public static String tbl_user = "tbl_user";
     public static String tbl_car = "tbl_car";
     public static String tbl_ride = "tbl_ride";
+    public static String tbl_history = "tbl_history";
     public static String tbl_ride_reject = "tbl_ride_reject";
     public static String tbl_geo_driver = "tbl_geo_driver";
     public static String tbl_geo_passenger = "tbl_geo_passenger";
@@ -84,6 +85,8 @@ public class Utils {
     public static GeoFire geo_driver = new GeoFire(Utils.mDatabase.child(Utils.tbl_geo_driver));
 
     public static LatLng basePos = new LatLng(5.3941, -3.9716);
+    public static int RIDE_STEP0 = 0, RIDE_STEP1 = 1, RIDE_STEP2 = 2, RIDE_STEP3 = 3, RIDE_STEP4 = 4;
+    // ---------------- post ------------- apply --------- pay ---------- arrive --------- review ---------
 
     public static int[] carTypes = new int[]{
         R.drawable.car_auris, R.drawable.car_avensis, R.drawable.car_camry, R.drawable.car_corolla, R.drawable.car_gt86,
@@ -115,13 +118,13 @@ public class Utils {
 
     public static MapRipple initRadar(GoogleMap mMap, LatLng latLng, Context context, int color){
         MapRipple mapRipple = new MapRipple(mMap, latLng, context);
-        mapRipple.withNumberOfRipples(3);
-        mapRipple.withFillColor(color);
+//        mapRipple.withNumberOfRipples(3);
+//        mapRipple.withFillColor(color);
         mapRipple.withStrokeColor(color);
-        mapRipple.withStrokewidth(10);      // 10dp
+        mapRipple.withStrokewidth(20);      // 10dp
         mapRipple.withDistance(Utils.geo_radius);
-        mapRipple.withRippleDuration(12000);    //12000ms
-        mapRipple.withTransparency(0.5f);
+//        mapRipple.withRippleDuration(12000);    //12000ms
+//        mapRipple.withTransparency(0.5f);
         mapRipple.startRippleMapAnimation();
         return mapRipple;
     }
@@ -250,6 +253,14 @@ public class Utils {
                 autoCompleteTextView.setText(address);
             if (textView != null)
                 textView.setText(address);
+        }
+    }
+
+    public static String getDistanceStr(long distance) {
+        if (distance > 1000) {
+            return String.valueOf((float)distance/1000)+"Km";
+        } else {
+            return String.valueOf(distance) + "m";
         }
     }
 

@@ -70,7 +70,7 @@ public class Fragment_driver_signup_setcar extends Fragment {
         btn_capture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                IDCardCamera.create(activity).openCamera(IDCardCamera.TYPE_IDCARD_BACK);
+                IDCardCamera.create(Fragment_driver_signup_setcar.this).openCamera(IDCardCamera.TYPE_IDCARD_BACK);
             }
         });
 

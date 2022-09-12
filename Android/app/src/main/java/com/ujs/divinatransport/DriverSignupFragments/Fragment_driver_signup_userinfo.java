@@ -375,12 +375,17 @@ public class Fragment_driver_signup_userinfo extends Fragment {
         Glide.with(this).load(uri)
                 .apply(new RequestOptions()
                         .placeholder(R.drawable.ic_avatar).centerCrop().dontAnimate()).into(img_photo);
-        try {
-            Uri uriContent = Uri.parse(MediaStore.Images.Media.insertImage(activity.getContentResolver(), uri, null, null));
-            activity.user_photo = uriContent;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        Uri uriContent = Uri.parse(uri);
+        activity.user_photo = uriContent;
+//        try {
+//            Uri uriContent = Uri.parse(uri);
+////            Uri uriContent = Uri.parse(MediaStore.Images.Media.insertImage(activity.getContentResolver(), uri, null, null));
+////            new File(uri.getPath());
+//
+//            activity.user_photo = uriContent;
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
     }
     public void onCropImageResult(@NonNull CropImageView.CropResult result) {
         if (result.isSuccessful()) {

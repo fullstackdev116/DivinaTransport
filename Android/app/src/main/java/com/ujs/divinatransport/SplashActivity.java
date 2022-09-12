@@ -60,15 +60,15 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         parentLayout = findViewById(android.R.id.content);
         findViewById(R.id.ly_bottom).setVisibility(View.GONE);
-        RunAnimation(findViewById(R.id.imageView), AnimationUtils.loadAnimation(this, R.anim.fade));
-        RunAnimation(findViewById(R.id.ly_title), AnimationUtils.loadAnimation(this, R.anim.fade));
+//        RunAnimation(findViewById(R.id.imageView), AnimationUtils.loadAnimation(this, R.anim.fade));
+//        RunAnimation(findViewById(R.id.ly_title), AnimationUtils.loadAnimation(this, R.anim.fade));
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 findViewById(R.id.ly_bottom).setVisibility(View.VISIBLE);
-                RunAnimation(findViewById(R.id.ly_bottom), AnimationUtils.loadAnimation(SplashActivity.this, R.anim.fade1));
-                RunAnimation(findViewById(R.id.txt_doyouknow), AnimationUtils.loadAnimation(SplashActivity.this, R.anim.translate));
+//                RunAnimation(findViewById(R.id.ly_bottom), AnimationUtils.loadAnimation(SplashActivity.this, R.anim.fade1));
+//                RunAnimation(findViewById(R.id.txt_doyouknow), AnimationUtils.loadAnimation(SplashActivity.this, R.anim.translate));
 
                 if (Utils.mUser != null) {
                     progressDialog.show();

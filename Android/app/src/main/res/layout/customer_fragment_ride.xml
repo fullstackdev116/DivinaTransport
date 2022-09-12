@@ -537,220 +537,408 @@
         android:layout_gravity="bottom"
         android:visibility="gone"
         >
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:background="@drawable/filters_sheet_background"
             android:layout_alignParentBottom="true"
-            >
+            android:background="@drawable/filters_sheet_background"
+            android:orientation="vertical"
+            android:padding="10dp">
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/gif_loading"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/loading"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                />
             <LinearLayout
                 android:id="@+id/ly_step1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="gone"
-                >
-                <TextView
-                    android:id="@+id/txt_accept_step1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Jhon Klak accepted!"
-                    android:textSize="15dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:textColor="@color/white"
-                    android:background="@android:color/holo_green_dark"
-                    />
+                android:visibility="gone">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     >
+                    <TextView
+                        android:id="@+id/txt_accept_step1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/holo_green_dark"
+                        android:paddingLeft="15dp"
+                        android:paddingTop="5dp"
+                        android:paddingRight="15dp"
+                        android:paddingBottom="5dp"
+                        android:text="Jhon Klak accepted!"
+                        android:textColor="@color/white"
+                        android:textSize="15dp" />
+                    <Button
+                        android:id="@+id/btn_cancel_driver"
+                        android:layout_width="wrap_content"
+                        android:layout_height="45dp"
+                        android:text="Cancel"
+                        android:layout_marginLeft="10dp"
+                        />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="10dp">
+
                     <ImageView
                         android:id="@+id/img_carType_driver"
-                        android:layout_width="100dp"
-                        android:layout_height="60dp"
-                        android:background="@drawable/car_auris"
-                        />
+                        android:layout_width="120dp"
+                        android:layout_height="70dp"
+                        android:background="@drawable/car_auris" />
+
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
                         android:layout_marginLeft="10dp"
-                        >
+                        android:background="@drawable/frame_border_red"
+                        android:padding="10dp"
+                        android:orientation="vertical">
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            >
+                            android:gravity="center_vertical">
+
                             <ImageView
-                                android:layout_width="25dp"
-                                android:layout_height="25dp"
-                                android:background="@drawable/ic_seats_dark"
-                                />
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:background="@drawable/ic_seats_dark" />
+
                             <TextView
                                 android:id="@+id/txt_seats_driver"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="2"
                                 android:layout_marginLeft="10dp"
-                                android:textSize="18dp"
-                                />
+                                android:text="2"
+                                android:textStyle="bold"
+                                android:textSize="18dp" />
                         </LinearLayout>
+
                         <TextView
                             android:id="@+id/txt_price_driver"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="XOF 1000/mile"
-                            android:layout_marginTop="10dp"
-                            android:textSize="18dp"
-                            />
+                            android:layout_marginTop="5dp"
+                            android:text="1000 XOF/mile"
+                            android:textStyle="bold"
+                            android:textSize="16dp" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="end|center_vertical"
-                    >
+                    android:layout_marginTop="10dp"
+                    android:gravity="end|center_vertical">
+                    <TextView
+                        android:id="@+id/txt_estimate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/red"
+                        />
+
                     <pl.droidsonroids.gif.GifImageView
                         android:layout_width="100dp"
                         android:layout_height="20dp"
-                        android:src="@drawable/progress"
                         android:scaleType="centerCrop"
-                        />
+                        android:src="@drawable/progress" />
+
                     <TextView
                         android:id="@+id/txt_time_remaining_step1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
                         android:text="3 mins remaining"
                         android:textSize="18dp"
-                        android:textStyle="italic"
-                        android:layout_marginRight="20dp"
-                        />
+                        android:textStyle="italic" />
                 </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/ly_step2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="gone"
-                >
+                android:visibility="gone">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Please pay for a driving!"
-                    android:textSize="15dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:textColor="@color/red_dark"
                     android:background="@android:color/holo_green_dark"
-                    />
+                    android:paddingLeft="15dp"
+                    android:paddingTop="5dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="5dp"
+                    android:text="Please pay before driving!"
+                    android:textColor="@color/red_dark"
+                    android:textSize="15dp" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:orientation="vertical"
-                    >
-                    <TextView
-                        android:id="@+id/txt_balance"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Pay Balance: XOF 2000.0"
-                        android:textSize="18dp"
-                        />
+                    android:orientation="vertical">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
                         >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="Pay Balance: "
+                            android:textSize="18dp" />
+                        <TextView
+                            android:id="@+id/txt_balance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:layout_marginLeft="10dp"
+                            android:background="@drawable/frame_border_round"
+                            android:backgroundTint="@color/red_dark"
+                            android:gravity="center"
+                            android:text="1000.0 XOF"
+                            android:textAlignment="center"
+                            android:textColor="@color/red_dark"
+                            android:textSize="15dp" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/ly_pay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        >
+
                         <Button
                             android:id="@+id/btn_ediapay"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="EdiaPay"
                             android:layout_marginBottom="20dp"
-                            />
+                            android:layout_weight="1"
+                            android:text="EdiaPay" />
+
                         <Button
                             android:id="@+id/btn_cache"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_marginLeft="20dp"
-                            android:text="Cache"
                             android:layout_marginBottom="20dp"
-                            />
+                            android:layout_weight="1"
+                            android:text="Cache" />
                     </LinearLayout>
-
+                    <TextView
+                        android:id="@+id/txt_confirm"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Waiting for driver's confirmation.."
+                        android:textAlignment="center"
+                        android:textSize="18dp"
+                        android:textStyle="italic"
+                        android:textColor="@color/teal_200"
+                        android:visibility="gone"
+                        />
                 </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/ly_step3"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="gone"
-                >
+                android:visibility="gone">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Enjoy your riding!"
-                    android:textSize="15dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:textColor="@color/white"
                     android:background="@android:color/holo_green_dark"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="To:"
-                    android:layout_marginTop="10dp"
-                    />
-                <TextView
-                    android:id="@+id/txt_target_step3"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="5dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="5dp"
+                    android:text="Enjoy your riding!"
+                    android:textColor="@color/white"
+                    android:textSize="15dp" />
+                <LinearLayout
                     android:layout_width="match_parent"
+                    android:layout_marginTop="10dp"
                     android:layout_height="wrap_content"
-                    android:text="To address here"
-                    android:lines="2"
-                    android:textStyle="bold"
-                    android:layout_marginTop="5dp"
-                    />
+                    android:gravity="top"
+                    >
+                    <ImageView
+                        android:layout_width="13dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_pin1"
+                        android:layout_marginLeft="10dp"
+                        android:text="To:"
+                        app:tint="@color/teal_200" />
+
+                    <TextView
+                        android:id="@+id/txt_target_step3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:lines="2"
+                        android:hint="To address here"
+                        android:textStyle="bold" />
+                </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="end|center_vertical"
-                    android:layout_marginTop="10dp"
-                    >
-                    <pl.droidsonroids.gif.GifImageView
-                        android:layout_width="100dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/progress"
-                        android:scaleType="centerCrop"
-                        />
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:src="@drawable/ic_distance"
+                        app:tint="@color/gray" />
+
+                    <TextView
+                        android:id="@+id/txt_distance_remaining_step3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text=""
+                        android:textSize="23dp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_marginLeft="50dp"
+                        android:src="@drawable/ic_time"
+                        app:tint="@color/gray" />
+
                     <TextView
                         android:id="@+id/txt_time_remaining_step3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="3 mins remaining"
-                        android:textSize="18dp"
-                        android:textStyle="italic"
-                        android:layout_marginRight="20dp"
-                        />
+                        android:layout_marginLeft="10dp"
+                        android:text=""
+                        android:textSize="23dp"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center|center_vertical">
+
+                    <pl.droidsonroids.gif.GifImageView
+                        android:layout_width="100dp"
+                        android:layout_height="20dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/progress" />
+
                 </LinearLayout>
             </LinearLayout>
 
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ly_step4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/holo_green_dark"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="5dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="5dp"
+                    android:text="Please review your riding!"
+                    android:textColor="@color/white"
+                    android:textSize="15dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical">
+
+                        <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                            android:id="@+id/rate_driver_step4"
+                            android:layout_width="150dp"
+                            android:layout_height="30dp"
+                            android:layout_marginLeft="10dp"
+                            android:max="5"
+                            android:min="1"
+                            android:numStars="5"
+                            android:progressBackgroundTint="@color/gray"
+                            android:progressTint="@color/red_dark"
+                            android:rating="1.0"
+                            android:secondaryProgressTint="@color/red_dark"
+                            android:stepSize="0.5" />
+
+                        <TextView
+                            android:id="@+id/txt_rate_driver"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:text="0.0"
+                            android:textSize="20dp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/edit_review"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_toLeftOf="@+id/btn_submit_review"
+                            android:gravity="top"
+                            android:hint="write your review"
+                            android:lines="2" />
+
+                        <Button
+                            android:id="@+id/btn_submit_review"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginLeft="10dp"
+                            android:text="Submit" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="80dp"
             android:layout_height="wrap_content"
@@ -758,12 +946,13 @@
             android:layout_alignParentEnd="true"
             android:layout_marginRight="30dp"
             android:gravity="center_horizontal"
+            android:visibility="visible"
             >
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/img_driver"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/supporter1"
+                android:src="@drawable/ic_avatar"
                 android:scaleType="centerCrop"
                 />
             <RatingBar
@@ -778,13 +967,13 @@
                 android:secondaryProgressTint="@color/red_dark"
                 android:max="100"
                 android:numStars="5"
-                android:rating="4.0"
+                android:rating="0.0"
                 android:stepSize="0.0" />
             <TextView
                 android:id="@+id/txt_name_driver"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Jhon Klak"
+                android:text=""
                 android:lines="1"
                 android:layout_marginTop="5dp"
                 android:textColor="#555555"
