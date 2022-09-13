@@ -41,7 +41,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -60,7 +59,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.ujs.divinatransport.MainActivityCustomer;
-import com.ujs.divinatransport.MainActivityDriver;
 import com.ujs.divinatransport.Model.Car;
 import com.ujs.divinatransport.Model.GeoUser;
 import com.ujs.divinatransport.Model.Ride;
@@ -77,7 +75,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.material.snackbar.Snackbar;
 import com.kienht.bottomsheetbehavior.BottomSheetBehavior;
 import com.ujs.divinatransport.App;
-import com.ujs.divinatransport.SignupActivityDriver;
+import com.ujs.divinatransport.service.AlarmBroadcast;
 import com.ujs.divinatransport.Utils.Utils;
 import com.ujs.divinatransport.directionhelpers.FetchURL;
 import com.ujs.divinatransport.directionhelpers.TaskLoadedCallback;
@@ -163,6 +161,8 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
     TextView txt_rate_driver;
     EditText edit_review;
     Button btn_submit_review;
+
+    Dialog pickupDialog;
 
 
     private static final int VOICE_RECOGNITION_REQUEST_CODE_START = 201;
@@ -294,7 +294,6 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
 
                 String key = Utils.mDatabase.child(Utils.tbl_history).push().getKey();
                 Utils.mDatabase.child(Utils.tbl_history).child(key).setValue(my_ride);
-                Utils.mDatabase.child(Utils.tbl_ride).child(my_ride._id).setValue(null);
 
                 activity.showProgress();
                 Utils.mDatabase.child(Utils.tbl_user).child(my_ride.driver_id).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -314,6 +313,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                                 user.point += 20;
                             }
                             Utils.mDatabase.child(Utils.tbl_user).child(user.uid).setValue(user);
+                            Utils.mDatabase.child(Utils.tbl_ride).child(my_ride._id).setValue(null);
                             my_ride = null;
                         }
                         activity.dismissProgress();
@@ -671,6 +671,10 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
 
                 openPickupDialog();
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                touch_enabled_start = false;
+                ImageViewCompat.setImageTintList(img_touch_start, ColorStateList.valueOf(getResources().getColor(me.jagar.chatvoiceplayerlibrary.R.color.gray)));
+                touch_enabled_target = false;
+                ImageViewCompat.setImageTintList(img_touch_target, ColorStateList.valueOf(getResources().getColor(me.jagar.chatvoiceplayerlibrary.R.color.gray)));
             }
         });
         if (App.prefs.getString(App.App_launched, "").length() == 0) {
@@ -775,7 +779,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
         marker_start.setTitle(edit_start.getText().toString());
         if (pos_target != null) {
-            new FetchURL(activity, Fragment_customer_ride.this).execute(getDirectionUrl(pos_start, pos_target, "driving"), "driving");
+            new FetchURL(activity, Fragment_customer_ride.this).execute(Utils.getDirectionUrl(pos_start, pos_target, "driving", activity), "driving");
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos_start, 16f));
     }
@@ -785,7 +789,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
         marker_target.setTitle(edit_target.getText().toString());
         if (pos_start != null) {
-            new FetchURL(activity, Fragment_customer_ride.this).execute(getDirectionUrl(pos_start, pos_target, "driving"), "driving");
+            new FetchURL(activity, Fragment_customer_ride.this).execute(Utils.getDirectionUrl(pos_start, pos_target, "driving", activity), "driving");
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos_target, 16f));
     }
@@ -801,20 +805,23 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         price = Math.round(((float)distance/1000) * 100);
 
     }
-
-    private String getDirectionUrl(LatLng origin, LatLng dest, String directionMode) {
-        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
-        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-        String mode = "mode=" + directionMode;
-        String parameters = str_origin + "&" + str_dest + "&" + mode;
-        String output = "json";
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getResources().getString(R.string.google_api_key_billed);
-        return url;
+    void rideNow() {
+        String from_address = edit_start.getText().toString().trim();
+        String to_address = edit_target.getText().toString().trim();
+        if (my_ride == null) {
+            my_ride = new Ride("", Utils.cur_user.uid, driver_id, pos_start.latitude, pos_start.longitude, pos_target.latitude, pos_target.longitude, Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude(), new Date(), 0, 0, false, 0, from_address, to_address, "", 0.0f, "");
+        }
+        String key = Utils.mDatabase.child(Utils.tbl_ride).push().getKey();
+        Utils.mDatabase.child(Utils.tbl_ride).child(key).setValue(my_ride);
+        my_ride._id = key;
+        closeTopView();
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        goRideState();
     }
     String driver_id = "";
     public void openPickupDialog() {
-        final Dialog dlg = new Dialog(activity);
-        Window window = dlg.getWindow();
+        pickupDialog = new Dialog(activity);
+        Window window = pickupDialog.getWindow();
         View view = getLayoutInflater().inflate(R.layout.fragment_bottomsheet, null);
         TextView txt_distance = view.findViewById(R.id.txt_distance);
         TextView txt_duration = view.findViewById(R.id.txt_duration);
@@ -827,16 +834,8 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View v) {
                 // send notification
-                String from_address = edit_start.getText().toString().trim();
-                String to_address = edit_target.getText().toString().trim();
-                my_ride = new Ride("", Utils.cur_user.uid, driver_id, pos_start.latitude, pos_start.longitude, pos_target.latitude, pos_target.longitude, Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude(), new Date(), 0, 0, false, 0, from_address, to_address, "", 0.0f, "");
-                String key = Utils.mDatabase.child(Utils.tbl_ride).push().getKey();
-                Utils.mDatabase.child(Utils.tbl_ride).child(key).setValue(my_ride);
-                my_ride._id = key;
-                closeTopView();
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                dlg.dismiss();
-                goRideState();
+                rideNow();
+                pickupDialog.dismiss();
             }
         });
         Button btn_order = view.findViewById(R.id.btn_order);
@@ -864,6 +863,9 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                 ly_all.setPadding(10,10,10,10);
                 ly_one.setPadding(10,10,10,10);
                 driver_id = sel_user.user.uid;
+
+                btn_order.setEnabled(true);
+                btn_order.setBackground(getResources().getDrawable(R.drawable.round_frame));
             }
         });
         ly_all.setOnClickListener(new View.OnClickListener() {
@@ -874,20 +876,29 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                 ly_all.setPadding(10,10,10,10);
                 ly_one.setPadding(10,10,10,10);
                 driver_id = "";
+                btn_order.setEnabled(false);
+                btn_order.setBackground(getResources().getDrawable(R.drawable.frame_border));
             }
         });
+        if (driver_id.length() == 0) {
+            btn_order.setEnabled(false);
+            btn_order.setBackground(getResources().getDrawable(R.drawable.frame_border));
+        } else {
+            btn_order.setEnabled(true);
+            btn_order.setBackground(getResources().getDrawable(R.drawable.round_frame));
+        }
 
         int width = (int)(getResources().getDisplayMetrics().widthPixels*1);
         int height = (int)(getResources().getDisplayMetrics().heightPixels*0.35);
         view.setMinimumWidth(width);
         view.setMinimumHeight(height);
-        dlg.setCancelable(true);
-        dlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dlg.setContentView(view);
+        pickupDialog.setCancelable(true);
+        pickupDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        pickupDialog.setContentView(view);
         window.setGravity(Gravity.BOTTOM);
         window.setBackgroundDrawableResource(android.R.color.transparent);
         window.setLayout(width, height);
-        dlg.show();
+        pickupDialog.show();
     }
     boolean isFirstLoad = true;
     @SuppressLint("SetTextI18n")
@@ -923,7 +934,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
             marker_target.setTitle(edit_target.getText().toString());
 
-            new FetchURL(activity, Fragment_customer_ride.this).execute(getDirectionUrl(pos_start, pos_target, "driving"), "driving");
+            new FetchURL(activity, Fragment_customer_ride.this).execute(Utils.getDirectionUrl(pos_start, pos_target, "driving", activity), "driving");
         }
         ly_ridingSteps.setVisibility(View.VISIBLE);
         ly_step1.setVisibility(View.GONE); ly_step2.setVisibility(View.GONE); ly_step3.setVisibility(View.GONE); ly_step4.setVisibility(View.GONE);
@@ -1015,7 +1026,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                 break;
             case 3:
                 LatLng pos_cur = new LatLng(Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude());
-                new FetchURL(activity, Fragment_customer_ride.this).execute(getDirectionUrl(pos_cur, pos_target, "driving"), "driving");
+                new FetchURL(activity, Fragment_customer_ride.this).execute(Utils.getDirectionUrl(pos_cur, pos_target, "driving", activity), "driving");
                 if (distance > 0) {
                     ly_step3.setVisibility(View.VISIBLE);
                     txt_target_step3.setText(my_ride.to_address);
@@ -1110,9 +1121,6 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
 
                 LatLng latLng = new LatLng(lat, lon);
 
-//                if (key.equals(select_key)) {
-//                    drawable = R.drawable.ic_car_green;
-//                }
                 markerGeo.put(key, mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(drawable))));
                 markerGeo.get(key).setTitle(title);
                 markerGeo.get(key).setTag(key);
@@ -1224,23 +1232,29 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
 
                 if (touch_enabled_start) {
                     new Utils.GetAddressTask(getContext(), edit_start, latLng).execute();
+                    edit_start.setText("Searching address...");
                     pos_start = latLng;
                     addStartMarker();
                 } else if (touch_enabled_target) {
                     new Utils.GetAddressTask(getContext(), edit_target, latLng).execute();
+                    edit_target.setText("Searching address...");
                     pos_target = latLng;
                     addTargetMarker();
                 }
             }
         });
 
+        my_ride = (Ride) App.readObjectPreference("my_ride", Ride.class);
+        if (my_ride != null) {
+            App.removePreference("my_ride");
+            pos_start = new LatLng(my_ride.from_lat, my_ride.from_lng);
+            pos_target = new LatLng(my_ride.to_lat, my_ride.to_lng);
+            addStartMarker(); addTargetMarker();
+            edit_start.setText(my_ride.from_address);
+            edit_target.setText(my_ride.to_address);
+            rideNow();
+        }
 
-//        if (my_ride != null) {
-//            if (Utils.cur_location != null) {
-//                goRideState();
-//            }
-//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(my_ride.cur_lat, my_ride.cur_lng), 16f));
-//        }
     }
 
     @Override
@@ -1311,7 +1325,19 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         Dialog datePickerDialog = new DatePickerDialog(activity, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                openPaymentDialog();
+                calendar.set(year, monthOfYear, dayOfMonth);
+                Date date = calendar.getTime();
+                String from_address = edit_start.getText().toString().trim();
+                String to_address = edit_target.getText().toString().trim();
+                Ride ride = new Ride("", Utils.cur_user.uid, driver_id, pos_start.latitude, pos_start.longitude, pos_target.latitude, pos_target.longitude, Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude(), date, -1, 0, false, 0, from_address, to_address, "", 0.0f, "");
+                String key = Utils.mDatabase.child(Utils.tbl_order).push().getKey();
+                Utils.mDatabase.child(Utils.tbl_order).child(key).setValue(ride);
+                closeTopView();
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                if (pickupDialog != null) pickupDialog.dismiss();
+                Toast.makeText(activity, "You have ordered successfully.", Toast.LENGTH_SHORT).show();
+
+                Utils.setAlarm(activity, date, new Intent(getContext(), AlarmBroadcast.class));
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -1321,6 +1347,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         });
         datePickerDialog.show();
     }
+
     public void openPaymentDialog() {
         final Dialog dlg = new Dialog(activity);
         Window window = dlg.getWindow();
@@ -1463,13 +1490,6 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         super.onResume();
         if (ripple_ride != null) {
             ripple_ride.startRippleMapAnimation();
-        } else {
-//            my_ride = (Ride)App.readObjectPreference(Utils.MY_RIDE, Ride.class);
-//            if (my_ride != null) {
-//                if (sel_car == null) {
-//                    getCarInfo(my_ride.driver_id);
-//                }
-//            }
         }
 
     }

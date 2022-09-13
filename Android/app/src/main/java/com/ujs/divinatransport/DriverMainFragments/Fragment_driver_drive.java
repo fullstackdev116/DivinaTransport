@@ -660,15 +660,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
         });
         if (sel_passenger != null) goMyRide();
     }
-    private String getDirectionUrl(LatLng origin, LatLng dest, String directionMode) {
-        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
-        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-        String mode = "mode=" + directionMode;
-        String parameters = str_origin + "&" + str_dest + "&" + mode;
-        String output = "json";
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getResources().getString(R.string.google_api_key_billed);
-        return url;
-    }
+
     @Override
     public void onTaskDone(long distanceVal, long durationVal, Object... values) {
         if (polyline != null) {
@@ -798,7 +790,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
             marker_target.setTitle(txt_target.getText().toString());
 
-            new FetchURL(activity, Fragment_driver_drive.this).execute(getDirectionUrl(pos_start, pos_target, "driving"), "driving");
+            new FetchURL(activity, Fragment_driver_drive.this).execute(Utils.getDirectionUrl(pos_start, pos_target, "driving", activity), "driving");
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos_start, 16f));
         }
     }

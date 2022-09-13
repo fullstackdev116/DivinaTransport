@@ -19,13 +19,13 @@
         android:layout_height="400dp"
         android:layout_alignParentBottom="true"
         >
+
         <View
             android:id="@+id/sheet_header_shadow"
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="5dp"
             android:alpha="0.5"
-            android:background="@drawable/filters_sheet_header_shadow"
-            />
+            android:background="@drawable/filters_sheet_header_shadow" />
 
         <com.google.android.gms.maps.MapView
             android:id="@+id/map"
@@ -40,6 +40,75 @@
             android:backgroundTint="@android:color/transparent"
             android:layout_alignParentEnd="true"
             app:tint="@color/black" />
+        <RelativeLayout
+            android:id="@+id/ly_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            >
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black"
+                android:alpha="0.7"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_distance"
+                        app:tint="@color/white" />
+
+                    <TextView
+                        android:id="@+id/txt_distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="12.3 Km"
+                        android:textSize="18dp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="50dp"
+                        android:src="@drawable/ic_time"
+                        app:tint="@color/white" />
+
+                    <TextView
+                        android:id="@+id/txt_duration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="50 mins"
+                        android:textSize="18dp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/teal_200"
+                android:text=" Riding Details "
+                />
+        </RelativeLayout>
     </RelativeLayout>
 
 </RelativeLayout>

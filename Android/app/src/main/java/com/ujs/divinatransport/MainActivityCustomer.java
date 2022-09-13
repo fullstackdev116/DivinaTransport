@@ -45,6 +45,7 @@ public class MainActivityCustomer extends AppCompatActivity {
     Toolbar mtoolbar;
     public View parentLayout;
     public ProgressDialog progressDialog;
+    public NavController navController;
 
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     Intent locationIntent;
@@ -74,7 +75,7 @@ public class MainActivityCustomer extends AppCompatActivity {
                 R.id.nav_ride, R.id.nav_orders, R.id.nav_message, R.id.nav_profile)
                 .setOpenableLayout(drawer)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {

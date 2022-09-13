@@ -57,7 +57,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         final String mainActivityCustomer = getPackageName() + ".MainActivityCustomer";
         final String chatActivity = getPackageName() + ".ChatActivity";
 
-        sendNotification(title, body, data, receiver_type);
+        Utils.sendNotification(getApplicationContext(), title, body, data, receiver_type);
         if (currentClass.equals(mainActivityDriver)) {
             App.notificationCallbackDriver.OnReceivedNotification();
             return;
@@ -78,47 +78,5 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         App.setPreference("DEVICE_TOKEN", token);
     }
 
-    private void sendNotification(String title, String body, Map<String, String> data, String userType) {
-        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_my_taxi);
-        Intent intent;
-        if (userType.equals(Utils.DRIVER)) {
-            intent = new Intent(this, MainActivityDriver.class);
-        } else {
-            intent = new Intent(this, MainActivityCustomer.class);
-        }
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "channel_id")
-                .setContentTitle(title)
-                .setContentText(body)
-                .setAutoCancel(true)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setContentIntent(pendingIntent)
-                .setContentInfo(title)
-                .setLargeIcon(icon)
-                .setColor(Color.BLUE)
-                .setLights(Color.BLUE, 1000, 300)
-                .setDefaults(Notification.DEFAULT_VIBRATE)
-                .setSmallIcon(R.drawable.ic_my_taxi);
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Notification Channel is required for Android O and above
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            NotificationChannel channel = new NotificationChannel(
-//                    "channel_id", "channel_name", NotificationManager.IMPORTANCE_DEFAULT
-//            );
-//            channel.setDescription("channel description");
-//            channel.setShowBadge(true);
-//            channel.canShowBadge();
-//            channel.enableLights(true);
-//            channel.setLightColor(Color.RED);
-//            channel.enableVibration(true);
-//            channel.setVibrationPattern(new long[]{100, 200, 300, 400, 500});
-//            notificationManager.createNotificationChannel(channel);
-//        }
-
-        notificationManager.notify(0, notificationBuilder.build());
-    }
 }

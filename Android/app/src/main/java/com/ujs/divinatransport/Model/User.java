@@ -13,8 +13,9 @@ public class User implements Serializable {
     public String type;
     public int state;
     public String token;
+    public int status;
 
-    public User(String uid, String email, String name, String phone, String photo, float rate, int point, String type, int state, String token) {
+    public User(String uid, String email, String name, String phone, String photo, float rate, int point, String type, int state, String token, int status) {
         this.uid = uid;
         this.name = name;
         this.photo = photo;
@@ -25,6 +26,7 @@ public class User implements Serializable {
         this.type = type;
         this.state = state;
         this.token = token;
+        this.status = status;
     }
     public User() {
         this.uid = "";
@@ -37,5 +39,6 @@ public class User implements Serializable {
         this.rate = 0;
         this.point = 0;
         this.state = 0;
+        this.status = 0;
     }
 }

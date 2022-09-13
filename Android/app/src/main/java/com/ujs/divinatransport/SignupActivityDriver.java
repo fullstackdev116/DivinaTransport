@@ -273,7 +273,7 @@ public class SignupActivityDriver extends AppCompatActivity {
                         dismissProgress();
                         String downloadUrl = uri.toString();
                         String token = Utils.getDeviceToken(SignupActivityDriver.this);
-                        User user = new User("", user_email, user_name, user_phone, downloadUrl, 0, 0, "DRIVER", 0, token);
+                        User user = new User("", user_email, user_name, user_phone, downloadUrl, 0, 0, "DRIVER", 0, token, 0);
 //                        Utils.mDatabase.child(Utils.tbl_user).push().setValue(user);
                         String pushKey = Utils.mDatabase.child(Utils.tbl_user).push().getKey();
                         Utils.mDatabase.child(Utils.tbl_user).child(pushKey).setValue(user);

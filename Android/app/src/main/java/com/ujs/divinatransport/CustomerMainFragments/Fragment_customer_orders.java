@@ -5,19 +5,31 @@ import static com.ujs.divinatransport.App.RunAnimation;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.ujs.divinatransport.Adapter.CustomerOrderListAdapter;
 import com.ujs.divinatransport.MainActivityCustomer;
+import com.ujs.divinatransport.Model.Car;
+import com.ujs.divinatransport.Model.Ride;
 import com.ujs.divinatransport.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,8 +41,17 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.directionhelpers.FetchURL;
+import com.ujs.divinatransport.directionhelpers.TaskLoadedCallback;
 
-public class Fragment_customer_orders extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+
+public class Fragment_customer_orders extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, TaskLoadedCallback {
     ListView listView;
     MainActivityCustomer activity;
     RelativeLayout ly_bottom;
@@ -40,24 +61,80 @@ public class Fragment_customer_orders extends Fragment implements OnMapReadyCall
     Marker markerFrom, markerTo;
     Polyline roadLine;
     ImageButton btn_close;
+    ArrayList<Ride> arrayList = new ArrayList<>();
+    CustomerOrderListAdapter adapter;
+    Polyline polyline;
+    RelativeLayout ly_detail;
+    TextView txt_distance, txt_duration;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.customer_fragment_orders, container, false);
+        adapter = new CustomerOrderListAdapter(activity, this, arrayList);
         ly_bottom = v.findViewById(R.id.ly_bottom);
         ly_bottom.setVisibility(View.GONE);
+        ly_detail = v.findViewById(R.id.ly_detail);
+        txt_distance = v.findViewById(R.id.txt_distance);
+        txt_duration = v.findViewById(R.id.txt_duration);
+        ly_detail.setVisibility(View.GONE);
         listView = v.findViewById(R.id.listView);
-        CustomerOrderListAdapter adapter = new CustomerOrderListAdapter(activity, this);
         listView.setAdapter(adapter);
         btn_close = v.findViewById(R.id.btn_close);
         btn_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 closeBottomView();
+                ly_detail.setVisibility(View.GONE);
             }
         });
         loadMap();
+        getOrders();
         return v;
+    }
+
+    public void getOrders() {
+        arrayList.clear();
+        activity.showProgress();
+        Utils.mDatabase.child(Utils.tbl_order).orderByChild("passenger_id").equalTo(Utils.cur_user.uid)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        activity.dismissProgress();
+                        if (dataSnapshot.getValue() != null) {
+                            Date today = new Date();
+                            today.setHours(0);
+                            today.setMinutes(0);
+                            for(DataSnapshot datas: dataSnapshot.getChildren()){
+                                Ride ride = datas.getValue(Ride.class);
+                                ride._id = datas.getKey();
+                                if (today.after(ride.date)) {
+                                    Utils.mDatabase.child(Utils.tbl_order).child(ride._id).setValue(null);
+                                } else {
+                                    arrayList.add(ride);
+                                }
+                            }
+                        }
+                        Collections.sort(arrayList, new Comparator<Ride>() {
+                            @Override
+                            public int compare(Ride rhs, Ride lhs) {
+                                return rhs.date.compareTo(lhs.date);
+                            }
+                        });
+                        if (arrayList.size() == 0) {
+                            String[] listItems = {"No orders"};
+                            listView.setAdapter(new ArrayAdapter(activity,  android.R.layout.simple_list_item_1, listItems));
+                        } else {
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w( "loadPost:onCancelled", databaseError.toException());
+                        // ...
+                        activity.dismissProgress();
+                    }
+                });
     }
 
     void loadMap() {
@@ -103,15 +180,40 @@ public class Fragment_customer_orders extends Fragment implements OnMapReadyCall
 
 
     }
-    void removeRoad() {
-        if (markerFrom != null) markerFrom.remove();
-        if (markerTo != null) markerTo.remove();
-        if (roadLine != null) roadLine.remove();
+
+    @Override
+    public void onTaskDone(long distanceVal, long durationVal, Object... values) {
+        if (polyline != null) {
+            polyline.remove();
+        }
+        polyline = mMap.addPolyline((PolylineOptions) values[0]);
+        // go to step1
+        txt_distance.setText(Utils.getDistanceStr(distanceVal));
+        txt_duration.setText(Utils.getDurationStr(durationVal));
+        ly_detail.setVisibility(View.VISIBLE);
     }
 
-    public void openBottomView() {
-        ly_bottom.setVisibility(View.VISIBLE);
-        RunAnimation(ly_bottom, AnimationUtils.loadAnimation(activity, R.anim.slideup));
+    public void openBottomView(Ride ride) {
+        if (!isOpenedBottomView()) {
+            ly_bottom.setVisibility(View.VISIBLE);
+            RunAnimation(ly_bottom, AnimationUtils.loadAnimation(activity, R.anim.slideup));
+        }
+        ly_detail.setVisibility(View.GONE);
+        LatLng fromLatLan = new LatLng(ride.from_lat, ride.from_lng);
+        LatLng toLatLan = new LatLng(ride.to_lat, ride.to_lng);
+
+        if (markerFrom != null) markerFrom.remove();
+        if (markerTo != null) markerTo.remove();
+        if (polyline != null) polyline.remove();
+        markerFrom = mMap.addMarker(new MarkerOptions()
+                .position(fromLatLan)
+                .title(ride.from_address).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+        markerTo = mMap.addMarker(new MarkerOptions()
+                .position(toLatLan)
+                .title(ride.to_address).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(fromLatLan, 16));
+        new FetchURL(activity, Fragment_customer_orders.this).execute(Utils.getDirectionUrl(fromLatLan, toLatLan, "driving", activity), "driving");
+        Toast.makeText(activity, "Loading route..", Toast.LENGTH_LONG).show();
     }
     public void closeBottomView() {
         ly_bottom.setVisibility(View.GONE);

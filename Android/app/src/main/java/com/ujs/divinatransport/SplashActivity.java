@@ -75,7 +75,7 @@ public class SplashActivity extends AppCompatActivity {
                     App.goToMainPage(SplashActivity.this, progressDialog);
                 }
             }
-        }, 3000);
+        }, 2000);
 
         findViewById(R.id.btn_driver).setOnClickListener(new View.OnClickListener() {
             @Override

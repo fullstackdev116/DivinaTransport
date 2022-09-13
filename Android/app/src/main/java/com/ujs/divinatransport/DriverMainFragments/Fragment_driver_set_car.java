@@ -34,7 +34,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.travijuu.numberpicker.library.Enums.ActionEnum;
+import com.travijuu.numberpicker.library.Interface.ValueChangedListener;
 import com.travijuu.numberpicker.library.NumberPicker;
+import com.ujs.divinatransport.App;
 import com.ujs.divinatransport.DriverSignupFragments.Fragment_driver_signup_license;
 import com.ujs.divinatransport.MainActivityCustomer;
 import com.ujs.divinatransport.MainActivityDriver;
@@ -75,14 +78,12 @@ public class Fragment_driver_set_car extends Fragment {
         cv_carTyppe = v.findViewById(R.id.cv_carType);
         edit_price = v.findViewById(R.id.edit_price);
         numberPicker = v.findViewById(R.id.number_picker);
-        numberPicker.setValue(2);
-        numberPicker.setOnClickListener(new View.OnClickListener() {
+        numberPicker.setValueChangedListener(new ValueChangedListener() {
             @Override
-            public void onClick(View v) {
-                car_seats = numberPicker.getValue();
+            public void valueChanged(int value, ActionEnum action) {
+                car_seats = value;
             }
         });
-
         loadCarTypes();
 
         Button btn_capture = v.findViewById(R.id.btn_capture);
@@ -99,35 +100,40 @@ public class Fragment_driver_set_car extends Fragment {
                     Utils.showAlert(getContext(), getResources().getString(R.string.warning), getResources().getString(R.string.please_fill_in_blank_field));
                     return;
                 }
+                App.hideKeyboard(activity);
                 car_price = Float.valueOf(edit_price.getText().toString());
                 car.price = car_price;
-                car.seats = car_seats;
                 car.type = txt_carName.getText().toString();
+                car.seats = numberPicker.getValue();
 
+                if (car_photo != null) {
+                    activity.showProgress();
+                    StorageMetadata metadata = new StorageMetadata.Builder()
+                            .setContentType("image/jpeg")
+                            .build();
+                    Long tsLong = System.currentTimeMillis();
+                    String ts = tsLong.toString();
+                    final StorageReference file_refer = Utils.mStorage.child(Utils.storage_car+ts);
+                    file_refer.putFile(car_photo, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            file_refer.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    activity.dismissProgress();
+                                    String downloadUrl = uri.toString();
+                                    car.photo = downloadUrl;
+                                    Utils.mDatabase.child(Utils.tbl_car).child(car._id).setValue(car);
 
-                activity.showProgress();
-                StorageMetadata metadata = new StorageMetadata.Builder()
-                        .setContentType("image/jpeg")
-                        .build();
-                Long tsLong = System.currentTimeMillis();
-                String ts = tsLong.toString();
-                final StorageReference file_refer = Utils.mStorage.child(Utils.storage_car+ts);
-                file_refer.putFile(car_photo, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        file_refer.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                activity.dismissProgress();
-                                String downloadUrl = uri.toString();
-                                car.photo = downloadUrl;
-                                Utils.mDatabase.child(Utils.tbl_car).child(car._id).setValue(car);
-                                Snackbar.make(activity.parentLayout, getResources().getString(R.string.car_updated_successfully), 3000).show();
-                            }
-                        });
-                    }
+                                }
+                            });
+                        }
 
-                });
+                    });
+                } else {
+                    Utils.mDatabase.child(Utils.tbl_car).child(car._id).setValue(car);
+                }
+                Snackbar.make(activity.parentLayout, getResources().getString(R.string.car_updated_successfully), 3000).show();
             }
         });
 
@@ -152,7 +158,8 @@ public class Fragment_driver_set_car extends Fragment {
                                 car_price = car.price;
                                 car_seats = car.seats;
                                 carType = car.type;
-                                car_photo = Uri.parse(car.photo);
+
+//                                car_photo = Uri.parse(car.photo);
 
                             }
                         } else { // go to signup intro

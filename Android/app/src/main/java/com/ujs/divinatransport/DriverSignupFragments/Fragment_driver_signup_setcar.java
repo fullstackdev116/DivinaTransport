@@ -25,6 +25,8 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.travijuu.numberpicker.library.Enums.ActionEnum;
+import com.travijuu.numberpicker.library.Interface.ValueChangedListener;
 import com.travijuu.numberpicker.library.NumberPicker;
 import com.ujs.divinatransport.MainActivityDriver;
 import com.ujs.divinatransport.R;
@@ -58,10 +60,11 @@ public class Fragment_driver_signup_setcar extends Fragment {
         numberPicker = v.findViewById(R.id.number_picker);
         numberPicker.setValue(2);
         activity.car_seats = 2;
-        numberPicker.setOnClickListener(new View.OnClickListener() {
+
+        numberPicker.setValueChangedListener(new ValueChangedListener() {
             @Override
-            public void onClick(View v) {
-                activity.car_seats = numberPicker.getValue();
+            public void valueChanged(int value, ActionEnum action) {
+                activity.car_seats = value;
             }
         });
         loadCarTypes();
