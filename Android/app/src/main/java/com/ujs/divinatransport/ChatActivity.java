@@ -176,7 +176,7 @@ public class ChatActivity extends AppCompatActivity {
                     Message message = new Message("", Utils.cur_user.uid, user_id, msg, "", "", System.currentTimeMillis(), false);
                     Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("messages").push().setValue(message);
                     edit_message.setText("");
-                    App.sendPushMessage(user.token, "Chat from " + Utils.cur_user.name, message.message, "", ChatActivity.this, Utils.PUSH_CHAT, Utils.cur_user.uid);
+                    App.sendPushMessage(user.token, "Chat from " + Utils.cur_user.name, message.message, "", ChatActivity.this, Utils.PUSH_CHAT, Utils.cur_user.uid, user.type);
                 } else if (btn_send.getTag().equals("record")) {
                     if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ) {
                         ArrayList<String> arrPermissionRequests = new ArrayList<>();
@@ -393,7 +393,7 @@ public class ChatActivity extends AppCompatActivity {
                         String downloadUrl = uri.toString();
                         Message message = new Message("", Utils.cur_user.uid, user_id, "", downloadUrl, file_type, System.currentTimeMillis(), false);
                         Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("messages").push().setValue(message);
-                        App.sendPushMessage(user.token, getResources().getString(R.string.chat_from_) + " " + Utils.cur_user.name, getResources().getString(R.string.file_attached), "",ChatActivity.this, Utils.PUSH_CHAT, Utils.cur_user.uid);
+                        App.sendPushMessage(user.token, getResources().getString(R.string.chat_from_) + " " + Utils.cur_user.name, getResources().getString(R.string.file_attached), "",ChatActivity.this, Utils.PUSH_CHAT, Utils.cur_user.uid, user.type);
                     }
                 });
             }

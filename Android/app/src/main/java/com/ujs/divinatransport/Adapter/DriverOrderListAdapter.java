@@ -26,6 +26,7 @@ import com.ujs.divinatransport.DriverMainFragments.Fragment_driver_orders;
 import com.ujs.divinatransport.MainActivityCustomer;
 import com.ujs.divinatransport.MainActivityDriver;
 import com.ujs.divinatransport.Model.Ride;
+import com.ujs.divinatransport.Model.RideReject;
 import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
 import com.ujs.divinatransport.Utils.Utils;
@@ -138,6 +139,10 @@ public class DriverOrderListAdapter extends BaseAdapter {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                RideReject rideReject = new RideReject("", ride._id, Utils.cur_user.uid, new Date());
+                                String key = Utils.mDatabase.child(Utils.tbl_ride_reject).push().getKey();
+                                Utils.mDatabase.child(Utils.tbl_ride_reject).child(key).setValue(rideReject);
+
                                 Utils.mDatabase.child(Utils.tbl_order).child(ride._id).setValue(null);
                                 fragment.getOrders();
                             }

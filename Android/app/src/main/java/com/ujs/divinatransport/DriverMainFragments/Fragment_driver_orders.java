@@ -25,6 +25,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.ujs.divinatransport.Adapter.DriverOrderListAdapter;
+import com.ujs.divinatransport.App;
 import com.ujs.divinatransport.CustomerMainFragments.Fragment_customer_orders;
 import com.ujs.divinatransport.MainActivityCustomer;
 import com.ujs.divinatransport.MainActivityDriver;
@@ -86,7 +87,7 @@ public class Fragment_driver_orders extends Fragment implements OnMapReadyCallba
             }
         });
         loadMap();
-        getOrders();
+
         return v;
     }
 
@@ -231,7 +232,13 @@ public class Fragment_driver_orders extends Fragment implements OnMapReadyCallba
         super.onAttach(context);
         activity = (MainActivityDriver) context;
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        getOrders();
+        App.setPreferenceInt(App.NewRide, 0);
+        activity.refreshMenuBadge();
+    }
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
         return false;

@@ -63,7 +63,8 @@
     <string name="download">Download</string>
     <string name="downloaded_in_">Downloaded in </string>
     <string name="downloading_image_">Downloading image…</string>
-    <string name="chat_from_">Chat from </string>
+    <string name="chat_from_">New Message from </string>
+    <string name="order_from_">New Order from </string>
     <string name="permission_denied">Permission denied.</string>
     <string name="uploading">Uploading…</string>
 

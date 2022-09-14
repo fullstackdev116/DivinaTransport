@@ -54,11 +54,12 @@ public class Fragment_message extends Fragment {
                 startActivity(intent);
             }
         });
-        readMessages();
         return v;
     }
     ProgressDialog progressDialog;
     void readMessages() {
+        App.setPreferenceInt(App.NewMessage, 0);
+
         arrayList.clear();
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading...");
@@ -164,6 +165,8 @@ public class Fragment_message extends Fragment {
         if (messageListAdapter!=null) {
             messageListAdapter.notifyDataSetChanged();
         }
+        readMessages();
+
     }
     @Override
     public void onDestroyView() {

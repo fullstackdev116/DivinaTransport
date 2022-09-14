@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -29,12 +30,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
@@ -42,6 +47,8 @@ import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.service.LocationService;
 import com.ujs.divinatransport.Utils.Utils;
 import com.google.android.material.navigation.NavigationView;
+import com.ujs.divinatransport.service.NotificationCallbackCustomer;
+import com.ujs.divinatransport.service.NotificationCallbackDriver;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,6 +61,7 @@ public class MainActivityCustomer extends AppCompatActivity {
     public View parentLayout;
     public ProgressDialog progressDialog;
     public NavController navController;
+    TextView new_message;
 
     private final static int MY_PERMISSION_STORAGE = 201;
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
@@ -125,6 +133,33 @@ public class MainActivityCustomer extends AppCompatActivity {
         IntentFilter locationIntent = new IntentFilter("LocationIntent");
         registerReceiver(myReceiver, locationIntent);
         setStoragePermission();
+
+        new_message =(TextView) MenuItemCompat.getActionView(navigationView.getMenu().
+                findItem(R.id.nav_message));
+        new_message.setGravity(Gravity.CENTER_VERTICAL);
+        new_message.setTypeface(null, Typeface.BOLD);
+        new_message.setText("");
+        new_message.setTextColor(Color.RED);
+
+        App.notificationCallbackCustomer = new NotificationCallbackCustomer() {
+            @Override
+            public void OnReceivedNotification() {
+                refreshMenuBadge();
+            }
+        };
+    }
+    public void refreshMenuBadge() {
+        int cnt = App.readPreferenceInt(App.NewMessage, 0);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (cnt > 0) {
+                    new_message.setText(String.valueOf(cnt)+"+");
+                } else {
+                    new_message.setText("");
+                }
+            }
+        });
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void startLocationUpdates() {
@@ -155,6 +190,7 @@ public class MainActivityCustomer extends AppCompatActivity {
                     unregisterReceiver(myReceiver);
                     stopService(locationIntent);
                 }
+                App.setStatus(0);
                 Utils.FirebaseLogout();
                 Utils.mUser = null;
                 Intent intent = new Intent(MainActivityCustomer.this, SplashActivity.class);
@@ -202,6 +238,7 @@ public class MainActivityCustomer extends AppCompatActivity {
         App.MY_IMAGE_PATH = pictures.getAbsolutePath();
 
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

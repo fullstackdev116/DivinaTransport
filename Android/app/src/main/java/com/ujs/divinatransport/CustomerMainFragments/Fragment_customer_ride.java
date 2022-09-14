@@ -58,6 +58,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.ujs.divinatransport.ChatActivity;
 import com.ujs.divinatransport.MainActivityCustomer;
 import com.ujs.divinatransport.Model.Car;
 import com.ujs.divinatransport.Model.GeoUser;
@@ -313,6 +314,8 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                             } else {
                                 user.rate = (user.rate + my_ride.rate)/2;
                             }
+                            int val = (int)user.rate*10;
+                            user.rate = (float)val/10;
                             if (my_ride.isSOS) {
                                 user.point += 30;
                             } else {
@@ -1398,7 +1401,8 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                 if (pickupDialog != null) pickupDialog.dismiss();
                 Toast.makeText(activity, "You have ordered successfully.", Toast.LENGTH_SHORT).show();
-
+                String message = "From: " + ride.from_address + "\n" + "To: " + ride.to_address + "\n" + "Date: " + Utils.getDateString(ride.date);
+                App.sendPushMessage(sel_user.user.token, getResources().getString(R.string.order_from_) + " " + Utils.cur_user.name, message, "", activity, Utils.PUSH_RIDE, Utils.cur_user.uid, sel_user.user.type);
 //                Utils.setAlarm(activity, date, new Intent(getContext(), AlarmBroadcast.class));
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
@@ -1553,7 +1557,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         if (ripple_ride != null) {
             ripple_ride.startRippleMapAnimation();
         }
-
+        activity.refreshMenuBadge();
     }
     @Override
     public void onStop() {

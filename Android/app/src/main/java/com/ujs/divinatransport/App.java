@@ -30,6 +30,8 @@ import android.widget.Toast;
 //import com.microblink.MicroblinkSDK;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.OnLifecycleEvent;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -75,6 +77,7 @@ public class App extends Application {
     public static String ediapayUrl = "https://api.ediapay.com/api/";
     public static String ediaSMSUrl = "https://smpp1.valorisetelecom.com/api/api_http.php";
     public static String NewMessage = "NewMessage";
+    public static String NewRide = "NewRide";
 
 
     @Override
@@ -112,7 +115,7 @@ public class App extends Application {
                 intent.putExtra("roomId", roomId);
                 context.startActivity(intent);
 
-                setPreference(App.NewMessage, "");
+                setPreferenceInt(App.NewMessage, 0);
             }
 
             @Override
@@ -142,6 +145,12 @@ public class App extends Application {
                             for(DataSnapshot datas: dataSnapshot.getChildren()){
                                 Utils.cur_user = datas.getValue(User.class);
                                 Utils.cur_user.uid = datas.getKey();
+
+                                setStatus(1);
+//token update
+                                String token = Utils.getDeviceToken(activity);
+                                Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("token").setValue(token);
+
                                 if (Utils.cur_user.type.equals(Utils.DRIVER)) {
                                     if (Utils.cur_user.state == 0) { // missing signup license
                                         Intent myIntent = new Intent(activity, SignupActivityDriver.class);
@@ -179,7 +188,7 @@ public class App extends Application {
                 });
 
     }
-    public static void sendPushMessage(final String token, final String title, final String body, final String key, final Context context, String push_type, String user_id) {
+    public static void sendPushMessage(final String token, final String title, final String body, final String key, final Context context, String push_type, String sender_id, String receiver_type) {
 
         new AsyncTask<String, String, String>() {
             @Override
@@ -188,7 +197,8 @@ public class App extends Application {
                     JSONObject root = new JSONObject();
                     JSONObject data = new JSONObject();
                     data.put("push_type", push_type);
-                    data.put("user_id", user_id);
+                    data.put("sender_id", sender_id);
+                    data.put("receiver_type", receiver_type);
                     data.put("body", body);
                     data.put("title", title);
                     data.put("key", key);
@@ -251,6 +261,25 @@ public class App extends Application {
                     }
                 });
     }
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    private void onAppBackgrounded() {
+        Log.d("MyApp", "App in background");
+//        Toast.makeText(getApplicationContext(), "Background", Toast.LENGTH_SHORT).show();
+        setStatus(0);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    private void onAppForegrounded() {
+        Log.d("MyApp", "App in foreground");
+//        Toast.makeText(getApplicationContext(), "Foreground", Toast.LENGTH_SHORT).show();
+        setStatus(1);
+    }
+    public static void setStatus(int status) {
+        if (Utils.cur_user != null) {
+            Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("status").setValue(status);
+            Utils.cur_user.status = status;
+        }
+    }
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -270,6 +299,17 @@ public class App extends Application {
         a.reset();
         v.clearAnimation();
         v.startAnimation(a);
+    }
+    public static void setPreferenceInt(String key, int value) {
+        PreferenceManager.getDefaultSharedPreferences(mContext)
+                .edit()
+                .putInt(key, value)
+                .commit();
+    }
+    public static int readPreferenceInt(String key, int defaultValue) {
+        int value = PreferenceManager.getDefaultSharedPreferences(mContext)
+                .getInt(key, defaultValue);
+        return value;
     }
     public static void setPreference(String key, String value) {
         PreferenceManager.getDefaultSharedPreferences(mContext)

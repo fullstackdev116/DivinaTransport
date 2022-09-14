@@ -11,10 +11,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Menu;
 import android.widget.RatingBar;
@@ -37,6 +40,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,6 +62,7 @@ public class MainActivityDriver extends AppCompatActivity {
     Toolbar mtoolbar;
     public View parentLayout;
     public ProgressDialog progressDialog;
+    TextView new_message, new_ride;
 
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     private final static int MY_PERMISSION_STORAGE = 201;
@@ -139,8 +144,47 @@ public class MainActivityDriver extends AppCompatActivity {
         registerReceiver(myReceiver, locationIntent);
 
         setStoragePermission();
-    }
 
+        new_message =(TextView) MenuItemCompat.getActionView(navigationView.getMenu().
+                findItem(R.id.nav_message));
+        new_message.setGravity(Gravity.CENTER_VERTICAL);
+        new_message.setTypeface(null, Typeface.BOLD);
+        new_message.setText("");
+        new_message.setTextColor(Color.RED);
+
+        new_ride =(TextView) MenuItemCompat.getActionView(navigationView.getMenu().
+                findItem(R.id.nav_orders));
+        new_ride.setGravity(Gravity.CENTER_VERTICAL);
+        new_ride.setTypeface(null, Typeface.BOLD);
+        new_ride.setText("");
+        new_ride.setTextColor(Color.RED);
+
+        App.notificationCallbackDriver = new NotificationCallbackDriver() {
+            @Override
+            public void OnReceivedNotification() {
+                refreshMenuBadge();
+            }
+        };
+    }
+    public void refreshMenuBadge() {
+        int cnt = App.readPreferenceInt(App.NewMessage, 0);
+        int cnt1 = App.readPreferenceInt(App.NewRide, 0);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (cnt > 0) {
+                    new_message.setText(String.valueOf(cnt)+"+");
+                } else {
+                    new_message.setText("");
+                }
+                if (cnt1 > 0) {
+                    new_ride.setText(String.valueOf(cnt1)+"+");
+                } else {
+                    new_ride.setText("");
+                }
+            }
+        });
+    }
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -171,6 +215,7 @@ public class MainActivityDriver extends AppCompatActivity {
                     unregisterReceiver(myReceiver);
                     stopService(locationIntent);
                 }
+                App.setStatus(0);
                 Utils.FirebaseLogout();
                 Utils.mUser = null;
                 Intent intent = new Intent(MainActivityDriver.this, SplashActivity.class);

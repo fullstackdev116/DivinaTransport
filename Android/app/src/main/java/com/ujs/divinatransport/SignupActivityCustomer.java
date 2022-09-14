@@ -93,7 +93,7 @@ public class SignupActivityCustomer extends AppCompatActivity {
                 }
                 showProgress();
                 String token = Utils.getDeviceToken(SignupActivityCustomer.this);
-                User user = new User("", "", user_name, user_phone, "", 0, 0, "CUSTOMER", 3, token, 0);
+                User user = new User("", "", user_name, user_phone, "", 0, 0, Utils.PASSENGER, 3, token, 0);
                 Utils.mDatabase.child(Utils.tbl_user).push().setValue(user);
                 Snackbar.make(parentLayout, getResources().getString(R.string.user_registered_successfully), 3000).show();
                 App.goToMainPage(SignupActivityCustomer.this, progressDialog);

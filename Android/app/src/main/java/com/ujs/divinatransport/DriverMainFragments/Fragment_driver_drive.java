@@ -277,7 +277,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                        arr_rejectRideKey.add(sel_ride._id);
+//                        arr_rejectRideKey.add(sel_ride._id);
                         RideReject rideReject = new RideReject("", sel_ride._id, Utils.cur_user.uid, new Date());
                         String key = Utils.mDatabase.child(Utils.tbl_ride_reject).push().getKey();
                         Utils.mDatabase.child(Utils.tbl_ride_reject).child(key).setValue(rideReject);
@@ -869,32 +869,29 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
 
     void getRideRejects() {
         arr_rejectRideKey = new ArrayList<>();
-        Utils.mDatabase.child(Utils.tbl_ride_reject).orderByChild("driver_id").equalTo(Utils.cur_user.uid).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.getValue() != null) {
-                    for(DataSnapshot datas: snapshot.getChildren()) {
-                        RideReject rideReject = datas.getValue(RideReject.class);
-                        rideReject._id = snapshot.getKey();
-                        arr_rejectRideKey.add(rideReject.ride_id);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("color", "Error: " + error.getMessage());
-            }
-        });
+//        Utils.mDatabase.child(Utils.tbl_ride_reject).orderByChild("driver_id").equalTo(Utils.cur_user.uid).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if (snapshot.getValue() != null) {
+//                    for(DataSnapshot datas: snapshot.getChildren()) {
+//                        RideReject rideReject = datas.getValue(RideReject.class);
+//                        rideReject._id = snapshot.getKey();
+//                        arr_rejectRideKey.add(rideReject.ride_id);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Log.e("color", "Error: " + error.getMessage());
+//            }
+//        });
     }
     @Override
     public void onResume() {
         super.onResume();
         getRideRejects();
-//        sel_ride = (Ride) App.readObjectPreference(Utils.MY_RIDE, Ride.class);
-//        sel_passenger = (User) App.readObjectPreference(Utils.MY_PASSENGER, User.class);
-//        getPassengerInfo(App.readPreference(Utils.MY_PASSENGER_KEY, ""));
-//        getRideInfo(App.readPreference(Utils.MY_PASSENGER_KEY, ""));
+        activity.refreshMenuBadge();
     }
     @Override
     public void onDestroyView() {

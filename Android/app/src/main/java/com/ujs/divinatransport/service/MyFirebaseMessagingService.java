@@ -38,17 +38,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //        RemoteMessage.Notification notification = remoteMessage.getNotification();
         Map<String, String> data = remoteMessage.getData();
         String push_type = data.get("push_type");
-        String user_id = data.get("user_id");
-        String receiver_type = data.get("user_type");
+        String sender_id = data.get("sender_id");
+        String receiver_type = data.get("receiver_type");
         String body = data.get("body");
         String title = data.get("title");
-        String room = data.get("room");
-
-        if (push_type.equals(Utils.PUSH_CHAT)) {
-            //App.setPreference(App.NewMessage, "true");
-        } else if (push_type.equals(Utils.PUSH_RIDE)) {
-//            App.setPreference(App.NewTest, "true");
-        }
 
         ActivityManager am = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
@@ -57,13 +50,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         final String mainActivityCustomer = getPackageName() + ".MainActivityCustomer";
         final String chatActivity = getPackageName() + ".ChatActivity";
 
+        if (currentClass.equals(chatActivity) && push_type.equals(Utils.PUSH_CHAT)) {
+            return;
+        }
+
         Utils.sendNotification(getApplicationContext(), title, body, data, receiver_type);
-        if (currentClass.equals(mainActivityDriver)) {
+
+        if (push_type.equals(Utils.PUSH_CHAT)) {
+            int cnt = App.readPreferenceInt(App.NewMessage, 0);
+            App.setPreferenceInt(App.NewMessage, cnt+1);
+        } else if (push_type.equals(Utils.PUSH_RIDE)) {
+            int cnt = App.readPreferenceInt(App.NewRide, 0);
+            App.setPreferenceInt(App.NewRide, cnt+1);
+        }
+
+        if (receiver_type.equals(Utils.DRIVER)) {
             App.notificationCallbackDriver.OnReceivedNotification();
-            return;
-        } else if (currentClass.equals(mainActivityCustomer)) {
+        } else {
             App.notificationCallbackCustomer.OnReceivedNotification();
-            return;
         }
 
 
