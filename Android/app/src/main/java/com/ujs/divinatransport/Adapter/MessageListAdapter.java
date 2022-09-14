@@ -74,11 +74,11 @@ public class MessageListAdapter extends BaseAdapter {
         }
         txt_message.setTextColor(Color.parseColor("#222222"));
 //        if (index_update == i) {
-//            if (message.receiver_id.equals(Utils.mUser.getUid()) && !message.seen) {
+//            if (message.receiver_id.equals(Utils.cur_user.uid) && !message.seen) {
 //                txt_message.setTextColor(Color.parseColor("#A55510"));
 //            }
 //        }
-        if (message.receiver_id.equals(Utils.mUser.getUid()) && !message.seen) {
+        if (message.receiver_id.equals(Utils.cur_user.uid) && !message.seen) {
             txt_message.setTextColor(Color.parseColor("#A55510"));
         }
         txt_time.setText(Utils.getTimeString(new Date(message.timestamp)));

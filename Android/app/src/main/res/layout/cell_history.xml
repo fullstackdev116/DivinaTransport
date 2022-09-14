@@ -24,10 +24,11 @@
             android:background="#ffffff"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/txt_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="12039489"
-                android:background="@android:color/darker_gray"
+                android:text="03/01/2022"
+                android:background="@color/gray"
                 android:textColor="@color/white"
                 android:padding="5dp"
                 />
@@ -69,6 +70,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/txt_start"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
@@ -78,6 +80,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/txt_target"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
@@ -91,11 +94,12 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
+                android:gravity="center_vertical|end"
                 android:orientation="horizontal"
                 android:padding="5dp">
 
                 <TextView
+                    android:id="@+id/txt_sos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -106,47 +110,6 @@
                     android:paddingBottom="3dp"
                     android:text="SOS"
                     android:textColor="@color/white" />
-
-                <LinearLayout
-                    android:id="@+id/ly_seats"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_seats_dark" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="3dp"
-                        android:text="2"
-                        android:textColor="#555555" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:background="@drawable/ic_schedule" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:text="01/03/2021" />
-                </LinearLayout>
-
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -159,10 +122,11 @@
                         android:background="@drawable/ic_dollar_paid" />
 
                     <TextView
+                        android:id="@+id/txt_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
-                        android:text="2.8" />
+                        android:text="1000 XOF (Cache)" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -204,19 +168,23 @@
                             android:numStars="5"
                             android:rating="4.2"
                             android:stepSize="0.0" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:text="reviewed by "
-                            />
-                        <ImageView
+
+                        <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/img_photo"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
+                            android:layout_marginLeft="20dp"
                             android:src="@drawable/ic_avatar" />
+                        <TextView
+                            android:id="@+id/txt_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="Jhon Klak"
+                            />
                     </LinearLayout>
                     <TextView
+                        android:id="@+id/txt_review"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Happy driving! very kind driver!"

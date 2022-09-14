@@ -1,10 +1,14 @@
 package com.ujs.divinatransport.Utils;
 
+import static android.content.Context.CLIPBOARD_SERVICE;
+
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -97,6 +101,7 @@ public class Utils {
     public static String tbl_driving_license = "tbl_driving_license";
     public static String storage_user = "user/";
     public static String storage_car = "car/";
+    public static String storage_chat = "chat/";
     public static String storage_driving_license = "driving_license/";
 
     public static GeoFire geo_passenger = new GeoFire(Utils.mDatabase.child(Utils.tbl_geo_passenger));
@@ -219,11 +224,11 @@ public class Utils {
     }
     public static String getChatUserId(String roomId) {
         String user_id;
-        int index = roomId.indexOf(Utils.mUser.getUid());
+        int index = roomId.indexOf(Utils.cur_user.uid);
         if (index == 0) {
-            user_id = roomId.substring(Utils.mUser.getUid().length());
+            user_id = roomId.substring(Utils.cur_user.uid.length());
         } else {
-            user_id = roomId.substring(0, roomId.length()-Utils.mUser.getUid().length());
+            user_id = roomId.substring(0, roomId.length()-Utils.cur_user.uid.length());
         }
         return user_id;
     }
@@ -292,6 +297,7 @@ public class Utils {
         LatLng latLng;
         AutoCompleteTextView autoCompleteTextView;
         TextView textView;
+        String UNDEFILED_ADDRESS = "undefined address, try again please!";
 
         public GetAddressTask(Context context, AutoCompleteTextView autoCompleteTextView, LatLng latLng) {
             this.mContext = context;
@@ -312,7 +318,7 @@ public class Utils {
         @Override
         protected String doInBackground(String... str) {
             Geocoder geocoder;
-            String address = "undefined address, try again please!";
+            String address = UNDEFILED_ADDRESS;
             List<Address> addresses;
             geocoder = new Geocoder(mContext, Locale.getDefault());
 
@@ -329,10 +335,20 @@ public class Utils {
         @Override
         protected void onPostExecute(String res) {
             super.onPostExecute(res);
-            if (autoCompleteTextView != null)
-                autoCompleteTextView.setText(address);
+            if (autoCompleteTextView != null) {
+                if (address.equals(UNDEFILED_ADDRESS)) {
+                    autoCompleteTextView.setHint(address);
+                } else {
+                    autoCompleteTextView.setText(address);
+                }
+            }
             if (textView != null)
-                textView.setText(address);
+                if (address.equals(UNDEFILED_ADDRESS)) {
+                    textView.setHint(address);
+                } else {
+                    textView.setText(address);
+                }
+
         }
     }
 
@@ -365,6 +381,11 @@ public class Utils {
 
         am.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
 
+    }
+    public static void copy_text(Context context, String text) {
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("label", text);
+        clipboard.setPrimaryClip(clip);
     }
     public static String getDurationStr(long seconds) {
         String str = "";

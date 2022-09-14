@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -117,10 +118,10 @@ public class CustomerOrderListAdapter extends BaseAdapter {
         String today = Utils.getDateString(currentLocalTime);
         if (Utils.getDateString(ride.date).equals(today)) {
             btn_view.setText(activity.getResources().getString(R.string.ride_now));
-            btn_view.setBackgroundColor(activity.getResources().getColor(R.color.teal_200));
+            btn_view.setTextColor(activity.getResources().getColor(R.color.teal_200));
         } else {
             btn_view.setText(activity.getResources().getString(R.string.view_road));
-            btn_view.setBackgroundColor(activity.getResources().getColor(R.color.white));
+            btn_view.setTextColor(activity.getResources().getColor(R.color.white));
         }
         RelativeLayout ly_cancel = view.findViewById(R.id.ly_cancel);
         TextView txt_waiting = view.findViewById(R.id.txt_waiting);
@@ -131,7 +132,7 @@ public class CustomerOrderListAdapter extends BaseAdapter {
             ly_cancel.setVisibility(View.VISIBLE);
             txt_waiting.setVisibility(View.VISIBLE);
         }
-        Button btn_cancel = view.findViewById(R.id.btn_cache);
+        Button btn_cancel = view.findViewById(R.id.btn_cancel);
         btn_cancel.setPaintFlags(btn_view.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,7 +174,13 @@ public class CustomerOrderListAdapter extends BaseAdapter {
                         }).show();
             }
         });
-
+        ImageButton btn_chat = view.findViewById(R.id.btn_chat);
+        btn_chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                App.goToChatPage(activity, ride.driver_id);
+            }
+        });
         return view;
     }
 

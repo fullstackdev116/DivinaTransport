@@ -8,68 +8,69 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_photo"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginTop="5dp"
-            android:src="@drawable/ic_avatar"
-            />
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_message"
+            android:src="@drawable/ic_avatar_white" />
+
+        <RelativeLayout
+            android:id="@+id/ly_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="10dp"
-            android:layout_toRightOf="@+id/img_photo"
+            android:layout_marginTop="15dp"
             android:layout_marginRight="35dp"
-            app:cardBackgroundColor="#3E52E6"
-            >
+            android:layout_toRightOf="@+id/img_photo"
+            android:background="@drawable/bubble_left"
+            android:paddingLeft="15dp"
+            android:paddingRight="5dp">
+
             <TextView
                 android:id="@+id/txt_message"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:text="sample text"
-                android:layout_margin="10dp"
-                android:textSize="18dp"
                 android:textColor="@color/white"
-                android:visibility="visible"
-                />
+                android:textSize="18dp"
+                android:visibility="visible" />
+
             <ImageView
                 android:id="@+id/img_pic"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_margin="10dp"
                 android:src="@drawable/default_pic"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
+
             <me.jagar.chatvoiceplayerlibrary.VoicePlayerView
                 android:id="@+id/voicePlayerView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:enableVisualizer="false"
-                app:visualizationPlayedColor="#ff7700"
-                app:visualizationNotPlayedColor="#727171"
-                app:playPauseBackgroundColor="#ff7700"
-                app:timingBackgroundColor="#6AFF7700"
-                app:seekBarProgressColor="#000"
-                app:showShareButton="false"
-                app:shareCornerRadius="100"
-                app:playPauseCornerRadius="100"
-                app:showTiming="true"
-                app:viewCornerRadius="100"
-                app:viewBackground="#C6C4CF"
-                app:progressTimeColor="#000"
-                app:seekBarThumbColor="#FFC107"
-                app:playProgressbarColor="#ff7700"
                 android:visibility="gone"
-                />
-        </androidx.cardview.widget.CardView>
+                app:enableVisualizer="false"
+                app:playPauseBackgroundColor="#ff7700"
+                app:playPauseCornerRadius="100"
+                app:playProgressbarColor="#ff7700"
+                app:progressTimeColor="#000"
+                app:seekBarProgressColor="#000"
+                app:seekBarThumbColor="#FFC107"
+                app:shareCornerRadius="100"
+                app:showShareButton="false"
+                app:showTiming="true"
+                app:timingBackgroundColor="#6AFF7700"
+                app:viewBackground="#C6C4CF"
+                app:viewCornerRadius="100"
+                app:visualizationNotPlayedColor="#727171"
+                app:visualizationPlayedColor="#ff7700" />
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/card_message"
-            android:layout_marginLeft="40dp"
+            android:layout_below="@+id/ly_message"
+            android:layout_marginLeft="50dp"
             >
             <TextView
                 android:id="@+id/txt_time"

@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -375,17 +376,20 @@ public class Fragment_driver_signup_userinfo extends Fragment {
         Glide.with(this).load(uri)
                 .apply(new RequestOptions()
                         .placeholder(R.drawable.ic_avatar).centerCrop().dontAnimate()).into(img_photo);
-        Uri uriContent = Uri.parse(uri);
-        activity.user_photo = uriContent;
-//        try {
-//            Uri uriContent = Uri.parse(uri);
-////            Uri uriContent = Uri.parse(MediaStore.Images.Media.insertImage(activity.getContentResolver(), uri, null, null));
-////            new File(uri.getPath());
-//
-//            activity.user_photo = uriContent;
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
+        Uri uriContent = null;
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            uriContent = Uri.parse(uri);
+        } else {
+            try {
+                uriContent = Uri.parse(MediaStore.Images.Media.insertImage(activity.getContentResolver(), uri, null, null));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        if (uriContent != null) {
+            activity.user_photo = uriContent;
+        }
     }
     public void onCropImageResult(@NonNull CropImageView.CropResult result) {
         if (result.isSuccessful()) {

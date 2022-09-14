@@ -126,9 +126,9 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
 
     CircleImageView img_photo;
     ImageView img_carType, img_car;
-    TextView txt_name, txt_rate, txt_seats, txt_carPrice, txt_state_driver, txt_target_step3, txt_time_remaining_step1;
+    TextView txt_name, txt_rate, txt_seats, txt_carPrice, txt_state_driver, txt_target_step3, txt_time_remaining_step1, txt_phone, txt_phone1;
     RatingBar ratingBar;
-    ImageButton btn_sos;
+    ImageButton btn_sos, btn_message, btn_call, btn_message1, btn_call1;
     ImageView img_touch_start, img_touch_target;
     Button btn_cancel_ride, btn_ediapay, btn_cache;
     GifImageView gif_loading;
@@ -183,6 +183,8 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         img_driver = v.findViewById(R.id.img_driver);
         rate_driver = v.findViewById(R.id.rate_driver);
         txt_estimate = v.findViewById(R.id.txt_estimate);
+        txt_phone = v.findViewById(R.id.txt_phone);
+        txt_phone1 = v.findViewById(R.id.txt_phone1);
         txt_name_driver = v.findViewById(R.id.txt_name_driver);
         txt_accept_step1 = v.findViewById(R.id.txt_accept_step1);
         txt_seats_driver = v.findViewById(R.id.txt_seats_driver);
@@ -193,6 +195,10 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         img_carType_driver = v.findViewById(R.id.img_carType_driver);
         btn_ediapay = v.findViewById(R.id.btn_ediapay);
         btn_cache = v.findViewById(R.id.btn_cache);
+        btn_message = v.findViewById(R.id.btn_message);
+        btn_call = v.findViewById(R.id.btn_call);
+        btn_message1 = v.findViewById(R.id.btn_message1);
+        btn_call1 = v.findViewById(R.id.btn_call1);
         txt_target_step3 = v.findViewById(R.id.txt_target_step3);
         rate_driver_step4 = v.findViewById(R.id.rate_driver_step4);
         txt_rate_driver = v.findViewById(R.id.txt_rate_driver);
@@ -345,6 +351,30 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View v) {
                 startVoiceActivity(VOICE_RECOGNITION_REQUEST_CODE_TARGET);
+            }
+        });
+        btn_message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                App.goToChatPage(activity, my_ride.driver_id);
+            }
+        });
+        btn_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        btn_message1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                App.goToChatPage(activity, sel_user.user.uid);
+            }
+        });
+        btn_call1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
         btn_cancel_ride.setOnClickListener(new View.OnClickListener() {
@@ -946,7 +976,32 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
             Glide.with(activity).load(user.photo).apply(new RequestOptions().placeholder(R.drawable.ic_avatar).centerCrop()).into(img_driver);
             txt_name_driver.setText(user.name);
             rate_driver.setRating(user.rate);
+            txt_phone.setText("+" + user.phone);
+            btn_message.setVisibility(View.VISIBLE);
+            btn_call.setVisibility(View.VISIBLE);
         }
+        if (my_ride.isSOS) {
+            if (my_ride.from_address.length() == 0) {
+                my_ride.from_address = edit_start.getText().toString();
+                Utils.mDatabase.child(Utils.tbl_ride).child(my_ride._id).setValue(my_ride);
+            }
+            if (my_ride.to_address.length() == 0) {
+                my_ride.to_address = edit_target.getText().toString();
+                Utils.mDatabase.child(Utils.tbl_ride).child(my_ride._id).setValue(my_ride);
+            }
+            if (pos_start != null && my_ride.from_lat == 0) {
+                my_ride.from_lat = pos_start.latitude;
+                my_ride.from_lng = pos_start.longitude;
+                Utils.mDatabase.child(Utils.tbl_ride).child(my_ride._id).setValue(my_ride);
+            }
+            if (pos_target != null && my_ride.to_lat == 0) {
+                my_ride.to_lat = pos_target.latitude;
+                my_ride.to_lng = pos_target.longitude;
+                Utils.mDatabase.child(Utils.tbl_ride).child(my_ride._id).setValue(my_ride);
+            }
+        }
+
+
         switch (my_ride.state) {
             case 0:
                 closeTopView();
@@ -986,9 +1041,15 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                     txt_time_remaining_step1.setText(Utils.getDurationStr(seconds) + " remaining to reach");
                     if (sel_car != null) {
                         pay_balance = Math.round((float)distance/1852*sel_car.price);
+                        if (pay_balance == 0) {
+                            txt_estimate.setVisibility(View.GONE);
+                        } else {
+                            txt_estimate.setVisibility(View.VISIBLE);
+                        }
                         txt_estimate.setText("Estimate: " + String.valueOf(pay_balance)+ " XOF");
                     }
                     if (dist < 5) {
+                        txt_time_remaining_step1.setText("The car has reached to you!");
                         if (!my_ride.isSOS) {
                             my_ride.state = 2;
                             Utils.mDatabase.child(Utils.tbl_ride).child(my_ride._id).setValue(my_ride);
@@ -1232,12 +1293,12 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
 
                 if (touch_enabled_start) {
                     new Utils.GetAddressTask(getContext(), edit_start, latLng).execute();
-                    edit_start.setText("Searching address...");
+                    edit_start.setHint("Searching address...");
                     pos_start = latLng;
                     addStartMarker();
                 } else if (touch_enabled_target) {
                     new Utils.GetAddressTask(getContext(), edit_target, latLng).execute();
-                    edit_target.setText("Searching address...");
+                    edit_target.setHint("Searching address...");
                     pos_target = latLng;
                     addTargetMarker();
                 }
@@ -1277,6 +1338,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                 ratingBar.setRating(user.rate);
                 txt_seats.setText("");
                 txt_carPrice.setText("");
+                txt_phone1.setText("+" + user.phone);
                 img_carType.setImageResource(R.drawable.ic_car2);
                 img_car.setImageResource(R.drawable.ic_car2);
                 getCarInfo(user.uid);
@@ -1337,7 +1399,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                 if (pickupDialog != null) pickupDialog.dismiss();
                 Toast.makeText(activity, "You have ordered successfully.", Toast.LENGTH_SHORT).show();
 
-                Utils.setAlarm(activity, date, new Intent(getContext(), AlarmBroadcast.class));
+//                Utils.setAlarm(activity, date, new Intent(getContext(), AlarmBroadcast.class));
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {

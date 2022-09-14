@@ -1,13 +1,16 @@
 package com.ujs.divinatransport;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +20,8 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ujs.divinatransport.Adapter.MessageListAdapter;
 import com.ujs.divinatransport.Model.ChatRoom;
 import com.ujs.divinatransport.Model.Message;
@@ -42,6 +47,7 @@ public class Fragment_message extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (arrayList.size() == 0) return;
                 messageListAdapter.index_update = -1;
                 Intent intent = new Intent(activity, ChatActivity.class);
                 intent.putExtra("roomId", arrayList.get(i)._id);
@@ -51,13 +57,38 @@ public class Fragment_message extends Fragment {
         readMessages();
         return v;
     }
+    ProgressDialog progressDialog;
     void readMessages() {
         arrayList.clear();
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+        Utils.mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChild(Utils.tbl_chat)) {
+                    addMessages();
+                } else {
+                    progressDialog.dismiss();
+                    String[] listItems = {"No messages"};
+                    listView.setAdapter(new ArrayAdapter(activity,  android.R.layout.simple_list_item_1, listItems));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+    void addMessages() {
         Utils.mDatabase.child(Utils.tbl_chat).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                progressDialog.dismiss();
                 if (dataSnapshot.getValue()!=null) {
-                    boolean flag = dataSnapshot.getKey().contains(Utils.mUser.getUid());
+                    boolean flag = dataSnapshot.getKey().contains(Utils.cur_user.uid);
                     if (flag) {
                         ChatRoom chatRoom = new ChatRoom();
                         chatRoom._id = dataSnapshot.getKey();
@@ -66,15 +97,22 @@ public class Fragment_message extends Fragment {
                             chatRoom.messages.add(message);
                         }
                         arrayList.add(chatRoom);
-                        messageListAdapter.notifyDataSetChanged();
+
                     }
+                }
+                if (arrayList.size() == 0) {
+                    String[] listItems = {"No messages"};
+                    listView.setAdapter(new ArrayAdapter(activity,  android.R.layout.simple_list_item_1, listItems));
+                } else {
+                    messageListAdapter.notifyDataSetChanged();
                 }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                progressDialog.dismiss();
                 if (dataSnapshot.getValue()!=null) {
-                    boolean flag = dataSnapshot.getKey().contains(Utils.mUser.getUid());
+                    boolean flag = dataSnapshot.getKey().contains(Utils.cur_user.uid);
                     if ( flag) {
                         ChatRoom chatRoom = new ChatRoom();
                         chatRoom._id = dataSnapshot.getKey();
@@ -93,8 +131,14 @@ public class Fragment_message extends Fragment {
                         }
                         arrayList.add(index_update, chatRoom);
                         messageListAdapter.index_update = index_update;
-                        messageListAdapter.notifyDataSetChanged();
+
                     }
+                }
+                if (arrayList.size() == 0) {
+                    String[] listItems = {"No messages"};
+                    listView.setAdapter(new ArrayAdapter(activity,  android.R.layout.simple_list_item_1, listItems));
+                } else {
+                    messageListAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -110,7 +154,7 @@ public class Fragment_message extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Log.d("Database Error:", databaseError.getMessage());
             }
         });
     }

@@ -1,6 +1,7 @@
 package com.ujs.divinatransport.Adapter;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,6 +29,7 @@ import com.ujs.divinatransport.Model.Ride;
 import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
 import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.service.AlarmBroadcast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -149,16 +152,13 @@ public class DriverOrderListAdapter extends BaseAdapter {
             ly_accept.setVisibility(View.VISIBLE);
         }
 
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-        Date currentLocalTime = cal.getTime();
-        String today = Utils.getDateString(currentLocalTime);
-//        if (Utils.getDateString(ride.date).equals(today)) {
-//            btn_view.setText("Ride Now");
-//            btn_view.setBackgroundColor(activity.getResources().getColor(R.color.teal_200));
-//        } else {
-//            btn_view.setText("View Road");
-//            btn_view.setBackgroundColor(activity.getResources().getColor(R.color.red));
-//        }
+        ImageButton btn_chat = view.findViewById(R.id.btn_chat);
+        btn_chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                App.goToChatPage(activity, ride.passenger_id);
+            }
+        });
         return view;
     }
 

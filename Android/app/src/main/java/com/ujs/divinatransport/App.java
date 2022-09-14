@@ -40,6 +40,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
+import com.ujs.divinatransport.Model.Message;
 import com.ujs.divinatransport.Model.Ride;
 import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.Utils.Utils;
@@ -68,6 +69,13 @@ public class App extends Application {
     public static NotificationCallbackDriver notificationCallbackDriver;
     public static NotificationCallbackCustomer notificationCallbackCustomer;
     public static String App_launched = "App_launched";
+    public static String MY_APP_PATH = "";
+    public static String MY_IMAGE_PATH = "";
+    public static String MY_AUDIO_PATH = "";
+    public static String ediapayUrl = "https://api.ediapay.com/api/";
+    public static String ediaSMSUrl = "https://smpp1.valorisetelecom.com/api/api_http.php";
+    public static String NewMessage = "NewMessage";
+
 
     @Override
     public void onCreate() {
@@ -78,6 +86,42 @@ public class App extends Application {
 
         getFCMToken();
     }
+    public static void goToChatPage(final Context context, final String user_id) {
+        String myUid = Utils.cur_user.uid;
+        final String roomId;
+        int compare = myUid.compareTo(user_id);
+        final String user1, user2;
+        if (compare < 0) {
+            user1 = myUid;
+            user2 = user_id;
+        } else {
+            user1 = user_id;
+            user2 = myUid;
+        }
+        roomId = user1 + user2;
+
+        Utils.mDatabase.child(Utils.tbl_chat).child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() == null) {
+                    Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("messages").push().setValue(new Message());
+                    Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("isTyping").child(user1).setValue(false);
+                    Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("isTyping").child(user2).setValue(false);
+                }
+                Intent intent = new Intent(context, ChatActivity.class);
+                intent.putExtra("roomId", roomId);
+                context.startActivity(intent);
+
+                setPreference(App.NewMessage, "");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public static void goToMainPage(final Activity activity, ProgressDialog progressDialog) {
         //get user info into model
         if (Utils.auth == null) return;

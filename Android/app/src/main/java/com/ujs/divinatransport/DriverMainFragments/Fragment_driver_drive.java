@@ -85,7 +85,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
     Polyline polyline;
     long distance = 0, duration = 0, price = 0;
     CircleImageView img_photo;
-    TextView txt_name, txt_cur_location, txt_start, txt_target, txt_distance, txt_duration, txt_price, txt_phone;
+    TextView txt_name, txt_cur_location, txt_start, txt_target, txt_distance, txt_duration, txt_price, txt_phone, txt_balance;
     LatLng pos_start, pos_target, pos_current;
     Marker marker_start, marker_target;
     LinearLayout ly_address, ly_sos, ly_ride, ly_button, ly_step_message1, ly_step_message2, ly_step_message3, ly_step_message4;
@@ -125,6 +125,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
         ly_step_message4 = v.findViewById(R.id.ly_step_message4);
         ly_button = v.findViewById(R.id.ly_button);
         ly_payment_confirm = v.findViewById(R.id.ly_payment_confirm);
+        txt_balance = v.findViewById(R.id.txt_balance);
 
 
         v.findViewById(R.id.btn_pay_no).setOnClickListener(new View.OnClickListener() {
@@ -132,6 +133,18 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
             public void onClick(View v) {
                 sel_ride.paid = 0;
                 Utils.mDatabase.child(Utils.tbl_ride).child(sel_ride._id).setValue(sel_ride);
+            }
+        });
+        v.findViewById(R.id.btn_message).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                App.goToChatPage(activity, sel_ride.passenger_id);
+            }
+        });
+        v.findViewById(R.id.btn_call).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
         v.findViewById(R.id.btn_pay_yes).setOnClickListener(new View.OnClickListener() {
@@ -153,6 +166,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
                                 sel_ride.paid = 2;
                                 sel_ride.state = 3;
                                 Utils.mDatabase.child(Utils.tbl_ride).child(sel_ride._id).setValue(sel_ride);
+                                ly_payment_confirm.setVisibility(View.GONE);
                             }
                         }).show();
             }
@@ -449,6 +463,15 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
                         }
                     }
 
+                } else {
+                    if (markerGeoPassenger.get(key) != null) {
+                        markerGeoPassenger.get(key).remove();
+                    }
+                    if (rippleGeoPassenger.get(key) != null) {
+                        rippleGeoPassenger.get(key).stopRippleMapAnimation();
+                        rippleGeoPassenger.put(key, null);
+                    }
+                    markerCountGeoPassenger.put(key, 0);
                 }
             }
 
@@ -726,15 +749,33 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
     }
 
     void goMyRide() {
-        if (sel_ride.from_lat != 0) {
+        if (sel_ride.from_address.length() > 0 && txt_start.getText().toString().length() == 0) {
+            txt_start.setText(sel_ride.from_address);
+        }
+        if (sel_ride.to_address.length() > 0 && txt_target.getText().toString().length() == 0) {
+            txt_target.setText(sel_ride.to_address);
+        }
+        if (sel_ride.from_lat != 0 && sel_ride.from_lng != 0 && sel_ride.to_lat != 0 && sel_ride.to_lng != 0 &&
+                pos_start == null) {
             pos_start = new LatLng(sel_ride.from_lat, sel_ride.from_lng);
             pos_target = new LatLng(sel_ride.to_lat, sel_ride.to_lng);
-            pos_current = new LatLng(sel_ride.cur_lat, sel_ride.cur_lng);
+            if (sel_ride.from_address.length() > 0) {
+                txt_start.setText(sel_ride.from_address);
+            } else {
+                new Utils.GetAddressTask(getContext(), txt_start, pos_start).execute();
+            }
+            if (sel_ride.to_address.length() > 0) {
+                txt_target.setText(sel_ride.to_address);
+            } else {
+                new Utils.GetAddressTask(getContext(), txt_target, pos_target).execute();
+            }
+        }
 
-            new Utils.GetAddressTask(getContext(), txt_start, pos_start).execute();
-            new Utils.GetAddressTask(getContext(), txt_target, pos_start).execute();
+        if (sel_ride.cur_lat != 0 && pos_current == null && txt_cur_location.getText().toString().length() == 0) {
+            pos_current = new LatLng(sel_ride.cur_lat, sel_ride.cur_lng);
             new Utils.GetAddressTask(getContext(), txt_cur_location, pos_current).execute();
         }
+
 
         if (sel_ride.state > 0) {
             ly_ridingSteps.setVisibility(View.VISIBLE);
@@ -751,6 +792,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
                     ly_step_message2.setVisibility(View.VISIBLE);
                     if (sel_ride.paid == 1) {
                         ly_payment_confirm.setVisibility(View.VISIBLE);
+                        txt_balance.setText(String.valueOf(sel_ride.price));
                     } else {
                         ly_payment_confirm.setVisibility(View.GONE);
                     }
@@ -771,11 +813,7 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
             ly_step_message4.setVisibility(View.GONE);
         }
 
-        if (pos_start == null) {
-            ly_address.setVisibility(View.GONE);
-            ly_ride.setVisibility(View.GONE);
-            ly_sos.setVisibility(View.VISIBLE);
-        } else {
+        if (pos_start != null && pos_target != null) {
             ly_address.setVisibility(View.VISIBLE);
             ly_ride.setVisibility(View.VISIBLE);
             ly_sos.setVisibility(View.GONE);
@@ -791,9 +829,18 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
             marker_target.setTitle(txt_target.getText().toString());
 
             new FetchURL(activity, Fragment_driver_drive.this).execute(Utils.getDirectionUrl(pos_start, pos_target, "driving", activity), "driving");
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos_start, 16f));
+            if (cameraMove) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos_start, 16f));
+                cameraMove = false;
+            }
+
+        } else {
+            ly_address.setVisibility(View.GONE);
+            ly_ride.setVisibility(View.GONE);
+            ly_sos.setVisibility(View.VISIBLE);
         }
     }
+    boolean cameraMove = true;
     void getPassengerInfo(String key) {
         activity.showProgress();
         Utils.mDatabase.child(Utils.tbl_user).child(key).addValueEventListener(new ValueEventListener() {

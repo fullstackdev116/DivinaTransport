@@ -49,5 +49,22 @@
     <string name="accept">Accept</string>
     <string name="reject">Reject</string>
     <string name="cancel">Cancel</string>
+    <string name="voice_message_deleted">Voice message deleted!</string>
+    <string name="message_copied_to_clipboard">Message copied to clipboard!</string>
+    <string name="message_from_chat">Message from chat</string>
+    <string name="you_are_not_allowed">You are not allowed</string>
+    <string name="share_via">Share via</string>
+    <string name="message_deleted">Message deleted!</string>
+    <string name="image_viewer">Image Viewer</string>
+    <string name="actions">Actions</string>
+    <string name="image_url_copied_to_clipboard">Image URL copied to clipboard!</string>
+    <string name="image_url">Image URL</string>
+    <string name="image_deleted">Image deleted!</string>
+    <string name="download">Download</string>
+    <string name="downloaded_in_">Downloaded in </string>
+    <string name="downloading_image_">Downloading image…</string>
+    <string name="chat_from_">Chat from </string>
+    <string name="permission_denied">Permission denied.</string>
+    <string name="uploading">Uploading…</string>
 
 </resources>

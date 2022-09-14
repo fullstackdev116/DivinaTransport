@@ -1,5 +1,8 @@
 package com.ujs.divinatransport;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -8,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -28,6 +32,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
 
@@ -38,6 +43,9 @@ import com.ujs.divinatransport.service.LocationService;
 import com.ujs.divinatransport.Utils.Utils;
 import com.google.android.material.navigation.NavigationView;
 
+import java.io.File;
+import java.util.ArrayList;
+
 public class MainActivityCustomer extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     View header;
@@ -47,6 +55,7 @@ public class MainActivityCustomer extends AppCompatActivity {
     public ProgressDialog progressDialog;
     public NavController navController;
 
+    private final static int MY_PERMISSION_STORAGE = 201;
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     Intent locationIntent;
 
@@ -115,6 +124,7 @@ public class MainActivityCustomer extends AppCompatActivity {
         });
         IntentFilter locationIntent = new IntentFilter("LocationIntent");
         registerReceiver(myReceiver, locationIntent);
+        setStoragePermission();
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void startLocationUpdates() {
@@ -158,6 +168,39 @@ public class MainActivityCustomer extends AppCompatActivity {
         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+    public void setStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ArrayList<String> arrPermissionRequests = new ArrayList<>();
+            arrPermissionRequests.add(WRITE_EXTERNAL_STORAGE);
+            arrPermissionRequests.add(READ_EXTERNAL_STORAGE);
+            ActivityCompat.requestPermissions(this, arrPermissionRequests.toArray(new String[arrPermissionRequests.size()]), MY_PERMISSION_STORAGE);
+            return;
+        } else {
+            createDirectory();
+        }
+    }
+    void createDirectory() {
+        getExternalFilesDir(null);
+        File assets = getExternalFilesDir("assets");
+        if (!assets.exists()) {
+            assets.mkdir();
+        }
+        App.MY_APP_PATH = assets.getAbsolutePath();
+        File f3 = new File(App.MY_APP_PATH, "audio");
+        if (!f3.exists()) {
+            f3.mkdir();
+        }
+        App.MY_AUDIO_PATH = f3.getAbsolutePath();
+
+        File pictures = new File(Environment.getExternalStorageDirectory() + File.separator + "Pictures", "rezo");
+        if (!pictures.exists()) {
+            pictures.mkdir();
+        }
+        App.MY_IMAGE_PATH = pictures.getAbsolutePath();
+
     }
     @Override
     public void onBackPressed() {
@@ -217,10 +260,14 @@ public class MainActivityCustomer extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] _permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, _permissions, grantResults);
         if (grantResults.length > 0) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startLocationUpdates();
-            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                requestPermissionLocation();
+            if (requestCode == MY_PERMISSION_FINE_LOCATION) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startLocationUpdates();
+                } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    requestPermissionLocation();
+                }
+            } else if (requestCode == MY_PERMISSION_STORAGE) {
+                createDirectory();
             }
         }
     }

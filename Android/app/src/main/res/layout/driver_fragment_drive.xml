@@ -221,8 +221,8 @@
                     android:textStyle="bold|italic"
                     android:lines="2"
                     android:textColor="@android:color/holo_orange_dark"
-                    android:textSize="17dp"
-                    android:hint="Current location here ..."/>
+                    android:textSize="16dp"
+                    android:hint="Searching the passenger's location..."/>
 
             </LinearLayout>
 
@@ -305,7 +305,7 @@
                             android:textStyle="bold"
                             android:lines="2"
                             android:textSize="17dp"
-                            android:text="Departure address here ..."/>
+                            android:hint="Departure address here ..."/>
                         <TextView
                             android:id="@+id/txt_target"
                             android:layout_width="match_parent"
@@ -314,7 +314,7 @@
                             android:layout_marginLeft="10dp"
                             android:lines="2"
                             android:textSize="17dp"
-                            android:text="Target address here ..."/>
+                            android:hint="Target address here ..."/>
                     </LinearLayout>
                 </LinearLayout>
                 <RelativeLayout
@@ -546,7 +546,7 @@
                             android:background="@drawable/frame_border_round"
                             android:backgroundTint="@color/red_dark"
                             android:gravity="center"
-                            android:text="1000.0 XOF"
+                            android:text="0.0 XOF"
                             android:textAlignment="center"
                             android:textColor="@color/red_dark"
                             android:textSize="15dp" />
