@@ -55,7 +55,7 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivityDriver extends AppCompatActivity {
+public class MainActivityDriver extends BaseActivity {
     private AppBarConfiguration mAppBarConfiguration;
     View header;
     DrawerLayout drawer;
@@ -63,6 +63,7 @@ public class MainActivityDriver extends AppCompatActivity {
     public View parentLayout;
     public ProgressDialog progressDialog;
     TextView new_message, new_ride;
+    CircleImageView img_photo;
 
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     private final static int MY_PERMISSION_STORAGE = 201;
@@ -124,13 +125,7 @@ public class MainActivityDriver extends AppCompatActivity {
                 do_logout();
             }
         });
-        RatingBar ratingBar = header.findViewById(R.id.rate);
-        ratingBar.setRating(Utils.cur_user.rate);
-        ((TextView) header.findViewById(R.id.txt_name)).setText(Utils.cur_user.name);
-        CircleImageView img_photo = header.findViewById(R.id.img_photo);
-        Glide.with(this).load(Utils.cur_user.photo)
-                .apply(new RequestOptions()
-                        .placeholder(R.drawable.ic_avatar).centerCrop().dontAnimate()).into(img_photo);
+        img_photo = header.findViewById(R.id.img_photo);
         img_photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,7 +133,7 @@ public class MainActivityDriver extends AppCompatActivity {
                 closeDrawer();
             }
         });
-
+        setProfile();
 
         IntentFilter locationIntent = new IntentFilter("LocationIntent");
         registerReceiver(myReceiver, locationIntent);
@@ -165,6 +160,14 @@ public class MainActivityDriver extends AppCompatActivity {
                 refreshMenuBadge();
             }
         };
+    }
+    public void setProfile() {
+        RatingBar ratingBar = header.findViewById(R.id.rate);
+        ratingBar.setRating(Utils.cur_user.rate);
+        ((TextView) header.findViewById(R.id.txt_name)).setText(Utils.cur_user.name);
+        Glide.with(this).load(Utils.cur_user.photo).override(150, 150)
+                .apply(new RequestOptions()
+                        .placeholder(R.drawable.ic_avatar_white).centerCrop().dontAnimate()).into(img_photo);
     }
     public void refreshMenuBadge() {
         int cnt = App.readPreferenceInt(App.NewMessage, 0);

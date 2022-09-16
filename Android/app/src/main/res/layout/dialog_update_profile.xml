@@ -15,10 +15,10 @@
         android:padding="10dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/img_photo"
+            android:id="@+id/img_photo1"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_centerHorizontal="true"
+            android:background="@android:color/transparent"
             android:src="@drawable/ic_avatar" />
 
         <LinearLayout
@@ -97,6 +97,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 app:ccp_contentColor="#888888"
+                app:ccp_rippleEnable="false"
+                app:ccp_clickable="false"
                 app:ccp_defaultNameCode="ci"
                 app:ccp_textSize="14dp" />
 
@@ -133,14 +135,16 @@
         android:backgroundTint="@android:color/transparent"
         android:src="@drawable/ic_close_white"
         app:tint="@color/black" />
+
     <Button
-        android:id="@+id/btn_set"
+        android:id="@+id/btn_update"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="25dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:layout_marginBottom="25dp"
+        android:clickable="true"
         android:background="@drawable/round_frame"
         android:text="Update" />
 </RelativeLayout>

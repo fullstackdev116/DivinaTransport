@@ -82,7 +82,7 @@ public class MessageListAdapter extends BaseAdapter {
             txt_message.setTextColor(Color.parseColor("#A55510"));
         }
         txt_time.setText(Utils.getTimeString(new Date(message.timestamp)));
-        Utils.mDatabase.child(Utils.tbl_user).child(user_id).addListenerForSingleValueEvent(new ValueEventListener() {
+        Utils.mDatabase.child(Utils.tbl_user).child(user_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue()!=null) {

@@ -24,6 +24,7 @@ import android.os.StrictMode;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -41,6 +42,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -58,11 +61,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.ujs.divinatransport.ChatActivity;
 import com.ujs.divinatransport.MainActivityCustomer;
 import com.ujs.divinatransport.Model.Car;
 import com.ujs.divinatransport.Model.GeoUser;
 import com.ujs.divinatransport.Model.Ride;
+import com.ujs.divinatransport.Model.Transaction;
 import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -76,7 +79,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.material.snackbar.Snackbar;
 import com.kienht.bottomsheetbehavior.BottomSheetBehavior;
 import com.ujs.divinatransport.App;
-import com.ujs.divinatransport.service.AlarmBroadcast;
+import com.ujs.divinatransport.httpsModule.RestClient;
 import com.ujs.divinatransport.Utils.Utils;
 import com.ujs.divinatransport.directionhelpers.FetchURL;
 import com.ujs.divinatransport.directionhelpers.TaskLoadedCallback;
@@ -84,6 +87,8 @@ import com.ujs.divinatransport.hrmovecarmarkeranimation.geolocation.GeoHRMarkerA
 import com.ujs.divinatransport.hrmovecarmarkeranimation.geolocation.GeoHRUpdateLocationCallBack;
 import com.ujs.divinatransport.hrmovecarmarkeranimation.location.HRMarkerAnimation;
 import com.ujs.divinatransport.hrmovecarmarkeranimation.location.HRUpdateLocationCallBack;
+
+import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -127,7 +132,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
 
     CircleImageView img_photo;
     ImageView img_carType, img_car;
-    TextView txt_name, txt_rate, txt_seats, txt_carPrice, txt_state_driver, txt_target_step3, txt_time_remaining_step1, txt_phone, txt_phone1;
+    TextView txt_name, txt_rate, txt_seats, txt_carPrice, txt_state_driver, txt_target_step3, txt_time_remaining_step1, txt_phone1;
     RatingBar ratingBar;
     ImageButton btn_sos, btn_message, btn_call, btn_message1, btn_call1;
     ImageView img_touch_start, img_touch_target;
@@ -184,7 +189,6 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         img_driver = v.findViewById(R.id.img_driver);
         rate_driver = v.findViewById(R.id.rate_driver);
         txt_estimate = v.findViewById(R.id.txt_estimate);
-        txt_phone = v.findViewById(R.id.txt_phone);
         txt_phone1 = v.findViewById(R.id.txt_phone1);
         txt_name_driver = v.findViewById(R.id.txt_name_driver);
         txt_accept_step1 = v.findViewById(R.id.txt_accept_step1);
@@ -256,7 +260,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         btn_ediapay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                openEdiaPayDialog();
             }
         });
         btn_cancel_driver.setOnClickListener(new View.OnClickListener() {
@@ -718,6 +722,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
             @Override
             public void locationUpdateCallback() {
                 mLastLocation = Utils.cur_location;
+                if (mMap == null) return;
                 addMarker(mMap, Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude(), location_track, R.drawable.ic_pin0);
                 Utils.geo_passenger.setLocation(Utils.cur_user.uid, new GeoLocation(Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude()), new GeoFire.CompletionListener() {
                     @Override
@@ -743,6 +748,222 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
             }
         };
         return v;
+    }
+
+    public void openEdiaPayDialog() {
+        final String[] gatewayid = {""};
+        final String[] method = {""};
+        final Dialog dlg = new Dialog(activity);
+        Window window = dlg.getWindow();
+        View view = getLayoutInflater().inflate(R.layout.dialog_ediapay, null);
+        TextView txt_price = view.findViewById(R.id.txt_price);
+        txt_price.setText(String.valueOf(pay_balance)+" XOF");
+        RadioGroup pay_method = view.findViewById(R.id.radioGroup);
+        pay_method.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                gatewayid[0] = view.findViewById(checkedId).getTag().toString();
+                RadioButton radioButton = (RadioButton)view.findViewById(checkedId);
+                method[0] = radioButton.getText().toString();
+            }
+        });
+        Button btn_pay = view.findViewById(R.id.btn_pay);
+        btn_pay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (gatewayid[0].length() == 0) {
+                    Utils.showAlert(activity, getResources().getString(R.string.warning), "Please select a method!");
+                    return;
+                }
+                merchant_pay_ediaRequest(gatewayid[0], method[0]);
+            }
+        });
+        ImageButton btn_close = view.findViewById(R.id.btn_close);
+        btn_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dlg.dismiss();
+            }
+        });
+
+        int width = (int)(getResources().getDisplayMetrics().widthPixels*0.70);
+        int height = (int)(getResources().getDisplayMetrics().heightPixels*0.4);
+        view.setMinimumWidth(width);
+        view.setMinimumHeight(height);
+        dlg.setCancelable(true);
+        dlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dlg.setContentView(view);
+        window.setGravity(Gravity.CENTER);
+        window.setBackgroundDrawableResource(android.R.color.transparent);
+        dlg.show();
+    }
+
+    private void merchant_pay_ediaRequest(String gatewayid, String method) {
+        activity.showProgress();
+        String uniqueid = Utils.getRandomStringUUID();
+        final JSONObject object = new JSONObject();
+        try {
+            object.put("command", "create payment request");
+            object.put("gatewayid", gatewayid);
+            object.put("merchantid", App.ediaMerchantId);
+            object.put("service", "DivinaTransport riding payment");
+            object.put("amount", pay_balance);
+            object.put("currency", "XOF");
+            object.put("uniqueid", uniqueid);
+            object.put("sandbox", 0);
+            if (!gatewayid.equals("2") && !gatewayid.equals("3")) {
+                object.put("mobile", App.ediaMobile);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        final RestClient restClient = RestClient.getInstance();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String response = restClient.postRequest(App.ediapayUrl+"api_payment", object);
+                JSONObject jsonObject = null;
+                String _error = null;
+                int pay_code = 0;
+                try {
+                    jsonObject = new JSONObject(response);
+                    pay_code = jsonObject.getInt("code");
+
+                    switch (pay_code) {
+                        case 200:
+                            _error = getResources().getString(R.string.payment_queued);
+                            String transactionid = jsonObject.getString("transactionid");
+                            String pay_link = jsonObject.getString("url");
+                            final String finalPay_link = pay_link;
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    openCompleteDialog(finalPay_link);
+                                }
+                            });
+                            Transaction transaction = new Transaction("", Utils.cur_user.uid, String.valueOf(pay_balance), method, transactionid, App.ediaMerchantId, uniqueid, pay_link, String.valueOf(pay_code), Utils.getDateString(new Date()));
+                            Utils.mDatabase.child(Utils.tbl_transaction).push().setValue(transaction);
+                            break;
+                        case 100:
+                            _error = getResources().getString(R.string.payment_success);
+                            break;
+                        default:
+                            _error = jsonObject.getString("error");
+                            final String final_error = _error;
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(activity, final_error, Toast.LENGTH_LONG).show();
+                                }
+                            });
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                activity.dismissProgress();
+            }
+        }).start();
+    }
+    private void openCompleteDialog(final String pay_link) {
+        final Dialog dlg = new Dialog(activity);
+        Window window = dlg.getWindow();
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+        final View view = getLayoutInflater().inflate(R.layout.dialog_ediapay_link, null);
+        dlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dlg.setContentView(view);
+        window.setGravity(Gravity.CENTER);
+        Button btn_complete = (Button)view.findViewById(R.id.btn_complete);
+        btn_complete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                App.openUrl(pay_link, activity);
+                dlg.dismiss();
+            }
+        });
+        dlg.show();
+        dlg.getWindow().setLayout((int)(width*0.95f), ViewGroup.LayoutParams.WRAP_CONTENT);
+    }
+
+    private void payment_status_ediaRequest(String uniqueid, String transactionid) {
+        activity.showProgress();
+        final JSONObject object = new JSONObject();
+        try {
+            object.put("command", "get payment request status");
+            object.put("merchantid", App.ediaMerchantId);
+            object.put("uniqueid", uniqueid);
+            object.put("transactionid", transactionid);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        final RestClient restClient = RestClient.getInstance();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String response = restClient.postRequest(App.ediapayUrl+"api_payment", object);
+                JSONObject jsonObject = null;
+                String _error = null;
+                int pay_code = 0;
+                String transaction_id = "";
+//                String pay_link = "";
+                try {
+                    jsonObject = new JSONObject(response);
+                    pay_code = jsonObject.getInt("code");
+
+                    switch (pay_code) {
+                        case 200:
+                            _error = getResources().getString(R.string.payment_queued);
+                            transaction_id = jsonObject.getString("transactionid");
+//                            pay_link = jsonObject.getString("url");
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(activity, getResources().getString(R.string.payment_queued), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                            break;
+                        case 100:
+                            _error = getResources().getString(R.string.payment_success);
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(activity, getResources().getString(R.string.payment_success), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                            final int finalPay_code = pay_code;
+                            Utils.mDatabase.child(Utils.tbl_transaction).orderByChild("transaction_id").equalTo(transaction_id).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.getValue()!=null) {
+                                        for (DataSnapshot datas:dataSnapshot.getChildren()) {
+                                            Transaction transaction1 = datas.getValue(Transaction.class);
+                                            transaction1.status = String.valueOf(finalPay_code);
+                                            Utils.mDatabase.child(Utils.tbl_transaction).child(datas.getKey()).setValue(transaction1);
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                            break;
+                        default:
+                            _error = jsonObject.getString("error");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                activity.dismissProgress();
+            }
+        }).start();
     }
     void checkMyRide1() {
         Utils.mDatabase.child(Utils.tbl_ride).orderByChild("passenger_id").equalTo(Utils.cur_user.uid).addValueEventListener(new ValueEventListener() {
@@ -943,12 +1164,6 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
             myLatlng = new LatLng(my_ride.cur_lat, my_ride.cur_lng);
         }
 
-        if (ripple_ride != null) {
-            if (ripple_ride.isAnimationRunning()) {
-                ripple_ride.stopRippleMapAnimation();
-            }
-            ripple_ride = null;
-        }
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         ly_topClick.setEnabled(false);
         if (pos_start == null && my_ride.from_lat != 0) {
@@ -979,7 +1194,6 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
             Glide.with(activity).load(user.photo).apply(new RequestOptions().placeholder(R.drawable.ic_avatar).centerCrop()).into(img_driver);
             txt_name_driver.setText(user.name);
             rate_driver.setRating(user.rate);
-            txt_phone.setText("+" + user.phone);
             btn_message.setVisibility(View.VISIBLE);
             btn_call.setVisibility(View.VISIBLE);
         }
@@ -1023,10 +1237,21 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                 touch_enabled_start = false; touch_enabled_target = false;
                 ImageViewCompat.setImageTintList(img_touch_target, ColorStateList.valueOf(getResources().getColor(me.jagar.chatvoiceplayerlibrary.R.color.gray)));
                 ImageViewCompat.setImageTintList(img_touch_start, ColorStateList.valueOf(getResources().getColor(me.jagar.chatvoiceplayerlibrary.R.color.gray)));
-                ripple_ride = Utils.initRadar(mMap, myLatlng, getContext(), color);
+                if (ripple_ride == null) {
+                    ripple_ride = Utils.initRadar(mMap, myLatlng, getContext(), color);
+                }
+                if (!ripple_ride.isAnimationRunning()) {
+                    ripple_ride.startRippleMapAnimation();
+                }
 //                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(my, 16f));
                 break;
             case 1:
+                if (ripple_ride != null) {
+                    if (ripple_ride.isAnimationRunning()) {
+                        ripple_ride.stopRippleMapAnimation();
+                    }
+                    ripple_ride = null;
+                }
                 btn_sos.setVisibility(View.GONE);
                 if (my_ride.isSOS) {
                     openTopView();
@@ -1051,7 +1276,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                         }
                         txt_estimate.setText("Estimate: " + String.valueOf(pay_balance)+ " XOF");
                     }
-                    if (dist < 5) {
+                    if (dist < 10) {
                         txt_time_remaining_step1.setText("The car has reached to you!");
                         if (!my_ride.isSOS) {
                             my_ride.state = 2;
@@ -1075,6 +1300,12 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                 }
                 break;
             case 2:
+                if (ripple_ride != null) {
+                    if (ripple_ride.isAnimationRunning()) {
+                        ripple_ride.stopRippleMapAnimation();
+                    }
+                    ripple_ride = null;
+                }
                 closeTopView();
                 btn_view.setVisibility(View.VISIBLE);
                 if (sel_car != null) {
@@ -1085,10 +1316,19 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                     if (my_ride.paid == 1) {
                         ly_pay.setVisibility(View.GONE);
                         txt_confirm.setVisibility(View.VISIBLE);
+                    } else if (my_ride.paid == 0){
+                        ly_pay.setVisibility(View.VISIBLE);
+                        txt_confirm.setVisibility(View.GONE);
                     }
                 }
                 break;
             case 3:
+                if (ripple_ride != null) {
+                    if (ripple_ride.isAnimationRunning()) {
+                        ripple_ride.stopRippleMapAnimation();
+                    }
+                    ripple_ride = null;
+                }
                 LatLng pos_cur = new LatLng(Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude());
                 new FetchURL(activity, Fragment_customer_ride.this).execute(Utils.getDirectionUrl(pos_cur, pos_target, "driving", activity), "driving");
                 if (distance > 0) {
@@ -1106,6 +1346,12 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                 }
                 break;
             case 4:
+                if (ripple_ride != null) {
+                    if (ripple_ride.isAnimationRunning()) {
+                        ripple_ride.stopRippleMapAnimation();
+                    }
+                    ripple_ride = null;
+                }
                 ly_step4.setVisibility(View.VISIBLE);
                 rate_driver_step4.setOnRatingChangeListener(new MaterialRatingBar.OnRatingChangeListener() {
                     @Override
@@ -1412,88 +1658,6 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
             }
         });
         datePickerDialog.show();
-    }
-
-    public void openPaymentDialog() {
-        final Dialog dlg = new Dialog(activity);
-        Window window = dlg.getWindow();
-        View view = getLayoutInflater().inflate(R.layout.dialog_payment, null);
-        Button btn_confirm = view.findViewById(R.id.btn_confirm);
-        btn_confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.initRadar(mMap, new LatLng(Utils.cur_location.getLatitude(), Utils.cur_location.getLongitude()), getContext(), Color.GREEN);
-            }
-        });
-        TextView txt_price = view.findViewById(R.id.txt_price);
-        txt_price.setText(String.valueOf(price)+" XOF");
-        TextView txt_payment = view.findViewById(R.id.txt_payment);
-        Button btn_ediapay = view.findViewById(R.id.btn_ediapay);
-        Button btn_cache = view.findViewById(R.id.btn_cache);
-        RelativeLayout ly_merchantID = view.findViewById(R.id.ly_merchantID);
-        EditText edit_merchantId = view.findViewById(R.id.edit_merchantID);
-        CheckBox chk_store = view.findViewById(R.id.chk_store);
-        String merchantID = App.prefs.getString(Utils.MERCHANTID, "");
-        if (merchantID.length() > 0) {
-            edit_merchantId.setText(merchantID);
-            chk_store.setChecked(true);
-        }
-        chk_store.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    String merchantID = edit_merchantId.getText().toString().trim();
-                    if (merchantID.length() == 0) {
-                        Utils.showAlert(activity, getResources().getString(R.string.warning), getResources().getString(R.string.please_fill_in_blank_field));
-                        chk_store.setChecked(false);
-                        return;
-                    }
-                    App.setPreference(Utils.MERCHANTID, merchantID);
-                } else {
-                    App.removePreference(Utils.MERCHANTID);
-                }
-            }
-        });
-        ImageButton btn_close = view.findViewById(R.id.btn_close);
-        btn_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dlg.dismiss();
-            }
-        });
-        btn_ediapay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btn_ediapay.setBackground(getResources().getDrawable(R.drawable.round_frame_red));
-                btn_ediapay.setTextColor(Color.WHITE);
-                btn_cache.setBackground(getResources().getDrawable(R.drawable.frame_border_red));
-                btn_cache.setTextColor(Color.GRAY);
-                txt_payment.setText("I want to pay via EDIAPAY");
-                ly_merchantID.setVisibility(View.VISIBLE);
-            }
-        });
-        btn_cache.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btn_cache.setBackground(getResources().getDrawable(R.drawable.round_frame_red));
-                btn_cache.setTextColor(Color.WHITE);
-                btn_ediapay.setBackground(getResources().getDrawable(R.drawable.frame_border_red));
-                btn_ediapay.setTextColor(Color.GRAY);
-                txt_payment.setText("I want to pay via CACHE");
-                ly_merchantID.setVisibility(View.GONE);
-            }
-        });
-
-        int width = (int)(getResources().getDisplayMetrics().widthPixels*0.70);
-        int height = (int)(getResources().getDisplayMetrics().heightPixels*0.4);
-        view.setMinimumWidth(width);
-        view.setMinimumHeight(height);
-        dlg.setCancelable(true);
-        dlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dlg.setContentView(view);
-        window.setGravity(Gravity.CENTER);
-        window.setBackgroundDrawableResource(android.R.color.transparent);
-        dlg.show();
     }
 
     void changeTopViewState() {

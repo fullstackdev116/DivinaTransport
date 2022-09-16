@@ -77,6 +77,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -99,6 +100,7 @@ public class Utils {
     public static String tbl_geo_driver = "tbl_geo_driver";
     public static String tbl_geo_passenger = "tbl_geo_passenger";
     public static String tbl_driving_license = "tbl_driving_license";
+    public static String tbl_transaction = "tbl_transaction";
     public static String storage_user = "user/";
     public static String storage_car = "car/";
     public static String storage_chat = "chat/";
@@ -144,7 +146,7 @@ public class Utils {
 //        mapRipple.withNumberOfRipples(3);
 //        mapRipple.withFillColor(color);
         mapRipple.withStrokeColor(color);
-        mapRipple.withStrokewidth(20);      // 10dp
+        mapRipple.withStrokewidth(50);      // 10dp
         mapRipple.withDistance(Utils.geo_radius);
 //        mapRipple.withRippleDuration(12000);    //12000ms
 //        mapRipple.withTransparency(0.5f);
@@ -368,6 +370,10 @@ public class Utils {
     public static String getTimeString(Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
         return formatter.format(date);
+    }
+    public static String getRandomStringUUID() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString();
     }
     public static void setAlarm(Context context, Date date, Intent intent) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

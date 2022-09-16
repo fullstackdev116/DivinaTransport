@@ -44,11 +44,14 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".BaseActivity"
+            android:exported="false" />
+        <activity
             android:name=".SignupActivityCustomer"
             android:exported="false" />
-        <activity android:name=".ImageViewerActivity"
-            android:exported="false"
-            />
+        <activity
+            android:name=".ImageViewerActivity"
+            android:exported="false" />
         <activity
             android:name=".ChatActivity"
             android:exported="false"
@@ -88,6 +91,7 @@
             android:name=".MainActivityCustomer"
             android:exported="true"
             android:theme="@style/Theme.DivinaTransport.NoActionBar" />
+
         <service
             android:name=".service.MyFirebaseMessagingService"
             android:directBootAware="true"
@@ -98,7 +102,7 @@
         </service>
         <service
             android:name=".service.LocationService"
-            android:label="Location Service"></service>
+            android:label="Location Service" />
 
         <receiver android:name=".service.AlarmBroadcast" />
     </application>

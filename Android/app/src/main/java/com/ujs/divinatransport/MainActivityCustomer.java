@@ -41,6 +41,8 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.ujs.divinatransport.Model.User;
@@ -53,7 +55,9 @@ import com.ujs.divinatransport.service.NotificationCallbackDriver;
 import java.io.File;
 import java.util.ArrayList;
 
-public class MainActivityCustomer extends AppCompatActivity {
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class MainActivityCustomer extends BaseActivity {
     private AppBarConfiguration mAppBarConfiguration;
     View header;
     DrawerLayout drawer;
@@ -62,6 +66,7 @@ public class MainActivityCustomer extends AppCompatActivity {
     public ProgressDialog progressDialog;
     public NavController navController;
     TextView new_message;
+    CircleImageView img_photo;
 
     private final static int MY_PERMISSION_STORAGE = 201;
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
@@ -117,19 +122,23 @@ public class MainActivityCustomer extends AppCompatActivity {
 
         // Header View
         header = navigationView.getHeaderView(0);
+
         header.findViewById(R.id.img_logout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 do_logout();
             }
         });
-        header.findViewById(R.id.img_photo).setOnClickListener(new View.OnClickListener() {
+        img_photo = header.findViewById(R.id.img_photo);
+
+        img_photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 navController.navigate(R.id.nav_profile);
                 closeDrawer();
             }
         });
+        setProfile();
         IntentFilter locationIntent = new IntentFilter("LocationIntent");
         registerReceiver(myReceiver, locationIntent);
         setStoragePermission();
@@ -147,6 +156,12 @@ public class MainActivityCustomer extends AppCompatActivity {
                 refreshMenuBadge();
             }
         };
+    }
+    public void setProfile() {
+        ((TextView) header.findViewById(R.id.txt_name)).setText(Utils.cur_user.name);
+        Glide.with(this).load(Utils.cur_user.photo)
+                .apply(new RequestOptions().override(150, 150)
+                        .placeholder(R.drawable.ic_avatar_white).centerCrop().dontAnimate()).into(img_photo);
     }
     public void refreshMenuBadge() {
         int cnt = App.readPreferenceInt(App.NewMessage, 0);
@@ -290,6 +305,7 @@ public class MainActivityCustomer extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
+        assert fragment != null;
         fragment.onActivityResult(requestCode, resultCode, data);
     }
     @RequiresApi(api = Build.VERSION_CODES.O)

@@ -27,6 +27,7 @@
     <string name="phone_verified_successfully">The phone number has been verified successfully</string>
     <string name="enable_permissions">Please enable permissions to use the app.</string>
     <string name="user_registered_successfully">User information has been registered successfully.</string>
+    <string name="user_updated_successfully">User information has been updated successfully.</string>
     <string name="car_registered_successfully">Car information has been registered successfully.</string>
     <string name="car_updated_successfully">Car information has been updated successfully.</string>
     <string name="driving_license_registered_successfully">Driving License has been registered successfully.</string>
@@ -67,5 +68,8 @@
     <string name="order_from_">New Order from </string>
     <string name="permission_denied">Permission denied.</string>
     <string name="uploading">Uploading…</string>
+    <string name="payment_processing">Payment processing…</string>
+    <string name="payment_success">Payment success!</string>
+    <string name="payment_queued">Payment queued!</string>
 
 </resources>

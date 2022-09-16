@@ -654,18 +654,21 @@
                         android:text=""
                         android:layout_marginLeft="10dp"
                         android:textColor="@color/teal_200"
+                        android:layout_centerVertical="true"
                         />
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="end|center_vertical"
+                        android:layout_centerVertical="true"
                         >
                         <pl.droidsonroids.gif.GifImageView
                             android:layout_width="100dp"
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
                             android:background="@android:color/transparent"
-                            android:src="@drawable/progress" />
+                            android:src="@drawable/progress"
+                            />
 
                         <TextView
                             android:id="@+id/txt_time_remaining_step1"
@@ -741,6 +744,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="visible"
+                        android:layout_marginTop="10dp"
                         >
 
                         <Button
@@ -766,6 +770,7 @@
                         android:layout_height="wrap_content"
                         android:text="Waiting for driver's confirmation.."
                         android:textAlignment="center"
+                        android:layout_marginTop="10dp"
                         android:textSize="18dp"
                         android:textStyle="italic"
                         android:textColor="@color/teal_200"
@@ -1010,12 +1015,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/txt_phone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:text="" />
                 <ImageButton
                     android:id="@+id/btn_call"
                     android:layout_width="wrap_content"
@@ -1023,16 +1022,18 @@
                     android:src="@drawable/ic_call"
                     android:visibility="gone"
                     android:backgroundTint="@color/red" />
+                <ImageButton
+                    android:id="@+id/btn_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/stat_notify_chat"
+                    android:backgroundTint="@color/red"
+                    android:visibility="gone"
+                    android:layout_marginLeft="20dp"
+                    />
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/btn_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/stat_notify_chat"
-                android:backgroundTint="@color/red"
-                android:visibility="gone"
-                />
+
 
         </LinearLayout>
     </RelativeLayout>

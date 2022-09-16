@@ -75,6 +75,8 @@ public class App extends Application {
     public static String MY_IMAGE_PATH = "";
     public static String MY_AUDIO_PATH = "";
     public static String ediapayUrl = "https://api.ediapay.com/api/";
+    public static String ediaMerchantId = "123456";
+    public static String ediaMobile = "22522440251";
     public static String ediaSMSUrl = "https://smpp1.valorisetelecom.com/api/api_http.php";
     public static String NewMessage = "NewMessage";
     public static String NewRide = "NewRide";
@@ -435,4 +437,6 @@ public class App extends Application {
         int primaryColor = arr.getColor(0, -1);
         return primaryColor;
     }
+
+
 }
