@@ -1,6 +1,9 @@
 package com.ujs.divinatransport.Adapter;
 
+import static android.Manifest.permission.CALL_PHONE;
+
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +17,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -26,7 +31,7 @@ import com.ujs.divinatransport.CustomerMainFragments.Fragment_customer_orders;
 import com.ujs.divinatransport.Model.Ride;
 import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -74,11 +79,12 @@ public class CustomerOrderListAdapter extends BaseAdapter {
         TextView txt_phone = view.findViewById(R.id.txt_phone);
         TextView txt_name = view.findViewById(R.id.txt_name);
         CircleImageView img_photo = view.findViewById(R.id.img_photo);
-        txt_date.setText(Utils.getDateString(ride.date));
+        txt_date.setText(MyUtils.getDateString(ride.date));
         txt_start.setText(ride.from_address);
         txt_target.setText(ride.to_address);
+        ImageButton btn_call = view.findViewById(R.id.btn_call);
 
-        Utils.mDatabase.child(Utils.tbl_user).child(ride.driver_id)
+        MyUtils.mDatabase.child(MyUtils.tbl_user).child(ride.driver_id)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -88,6 +94,7 @@ public class CustomerOrderListAdapter extends BaseAdapter {
                             Glide.with(activity).load(user.photo).apply(new RequestOptions().placeholder(R.drawable.ic_avatar).centerCrop()).into(img_photo);
                             txt_phone.setText("+"+user.phone);
                             txt_name.setText(user.name);
+                            btn_call.setTag(user.phone);
                         }
                     }
 
@@ -106,7 +113,7 @@ public class CustomerOrderListAdapter extends BaseAdapter {
                     fragment.openBottomView(ride);
                 } else {
                     App.setObjectPreference("my_ride", ride);
-                    Utils.mDatabase.child(Utils.tbl_order).child(ride._id).setValue(null);
+                    MyUtils.mDatabase.child(MyUtils.tbl_order).child(ride._id).setValue(null);
                     activity.navController.navigate(R.id.nav_ride);
                 }
             }
@@ -115,8 +122,8 @@ public class CustomerOrderListAdapter extends BaseAdapter {
 
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         Date currentLocalTime = cal.getTime();
-        String today = Utils.getDateString(currentLocalTime);
-        if (Utils.getDateString(ride.date).equals(today)) {
+        String today = MyUtils.getDateString(currentLocalTime);
+        if (MyUtils.getDateString(ride.date).equals(today)) {
             btn_view.setText(activity.getResources().getString(R.string.ride_now));
             btn_view.setTextColor(activity.getResources().getColor(R.color.teal_200));
         } else {
@@ -151,7 +158,7 @@ public class CustomerOrderListAdapter extends BaseAdapter {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 activity.showProgress();
-                                Utils.mDatabase.child(Utils.tbl_order).child(ride._id).addListenerForSingleValueEvent(new ValueEventListener() {
+                                MyUtils.mDatabase.child(MyUtils.tbl_order).child(ride._id).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         activity.dismissProgress();
@@ -159,7 +166,7 @@ public class CustomerOrderListAdapter extends BaseAdapter {
                                             Ride ride1 = snapshot.getValue(Ride.class);
                                             ride1._id = snapshot.getKey();
                                             if (ride1.state == -1) {
-                                                Utils.mDatabase.child(Utils.tbl_order).child(ride1._id).setValue(null);
+                                                MyUtils.mDatabase.child(MyUtils.tbl_order).child(ride1._id).setValue(null);
                                                 fragment.getOrders();
                                             }
                                         }
@@ -179,6 +186,21 @@ public class CustomerOrderListAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 App.goToChatPage(activity, ride.driver_id);
+            }
+        });
+
+        btn_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(activity, CALL_PHONE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ArrayList<String> arrPermissionRequests = new ArrayList<>();
+                    arrPermissionRequests.add(CALL_PHONE);
+                    ActivityCompat.requestPermissions(activity, arrPermissionRequests.toArray(new String[arrPermissionRequests.size()]), activity.MY_PERMISSION_CALL);
+                } else {
+                    String phone = btn_call.getTag().toString();
+                    App.dialNumber(phone, activity);
+                }
             }
         });
         return view;

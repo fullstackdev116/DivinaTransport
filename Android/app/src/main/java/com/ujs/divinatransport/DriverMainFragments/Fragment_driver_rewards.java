@@ -15,10 +15,9 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.ujs.divinatransport.App;
 import com.ujs.divinatransport.MainActivityDriver;
 import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 
 import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator;
 
@@ -50,16 +49,16 @@ public class Fragment_driver_rewards extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        circularProgress.setProgress(Utils.cur_user.point, 1000);
-        int remain = 1000 - Utils.cur_user.point;
+        circularProgress.setProgress(MyUtils.cur_user.point, 1000);
+        int remain = 1000 - MyUtils.cur_user.point;
         String message = "Keep trying to get " + String.valueOf(remain) + " points more to get a reward!";
         img_reward.setImageDrawable(getResources().getDrawable(R.drawable.ic_keep_going));
-        if (Utils.cur_user.point > 800) {
+        if (MyUtils.cur_user.point > 800) {
             message = "Almost done!\\nYou will get a reward once you reach the 1000 points!";
             img_reward.setImageDrawable(getResources().getDrawable(R.drawable.ic_rewards));
         }
         txt_reward.setText(message);
-        if (Utils.cur_user.point >= 1000) {
+        if (MyUtils.cur_user.point >= 1000) {
             btn_reward.setEnabled(true);
         } else {
             btn_reward.setEnabled(false);

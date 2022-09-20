@@ -6,23 +6,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DataSnapshot;
@@ -32,10 +38,14 @@ import com.hbb20.CountryCodePicker;
 import com.jkb.vcedittext.VerificationAction;
 import com.jkb.vcedittext.VerificationCodeEditText;
 import com.ujs.divinatransport.Model.User;
-import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 
+import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
+import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
+
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -50,13 +60,14 @@ public class SignupActivityCustomer extends AppCompatActivity {
     ProgressDialog progressDialog;
     Button btn_verify, btn_submit;
     String user_phone = "", user_name = "";
+    CheckBox checkBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_signup);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle("I want to be a CUSTOMER");
+        setTitle("I want to be a PASSENGER");
 
         progressDialog = new ProgressDialog(this);
         parentLayout = findViewById(android.R.id.content);
@@ -65,12 +76,14 @@ public class SignupActivityCustomer extends AppCompatActivity {
         txt_countryCode = findViewById(R.id.txt_countryCode);
         txt_countryCode.setCountryForPhoneCode(1);
         edit_phone.setText("1111111111");
+        TextView txt_howitworks = findViewById(R.id.txt_howitworks);
+
         btn_verify = findViewById(R.id.btn_verify);
         btn_submit = findViewById(R.id.btn_submit);
         btn_verify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!Utils.isEmptyEditText(edit_phone)) {
+                if (!MyUtils.isEmptyEditText(edit_phone)) {
                     country_code = txt_countryCode.getSelectedCountryCode();
                     number = edit_phone.getText().toString().trim();
                     number = number.replace(" ", "");
@@ -78,27 +91,74 @@ public class SignupActivityCustomer extends AppCompatActivity {
                     App.hideKeyboard(SignupActivityCustomer.this);
                     sendAuthSMS(country_code + number);
                 } else {
-                    Utils.showAlert(SignupActivityCustomer.this, getResources().getString(R.string.warning), getResources().getString(R.string.please_input_your_mobile_number));
+                    MyUtils.showAlert(SignupActivityCustomer.this, getResources().getString(R.string.warning), getResources().getString(R.string.please_input_your_mobile_number));
                 }
             }
         });
         btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!Utils.isEmptyEditText(edit_name)) {
+
+                if (!MyUtils.isEmptyEditText(edit_name)) {
                     user_name = edit_name.getText().toString().trim();
                 } else {
-                    Utils.showAlert(SignupActivityCustomer.this, getResources().getString(R.string.warning), getResources().getString(R.string.please_fill_in_blank_field));
+                    MyUtils.showAlert(SignupActivityCustomer.this, getResources().getString(R.string.warning), getResources().getString(R.string.please_fill_in_blank_field));
+                    return;
+                }
+                if (!checkBox.isChecked()) {
+                    MyUtils.showAlert(SignupActivityCustomer.this, getResources().getString(R.string.warning), "You must agree on the terms of services for the Divina Transport");
                     return;
                 }
                 showProgress();
-                String token = Utils.getDeviceToken(SignupActivityCustomer.this);
-                User user = new User("", "", user_name, user_phone, "", 0, 0, Utils.PASSENGER, 3, token, 0);
-                Utils.mDatabase.child(Utils.tbl_user).push().setValue(user);
+                String token = MyUtils.getDeviceToken(SignupActivityCustomer.this);
+                User user = new User("", "", user_name, user_phone, "", 0, 0, MyUtils.PASSENGER, 3, token, 0);
+                MyUtils.mDatabase.child(MyUtils.tbl_user).push().setValue(user);
                 Snackbar.make(parentLayout, getResources().getString(R.string.user_registered_successfully), 3000).show();
                 App.goToMainPage(SignupActivityCustomer.this, progressDialog);
             }
         });
+
+        ImageCarousel carousel = findViewById(R.id.carousel);
+
+        List<CarouselItem> list = new ArrayList<>();
+        list.add(new CarouselItem(R.drawable.welcome1,"Passenger signup details first page"));
+        list.add(new CarouselItem(R.drawable.welcome2,"Passenger signup details second page"));
+        list.add(new CarouselItem(R.drawable.welcome3,"Passenger signup details third page"));
+        carousel.setData(list);
+
+        checkBox = findViewById(R.id.chk_agree);
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+        Button btn_terms = findViewById(R.id.btn_terms);
+        btn_terms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openTermsDialog();
+            }
+        });
+    }
+    public void openTermsDialog() {
+        final Dialog dlg = new Dialog(this, R.style.Theme_Transparent);
+        Window window = dlg.getWindow();
+        View view = getLayoutInflater().inflate(R.layout.dialog_terms, null);
+        WebView wv = view.findViewById(R.id.webview);
+        wv.loadUrl("file:///android_asset/terms.html");
+        ImageButton btn_close = view.findViewById(R.id.btn_close);
+        btn_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dlg.dismiss();
+            }
+        });
+
+        dlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dlg.setContentView(view);
+        window.setGravity(Gravity.CENTER);
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dlg.show();
     }
     private void sendAuthSMS(final String mobileNumber) {
         PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallback;
@@ -113,7 +173,7 @@ public class SignupActivityCustomer extends AppCompatActivity {
             public void onVerificationFailed(FirebaseException e) {
                 dismissProgress();
                 Log.d("msg", e.getLocalizedMessage());
-                Utils.showAlert(SignupActivityCustomer.this, getResources().getString(R.string.error), e.getMessage());
+                MyUtils.showAlert(SignupActivityCustomer.this, getResources().getString(R.string.error), e.getMessage());
             }
 
             @Override
@@ -208,19 +268,19 @@ public class SignupActivityCustomer extends AppCompatActivity {
     {
         App.hideKeyboard(this);
         showProgress();
-        Utils.auth.signInWithCredential(credential)
+        MyUtils.auth.signInWithCredential(credential)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Utils.mDatabase.child(Utils.tbl_user).orderByChild(Utils.PHONE).equalTo(country_code+number)
+                            MyUtils.mDatabase.child(MyUtils.tbl_user).orderByChild(MyUtils.PHONE).equalTo(country_code+number)
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                             dismissProgress();
                                             if (dataSnapshot.getValue() != null) {
-                                                Utils.FirebaseLogout();
-                                                Utils.showAlert(SignupActivityCustomer.this, getResources().getString(R.string.warning), getResources().getString(R.string.phone_number_already_exists));
+                                                MyUtils.FirebaseLogout();
+                                                MyUtils.showAlert(SignupActivityCustomer.this, getResources().getString(R.string.warning), getResources().getString(R.string.phone_number_already_exists));
                                             } else {
                                                 Snackbar.make(parentLayout, getResources().getString(R.string.phone_verified_successfully), 3000).show();
                                                 btn_verify.setText("Verified ✅");

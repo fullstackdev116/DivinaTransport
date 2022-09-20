@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -31,7 +30,7 @@ import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
 import com.ujs.divinatransport.Utils.DownloadTask;
 import com.ujs.divinatransport.Utils.OnTaskResult;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public class ChatListAdapter extends BaseAdapter {
     public View getView(final int i, View view, ViewGroup viewGroup) {
         final Message message = arrayList.get(i);
         LayoutInflater inflater = LayoutInflater.from(context);
-        boolean flag_me = message.sender_id.equals(Utils.cur_user.uid);
+        boolean flag_me = message.sender_id.equals(MyUtils.cur_user.uid);
 
         if (flag_me) {
             view = inflater.inflate(R.layout.cell_chat_right, null);
@@ -91,7 +90,7 @@ public class ChatListAdapter extends BaseAdapter {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case R.id.delete:
-                                if (message.sender_id.equals(Utils.cur_user.uid)) {
+                                if (message.sender_id.equals(MyUtils.cur_user.uid)) {
                                     context.delete_message(message);
                                     Toast.makeText(context, context.getResources().getString(R.string.voice_message_deleted), Toast.LENGTH_SHORT).show();
                                 } else {
@@ -111,7 +110,7 @@ public class ChatListAdapter extends BaseAdapter {
         }
         if (!flag_me && !message.seen) {
             txt_seen.setVisibility(View.VISIBLE);
-            Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("messages").child(message._id).child("seen").setValue(true);
+            MyUtils.mDatabase.child(MyUtils.tbl_chat).child(roomId).child("messages").child(message._id).child("seen").setValue(true);
         }
         txt_message.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -121,7 +120,7 @@ public class ChatListAdapter extends BaseAdapter {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case R.id.copy_text:
-                                Utils.copy_text(context, message.message);
+                                MyUtils.copy_text(context, message.message);
                                 Toast.makeText(context, context.getResources().getString(R.string.message_copied_to_clipboard), Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.share_text:
@@ -132,7 +131,7 @@ public class ChatListAdapter extends BaseAdapter {
                                 context.startActivity(Intent.createChooser(intent, context.getResources().getString(R.string.share_via)));
                                 break;
                             case R.id.delete:
-                                if (message.sender_id.equals(Utils.cur_user.uid)) {
+                                if (message.sender_id.equals(MyUtils.cur_user.uid)) {
                                     context.delete_message(message);
                                     Toast.makeText(context, context.getResources().getString(R.string.message_deleted), Toast.LENGTH_SHORT).show();
                                 } else {
@@ -164,7 +163,7 @@ public class ChatListAdapter extends BaseAdapter {
                                 do_download(message.file);
                                 break;
                             case R.id.copy_url:
-                                Utils.copy_text(context, message.file);
+                                MyUtils.copy_text(context, message.file);
                                 Toast.makeText(context, context.getResources().getString(R.string.image_url_copied_to_clipboard), Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.share_url:
@@ -175,7 +174,7 @@ public class ChatListAdapter extends BaseAdapter {
                                 context.startActivity(Intent.createChooser(intent, context.getResources().getString(R.string.share_via)));
                                 break;
                             case R.id.delete:
-                                if (message.sender_id.equals(Utils.cur_user.uid)) {
+                                if (message.sender_id.equals(MyUtils.cur_user.uid)) {
                                     context.delete_message(message);
                                     Toast.makeText(context, context.getResources().getString(R.string.image_deleted), Toast.LENGTH_SHORT).show();
                                 } else {
@@ -213,15 +212,19 @@ public class ChatListAdapter extends BaseAdapter {
                 setAudioTask.execute(message.file);
             }
         }
-        txt_time.setText(Utils.getTimeString(new Date(message.timestamp)));
-        Utils.mDatabase.child(Utils.tbl_user).child(message.sender_id).addListenerForSingleValueEvent(new ValueEventListener() {
+        txt_time.setText(MyUtils.getTimeString(new Date(message.timestamp)));
+        MyUtils.mDatabase.child(MyUtils.tbl_user).child(message.sender_id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue()!=null) {
                     User user = dataSnapshot.getValue(User.class);
                     if (context != null) {
-                        Glide.with(context).load(user.photo).apply(new RequestOptions()
-                                .placeholder(R.drawable.ic_avatar_white).centerCrop().dontAnimate()).into(img_photo);
+                        try {
+                            Glide.with(context).load(user.photo).apply(new RequestOptions()
+                                    .placeholder(R.drawable.ic_avatar_white).centerCrop().dontAnimate()).into(img_photo);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 

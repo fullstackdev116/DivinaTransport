@@ -21,7 +21,7 @@ import com.ujs.divinatransport.Model.ChatRoom;
 import com.ujs.divinatransport.Model.Message;
 import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,7 +54,7 @@ public class MessageListAdapter extends BaseAdapter {
     public View getView(final int i, View view, ViewGroup viewGroup) {
         final ChatRoom chatRoom = arrayList.get(i);
         Message message = chatRoom.messages.get(chatRoom.messages.size()-1);
-        String user_id = Utils.getChatUserId(chatRoom._id);
+        String user_id = MyUtils.getChatUserId(chatRoom._id);
 
         if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(activity);
@@ -78,11 +78,11 @@ public class MessageListAdapter extends BaseAdapter {
 //                txt_message.setTextColor(Color.parseColor("#A55510"));
 //            }
 //        }
-        if (message.receiver_id.equals(Utils.cur_user.uid) && !message.seen) {
+        if (message.receiver_id.equals(MyUtils.cur_user.uid) && !message.seen) {
             txt_message.setTextColor(Color.parseColor("#A55510"));
         }
-        txt_time.setText(Utils.getTimeString(new Date(message.timestamp)));
-        Utils.mDatabase.child(Utils.tbl_user).child(user_id).addValueEventListener(new ValueEventListener() {
+        txt_time.setText(MyUtils.getTimeString(new Date(message.timestamp)));
+        MyUtils.mDatabase.child(MyUtils.tbl_user).child(user_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue()!=null) {

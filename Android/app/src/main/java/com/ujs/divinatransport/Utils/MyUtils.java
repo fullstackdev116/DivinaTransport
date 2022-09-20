@@ -25,18 +25,15 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
-import androidx.fragment.app.Fragment;
 
 import com.arsy.maps_library.MapRipple;
 import com.firebase.geofire.GeoFire;
@@ -53,35 +50,19 @@ import com.ujs.divinatransport.MainActivityCustomer;
 import com.ujs.divinatransport.MainActivityDriver;
 import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.directionhelpers.TaskLoadedCallback;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Utils {
+public class MyUtils {
     public static String fbServerKey = "AAAAELRrj3c:APA91bEIkxYtkwb1iS3zjmJmsh9YBF2HYL4dqoxU1gh5h30q8dNl4pdRznMuH9aYfPhuRye1IM5IldM6OlMzUYMTiCjsxvoXiNxw0By7RJcz_MtJdIHaX75836tklpel6qXkYeQyz2yp";
 
     public static FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -106,8 +87,8 @@ public class Utils {
     public static String storage_chat = "chat/";
     public static String storage_driving_license = "driving_license/";
 
-    public static GeoFire geo_passenger = new GeoFire(Utils.mDatabase.child(Utils.tbl_geo_passenger));
-    public static GeoFire geo_driver = new GeoFire(Utils.mDatabase.child(Utils.tbl_geo_driver));
+    public static GeoFire geo_passenger = new GeoFire(MyUtils.mDatabase.child(MyUtils.tbl_geo_passenger));
+    public static GeoFire geo_driver = new GeoFire(MyUtils.mDatabase.child(MyUtils.tbl_geo_driver));
 
     public static LatLng basePos = new LatLng(5.3941, -3.9716);
     public static int RIDE_STEP0 = 0, RIDE_STEP1 = 1, RIDE_STEP2 = 2, RIDE_STEP3 = 3, RIDE_STEP4 = 4;
@@ -146,8 +127,8 @@ public class Utils {
 //        mapRipple.withNumberOfRipples(3);
 //        mapRipple.withFillColor(color);
         mapRipple.withStrokeColor(color);
-        mapRipple.withStrokewidth(50);      // 10dp
-        mapRipple.withDistance(Utils.geo_radius);
+        mapRipple.withStrokewidth(10);      // 10dp
+        mapRipple.withDistance(MyUtils.geo_radius);
 //        mapRipple.withRippleDuration(12000);    //12000ms
 //        mapRipple.withTransparency(0.5f);
         mapRipple.startRippleMapAnimation();
@@ -164,7 +145,7 @@ public class Utils {
     public static void sendNotification(Context context, String title, String body, Map<String, String> data, String userType) {
         Bitmap icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_my_taxi);
         Intent intent;
-        if (userType.equals(Utils.DRIVER)) {
+        if (userType.equals(MyUtils.DRIVER)) {
             intent = new Intent(context, MainActivityDriver.class);
         } else {
             intent = new Intent(context, MainActivityCustomer.class);
@@ -226,11 +207,11 @@ public class Utils {
     }
     public static String getChatUserId(String roomId) {
         String user_id;
-        int index = roomId.indexOf(Utils.cur_user.uid);
+        int index = roomId.indexOf(MyUtils.cur_user.uid);
         if (index == 0) {
-            user_id = roomId.substring(Utils.cur_user.uid.length());
+            user_id = roomId.substring(MyUtils.cur_user.uid.length());
         } else {
-            user_id = roomId.substring(0, roomId.length()-Utils.cur_user.uid.length());
+            user_id = roomId.substring(0, roomId.length()- MyUtils.cur_user.uid.length());
         }
         return user_id;
     }

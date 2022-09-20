@@ -6,7 +6,6 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -53,14 +52,12 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.ujs.divinatransport.App;
-import com.ujs.divinatransport.MainActivityCustomer;
 import com.ujs.divinatransport.MainActivityDriver;
 import com.ujs.divinatransport.Model.Car;
 import com.ujs.divinatransport.Model.Ride;
 import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.SignupActivityDriver;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 import com.ujs.divinatransport.idcamera.utils.PermissionUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -138,16 +135,16 @@ public class Fragment_driver_profile extends Fragment {
         return v;
     }
     void loadProfile() {
-        txt_email.setText(Utils.cur_user.email);
-        txt_phone.setText("+" + Utils.cur_user.phone);
-        txt_name.setText(Utils.cur_user.name);
-        rate.setRating(Utils.cur_user.rate);
-        txt_rate.setText(String.valueOf(Utils.cur_user.rate));
-        txt_points.setText(String.valueOf(Utils.cur_user.point));
-        Glide.with(activity).load(Utils.cur_user.photo).apply(new RequestOptions().override(150, 150)
+        txt_email.setText(MyUtils.cur_user.email);
+        txt_phone.setText("+" + MyUtils.cur_user.phone);
+        txt_name.setText(MyUtils.cur_user.name);
+        rate.setRating(MyUtils.cur_user.rate);
+        txt_rate.setText(String.valueOf(MyUtils.cur_user.rate));
+        txt_points.setText(String.valueOf(MyUtils.cur_user.point));
+        Glide.with(activity).load(MyUtils.cur_user.photo).apply(new RequestOptions().override(150, 150)
                 .placeholder(R.drawable.ic_avatar_white).fitCenter()).into(img_photo);
 
-        Utils.mDatabase.child(Utils.tbl_ride_reject).orderByChild("driver_id").equalTo(Utils.cur_user.uid)
+        MyUtils.mDatabase.child(MyUtils.tbl_ride_reject).orderByChild("driver_id").equalTo(MyUtils.cur_user.uid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -167,7 +164,7 @@ public class Fragment_driver_profile extends Fragment {
                 });
 
         arrayList.clear();
-        Utils.mDatabase.child(Utils.tbl_history).orderByChild("driver_id").equalTo(Utils.cur_user.uid)
+        MyUtils.mDatabase.child(MyUtils.tbl_history).orderByChild("driver_id").equalTo(MyUtils.cur_user.uid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -191,7 +188,7 @@ public class Fragment_driver_profile extends Fragment {
                     }
                 });
 
-        Utils.mDatabase.child(Utils.tbl_car).orderByChild("uid").equalTo(Utils.cur_user.uid)
+        MyUtils.mDatabase.child(MyUtils.tbl_car).orderByChild("uid").equalTo(MyUtils.cur_user.uid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -199,8 +196,8 @@ public class Fragment_driver_profile extends Fragment {
                             for(DataSnapshot datas: dataSnapshot.getChildren()){
                                 Car car = datas.getValue(Car.class);
                                 car._id = datas.getKey();
-                                int index = Arrays.asList(Utils.carNames).indexOf(car.type);
-                                Glide.with(activity).load(Utils.carTypes[index]).apply(new RequestOptions().placeholder(R.drawable.ic_car2).fitCenter()).into(img_carType);
+                                int index = Arrays.asList(MyUtils.carNames).indexOf(car.type);
+                                Glide.with(activity).load(MyUtils.carTypes[index]).apply(new RequestOptions().placeholder(R.drawable.ic_car2).fitCenter()).into(img_carType);
                             }
                         } else {
 
@@ -215,7 +212,7 @@ public class Fragment_driver_profile extends Fragment {
                 });
 
         activity.showProgress();
-        Utils.mDatabase.child(Utils.tbl_order).orderByChild("driver_id").equalTo(Utils.cur_user.uid)
+        MyUtils.mDatabase.child(MyUtils.tbl_order).orderByChild("driver_id").equalTo(MyUtils.cur_user.uid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -250,7 +247,7 @@ public class Fragment_driver_profile extends Fragment {
                     RatingBar rate = view.findViewById(R.id.rate);
                     rate.setRating(ride.rate);
                     TextView txt_name = view.findViewById(R.id.txt_name);
-                    Utils.mDatabase.child(Utils.tbl_user).child(ride.passenger_id)
+                    MyUtils.mDatabase.child(MyUtils.tbl_user).child(ride.passenger_id)
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -270,7 +267,7 @@ public class Fragment_driver_profile extends Fragment {
                     TextView txt_rate = view.findViewById(R.id.txt_rate);
                     txt_rate.setText(String.valueOf(ride.rate));
                     TextView txt_date = view.findViewById(R.id.txt_date);
-                    txt_date.setText(Utils.getDateString(ride.date));
+                    txt_date.setText(MyUtils.getDateString(ride.date));
                     ly_feedback.addView(view);
                 }
             }
@@ -289,9 +286,9 @@ public class Fragment_driver_profile extends Fragment {
                 displayChoiceDialog();
             }
         });
-        edit_name.setText(Utils.cur_user.name);
-        edit_email.setText(Utils.cur_user.email);
-        Glide.with(activity).load(Utils.cur_user.photo).apply(new RequestOptions().override(150, 150).placeholder(R.drawable.ic_avatar).centerInside()).into(img_photo1);
+        edit_name.setText(MyUtils.cur_user.name);
+        edit_email.setText(MyUtils.cur_user.email);
+        Glide.with(activity).load(MyUtils.cur_user.photo).apply(new RequestOptions().override(150, 150).placeholder(R.drawable.ic_avatar).centerInside()).into(img_photo1);
         ImageButton btn_close = view.findViewById(R.id.btn_close);
         btn_close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -306,19 +303,19 @@ public class Fragment_driver_profile extends Fragment {
                 name = edit_name.getText().toString().trim();
                 email = edit_email.getText().toString().trim();
                 if (user_photo == null && name.length()*email.length() == 0) {
-                    Utils.showAlert(activity, getResources().getString(R.string.warning), getResources().getString(R.string.please_fill_in_blank_field));
+                    MyUtils.showAlert(activity, getResources().getString(R.string.warning), getResources().getString(R.string.please_fill_in_blank_field));
                     return;
                 }
-                if (!Utils.isValidEmail(email)) {
-                    Utils.showAlert(activity, getResources().getString(R.string.warning), getResources().getString(R.string.invalid_email));
+                if (!MyUtils.isValidEmail(email)) {
+                    MyUtils.showAlert(activity, getResources().getString(R.string.warning), getResources().getString(R.string.invalid_email));
                     return;
                 }
                 App.hideKeyboard(activity);
                 if (user_photo == null) {
-                    Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("name").setValue(name);
-                    Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("email").setValue(email);
-                    Utils.cur_user.name = name;
-                    Utils.cur_user.email = email;
+                    MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).child("name").setValue(name);
+                    MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).child("email").setValue(email);
+                    MyUtils.cur_user.name = name;
+                    MyUtils.cur_user.email = email;
                     activity.setProfile();
                     loadProfile();
                     Snackbar.make(activity.parentLayout, getResources().getString(R.string.user_updated_successfully), 3000).show();
@@ -340,7 +337,7 @@ public class Fragment_driver_profile extends Fragment {
                 .build();
         Long tsLong = System.currentTimeMillis();
         String ts = tsLong.toString();
-        final StorageReference file_refer = Utils.mStorage.child(Utils.storage_user+ts);
+        final StorageReference file_refer = MyUtils.mStorage.child(MyUtils.storage_user+ts);
         file_refer.putFile(user_photo, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -349,15 +346,15 @@ public class Fragment_driver_profile extends Fragment {
                     public void onSuccess(Uri uri) {
                         activity.dismissProgress();
                         String downloadUrl = uri.toString();
-                        Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("photo").setValue(downloadUrl);
-                        Utils.cur_user.photo = downloadUrl;
+                        MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).child("photo").setValue(downloadUrl);
+                        MyUtils.cur_user.photo = downloadUrl;
                         if (name.length() > 0) {
-                            Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("name").setValue(name);
-                            Utils.cur_user.name = name;
+                            MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).child("name").setValue(name);
+                            MyUtils.cur_user.name = name;
                         }
                         if (email.length() > 0) {
-                            Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("email").setValue(email);
-                            Utils.cur_user.email = email;
+                            MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).child("email").setValue(email);
+                            MyUtils.cur_user.email = email;
                         }
                         activity.setProfile();
                         loadProfile();

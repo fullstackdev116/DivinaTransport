@@ -35,7 +35,6 @@ import androidx.lifecycle.OnLifecycleEvent;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -43,9 +42,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 import com.ujs.divinatransport.Model.Message;
-import com.ujs.divinatransport.Model.Ride;
 import com.ujs.divinatransport.Model.User;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 import com.ujs.divinatransport.service.NotificationCallbackCustomer;
 import com.ujs.divinatransport.service.NotificationCallbackDriver;
 
@@ -75,8 +73,11 @@ public class App extends Application {
     public static String MY_IMAGE_PATH = "";
     public static String MY_AUDIO_PATH = "";
     public static String ediapayUrl = "https://api.ediapay.com/api/";
-    public static String ediaMerchantId = "123456";
-    public static String ediaMobile = "22522440251";
+    public static String rezomobiUrl = "https://api.rezo.mobi/api/";
+    public static String ediaMerchantId = "4517";
+    public static String ediaMobile_MNT = "2250564906603";
+    public static String ediaMobile_ORANGE = "2250564906603";
+    public static String ediaMobile_MOOV = "2250101019014";
     public static String ediaSMSUrl = "https://smpp1.valorisetelecom.com/api/api_http.php";
     public static String NewMessage = "NewMessage";
     public static String NewRide = "NewRide";
@@ -92,7 +93,7 @@ public class App extends Application {
         getFCMToken();
     }
     public static void goToChatPage(final Context context, final String user_id) {
-        String myUid = Utils.cur_user.uid;
+        String myUid = MyUtils.cur_user.uid;
         final String roomId;
         int compare = myUid.compareTo(user_id);
         final String user1, user2;
@@ -105,13 +106,13 @@ public class App extends Application {
         }
         roomId = user1 + user2;
 
-        Utils.mDatabase.child(Utils.tbl_chat).child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+        MyUtils.mDatabase.child(MyUtils.tbl_chat).child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() == null) {
-                    Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("messages").push().setValue(new Message());
-                    Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("isTyping").child(user1).setValue(false);
-                    Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("isTyping").child(user2).setValue(false);
+                    MyUtils.mDatabase.child(MyUtils.tbl_chat).child(roomId).child("messages").push().setValue(new Message());
+                    MyUtils.mDatabase.child(MyUtils.tbl_chat).child(roomId).child("isTyping").child(user1).setValue(false);
+                    MyUtils.mDatabase.child(MyUtils.tbl_chat).child(roomId).child("isTyping").child(user2).setValue(false);
                 }
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("roomId", roomId);
@@ -129,55 +130,55 @@ public class App extends Application {
 
     public static void goToMainPage(final Activity activity, ProgressDialog progressDialog) {
         //get user info into model
-        if (Utils.auth == null) return;
-        Utils.mUser = Utils.auth.getCurrentUser();
-        String phone_num = Utils.mUser.getPhoneNumber();
+        if (MyUtils.auth == null) return;
+        MyUtils.mUser = MyUtils.auth.getCurrentUser();
+        String phone_num = MyUtils.mUser.getPhoneNumber();
         if (phone_num.length() == 0) {
-            Utils.FirebaseLogout();
+            MyUtils.FirebaseLogout();
             progressDialog.dismiss();
             return;
         }
         phone_num = phone_num.substring(1);
-        Utils.mDatabase.child(Utils.tbl_user).orderByChild(Utils.PHONE).equalTo(phone_num)
+        MyUtils.mDatabase.child(MyUtils.tbl_user).orderByChild(MyUtils.PHONE).equalTo(phone_num)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.getValue() != null) {
                             progressDialog.dismiss();
                             for(DataSnapshot datas: dataSnapshot.getChildren()){
-                                Utils.cur_user = datas.getValue(User.class);
-                                Utils.cur_user.uid = datas.getKey();
+                                MyUtils.cur_user = datas.getValue(User.class);
+                                MyUtils.cur_user.uid = datas.getKey();
 
                                 setStatus(1);
 //token update
-                                String token = Utils.getDeviceToken(activity);
-                                Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("token").setValue(token);
+                                String token = MyUtils.getDeviceToken(activity);
+                                MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).child("token").setValue(token);
 
-                                if (Utils.cur_user.type.equals(Utils.DRIVER)) {
-                                    if (Utils.cur_user.state == 0) { // missing signup license
+                                if (MyUtils.cur_user.type.equals(MyUtils.DRIVER)) {
+                                    if (MyUtils.cur_user.state == 0) { // missing signup license
                                         Intent myIntent = new Intent(activity, SignupActivityDriver.class);
                                         myIntent.putExtra("index_step", 2);
                                         activity.startActivity(myIntent);
-                                    } else if (Utils.cur_user.state == 1) { // missing car info
+                                    } else if (MyUtils.cur_user.state == 1) { // missing car info
                                         Intent myIntent = new Intent(activity, SignupActivityDriver.class);
                                         myIntent.putExtra("index_step", 3);
                                         activity.startActivity(myIntent);
-                                    } else if (Utils.cur_user.state == 2) { // disabled
-                                        Utils.FirebaseLogout();
-                                        Utils.showAlert(activity, activity.getResources().getString(R.string.warning), activity.getResources().getString(R.string.please_wait_admin_enable_login));
+                                    } else if (MyUtils.cur_user.state == 2) { // disabled
+                                        MyUtils.FirebaseLogout();
+                                        MyUtils.showAlert(activity, activity.getResources().getString(R.string.warning), activity.getResources().getString(R.string.please_wait_admin_enable_login));
                                     } else {  // enabled
                                         Intent myIntent = new Intent(activity, MainActivityDriver.class);
                                         activity.startActivity(myIntent);
                                         activity.finishAffinity();
                                     }
-                                } else if (Utils.cur_user.type.equals(Utils.PASSENGER)) {
+                                } else if (MyUtils.cur_user.type.equals(MyUtils.PASSENGER)) {
                                     Intent myIntent = new Intent(activity, MainActivityCustomer.class);
                                     activity.startActivity(myIntent);
                                     activity.finishAffinity();
                                 }
                             }
                         } else { // go to signup intro
-                            Utils.FirebaseLogout();
+                            MyUtils.FirebaseLogout();
                             progressDialog.dismiss();
                         }
                     }
@@ -241,7 +242,7 @@ public class App extends Application {
         Request request = new Request.Builder()
                 .url(FCM_MESSAGE_URL)
                 .post(body)
-                .addHeader("Authorization", "key=" + Utils.fbServerKey)
+                .addHeader("Authorization", "key=" + MyUtils.fbServerKey)
                 .build();
         OkHttpClient mClient = new OkHttpClient();
         Response response = mClient.newCall(request).execute();
@@ -277,9 +278,9 @@ public class App extends Application {
         setStatus(1);
     }
     public static void setStatus(int status) {
-        if (Utils.cur_user != null) {
-            Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("status").setValue(status);
-            Utils.cur_user.status = status;
+        if (MyUtils.cur_user != null) {
+            MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).child("status").setValue(status);
+            MyUtils.cur_user.status = status;
         }
     }
     @Override
@@ -382,14 +383,14 @@ public class App extends Application {
         activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
-    public static void DialNumber(String number, Context context)
+    public static void dialNumber(String number, Context context)
     {
         try {
             Intent intent = new Intent(Intent.ACTION_CALL);
-//            intent.setData(Uri.parse("tel:" + number));
-            Uri uri = ussdToCallableUri(number);
-            intent.setData(uri);
-//            context.startActivity(intent);
+            intent.setData(Uri.parse("tel:" + number));
+//            Uri uri = ussdToCallableUri(number);
+//            intent.setData(uri);
+            context.startActivity(intent);
         } catch (SecurityException e) {
             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT);
         }

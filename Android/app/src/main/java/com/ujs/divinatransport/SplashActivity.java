@@ -1,7 +1,5 @@
 package com.ujs.divinatransport;
 
-import static com.ujs.divinatransport.App.RunAnimation;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,7 +14,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,14 +26,10 @@ import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.hbb20.CountryCodePicker;
 import com.jkb.vcedittext.VerificationAction;
 import com.jkb.vcedittext.VerificationCodeEditText;
-import com.ujs.divinatransport.Model.User;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -70,7 +63,7 @@ public class SplashActivity extends AppCompatActivity {
 //                RunAnimation(findViewById(R.id.ly_bottom), AnimationUtils.loadAnimation(SplashActivity.this, R.anim.fade1));
 //                RunAnimation(findViewById(R.id.txt_doyouknow), AnimationUtils.loadAnimation(SplashActivity.this, R.anim.translate));
 
-                if (Utils.mUser != null) {
+                if (MyUtils.mUser != null) {
                     progressDialog.show();
                     App.goToMainPage(SplashActivity.this, progressDialog);
                 }
@@ -116,7 +109,7 @@ public class SplashActivity extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!Utils.isEmptyEditText(edit_phone)) {
+                if (!MyUtils.isEmptyEditText(edit_phone)) {
                     country_code = txt_countryCode.getSelectedCountryCode();
                     number = edit_phone.getText().toString().trim();
                     number = number.replace(" ", "");
@@ -158,7 +151,7 @@ public class SplashActivity extends AppCompatActivity {
             public void onVerificationFailed(FirebaseException e) {
                 progressDialog.dismiss();
                 Log.d("msg", e.getLocalizedMessage());
-                Utils.showAlert(SplashActivity.this, getResources().getString(R.string.error), e.getMessage());
+                MyUtils.showAlert(SplashActivity.this, getResources().getString(R.string.error), e.getMessage());
             }
 
             @Override
@@ -252,7 +245,7 @@ public class SplashActivity extends AppCompatActivity {
     public void signInWithPhone(PhoneAuthCredential credential)
     {
         progressDialog.show();
-        Utils.auth.signInWithCredential(credential)
+        MyUtils.auth.signInWithCredential(credential)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {

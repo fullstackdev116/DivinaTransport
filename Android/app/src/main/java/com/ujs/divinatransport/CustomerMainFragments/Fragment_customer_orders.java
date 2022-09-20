@@ -20,15 +20,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.ujs.divinatransport.Adapter.CustomerOrderListAdapter;
 import com.ujs.divinatransport.MainActivityCustomer;
-import com.ujs.divinatransport.Model.Car;
 import com.ujs.divinatransport.Model.Ride;
 import com.ujs.divinatransport.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -41,12 +38,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 import com.ujs.divinatransport.directionhelpers.FetchURL;
 import com.ujs.divinatransport.directionhelpers.TaskLoadedCallback;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -95,7 +91,7 @@ public class Fragment_customer_orders extends Fragment implements OnMapReadyCall
     public void getOrders() {
         arrayList.clear();
         activity.showProgress();
-        Utils.mDatabase.child(Utils.tbl_order).orderByChild("passenger_id").equalTo(Utils.cur_user.uid)
+        MyUtils.mDatabase.child(MyUtils.tbl_order).orderByChild("passenger_id").equalTo(MyUtils.cur_user.uid)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -108,7 +104,7 @@ public class Fragment_customer_orders extends Fragment implements OnMapReadyCall
                                 Ride ride = datas.getValue(Ride.class);
                                 ride._id = datas.getKey();
                                 if (today.after(ride.date)) {
-                                    Utils.mDatabase.child(Utils.tbl_order).child(ride._id).setValue(null);
+                                    MyUtils.mDatabase.child(MyUtils.tbl_order).child(ride._id).setValue(null);
                                 } else {
                                     arrayList.add(ride);
                                 }
@@ -188,8 +184,8 @@ public class Fragment_customer_orders extends Fragment implements OnMapReadyCall
         }
         polyline = mMap.addPolyline((PolylineOptions) values[0]);
         // go to step1
-        txt_distance.setText(Utils.getDistanceStr(distanceVal));
-        txt_duration.setText(Utils.getDurationStr(durationVal));
+        txt_distance.setText(MyUtils.getDistanceStr(distanceVal));
+        txt_duration.setText(MyUtils.getDurationStr(durationVal));
         ly_detail.setVisibility(View.VISIBLE);
     }
 
@@ -212,7 +208,7 @@ public class Fragment_customer_orders extends Fragment implements OnMapReadyCall
                 .position(toLatLan)
                 .title(ride.to_address).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(fromLatLan, 16));
-        new FetchURL(activity, Fragment_customer_orders.this).execute(Utils.getDirectionUrl(fromLatLan, toLatLan, "driving", activity), "driving");
+        new FetchURL(activity, Fragment_customer_orders.this).execute(MyUtils.getDirectionUrl(fromLatLan, toLatLan, "driving", activity), "driving");
         Toast.makeText(activity, "Loading route..", Toast.LENGTH_LONG).show();
     }
     public void closeBottomView() {

@@ -1,7 +1,9 @@
 package com.ujs.divinatransport.Adapter;
 
+import static android.Manifest.permission.CALL_PHONE;
+
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +16,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -21,21 +25,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.ujs.divinatransport.App;
-import com.ujs.divinatransport.CustomerMainFragments.Fragment_customer_orders;
 import com.ujs.divinatransport.DriverMainFragments.Fragment_driver_orders;
-import com.ujs.divinatransport.MainActivityCustomer;
 import com.ujs.divinatransport.MainActivityDriver;
 import com.ujs.divinatransport.Model.Ride;
 import com.ujs.divinatransport.Model.RideReject;
 import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.Utils.Utils;
-import com.ujs.divinatransport.service.AlarmBroadcast;
+import com.ujs.divinatransport.Utils.MyUtils;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -78,11 +77,12 @@ public class DriverOrderListAdapter extends BaseAdapter {
         TextView txt_phone = view.findViewById(R.id.txt_phone);
         TextView txt_name = view.findViewById(R.id.txt_name);
         CircleImageView img_photo = view.findViewById(R.id.img_photo);
-        txt_date.setText(Utils.getDateString(ride.date));
+        txt_date.setText(MyUtils.getDateString(ride.date));
         txt_start.setText(ride.from_address);
         txt_target.setText(ride.to_address);
+        ImageButton btn_call = view.findViewById(R.id.btn_call);
 
-        Utils.mDatabase.child(Utils.tbl_user).child(ride.passenger_id)
+        MyUtils.mDatabase.child(MyUtils.tbl_user).child(ride.passenger_id)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -92,6 +92,7 @@ public class DriverOrderListAdapter extends BaseAdapter {
                             Glide.with(activity).load(user.photo).apply(new RequestOptions().placeholder(R.drawable.ic_avatar).centerCrop()).into(img_photo);
                             txt_phone.setText("+"+user.phone);
                             txt_name.setText(user.name);
+                            btn_call.setTag(user.phone);
                         }
                     }
 
@@ -117,7 +118,7 @@ public class DriverOrderListAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 ride.state = 0;
-                Utils.mDatabase.child(Utils.tbl_order).child(ride._id).setValue(ride);
+                MyUtils.mDatabase.child(MyUtils.tbl_order).child(ride._id).setValue(ride);
                 fragment.getOrders();
             }
         });
@@ -139,11 +140,11 @@ public class DriverOrderListAdapter extends BaseAdapter {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                RideReject rideReject = new RideReject("", ride._id, Utils.cur_user.uid, new Date());
-                                String key = Utils.mDatabase.child(Utils.tbl_ride_reject).push().getKey();
-                                Utils.mDatabase.child(Utils.tbl_ride_reject).child(key).setValue(rideReject);
+                                RideReject rideReject = new RideReject("", ride._id, MyUtils.cur_user.uid, new Date());
+                                String key = MyUtils.mDatabase.child(MyUtils.tbl_ride_reject).push().getKey();
+                                MyUtils.mDatabase.child(MyUtils.tbl_ride_reject).child(key).setValue(rideReject);
 
-                                Utils.mDatabase.child(Utils.tbl_order).child(ride._id).setValue(null);
+                                MyUtils.mDatabase.child(MyUtils.tbl_order).child(ride._id).setValue(null);
                                 fragment.getOrders();
                             }
                         }).show();
@@ -162,6 +163,20 @@ public class DriverOrderListAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 App.goToChatPage(activity, ride.passenger_id);
+            }
+        });
+        btn_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(activity, CALL_PHONE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ArrayList<String> arrPermissionRequests = new ArrayList<>();
+                    arrPermissionRequests.add(CALL_PHONE);
+                    ActivityCompat.requestPermissions(activity, arrPermissionRequests.toArray(new String[arrPermissionRequests.size()]), activity.MY_PERMISSION_CALL);
+                } else {
+                    String phone = btn_call.getTag().toString();
+                    App.dialNumber(phone, activity);
+                }
             }
         });
         return view;

@@ -18,7 +18,7 @@ import com.ujs.divinatransport.MainActivityDriver;
 import com.ujs.divinatransport.Model.Ride;
 import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 
 import java.util.ArrayList;
 
@@ -67,7 +67,7 @@ public class HistoryListAdapter extends BaseAdapter {
         RatingBar ratingBar = view.findViewById(R.id.rate);
 
         Ride ride = arrayList.get(i);
-        txt_date.setText(Utils.getDateString(ride.date));
+        txt_date.setText(MyUtils.getDateString(ride.date));
         txt_start.setText(ride.from_address);
         txt_target.setText(ride.to_address);
         if (ride.isSOS) {
@@ -82,7 +82,7 @@ public class HistoryListAdapter extends BaseAdapter {
         }
         txt_review.setText(ride.review);
         ratingBar.setRating(ride.rate);
-        Utils.mDatabase.child(Utils.tbl_user).child(ride.passenger_id)
+        MyUtils.mDatabase.child(MyUtils.tbl_user).child(ride.passenger_id)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {

@@ -28,16 +28,13 @@ import com.bumptech.glide.request.RequestOptions;
 import com.travijuu.numberpicker.library.Enums.ActionEnum;
 import com.travijuu.numberpicker.library.Interface.ValueChangedListener;
 import com.travijuu.numberpicker.library.NumberPicker;
-import com.ujs.divinatransport.MainActivityDriver;
 import com.ujs.divinatransport.R;
 import com.ujs.divinatransport.SignupActivityDriver;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 import com.ujs.divinatransport.idcamera.IDCardCamera;
 import com.ujs.divinatransport.idcamera.utils.FileUtils;
 
 import java.io.FileNotFoundException;
-
-import ca.antonious.materialdaypicker.MaterialDayPicker;
 
 public class Fragment_driver_signup_setcar extends Fragment {
     SignupActivityDriver activity;
@@ -101,9 +98,9 @@ public class Fragment_driver_signup_setcar extends Fragment {
             public void run() {
                 final LayoutInflater inflater = LayoutInflater.from(activity);
                 ly_carType.removeAllViews();
-                for(int n = 0; n < Utils.carTypes.length; n++) {
-                    int drawable = Utils.carTypes[n];
-                    String name = Utils.carNames[n];
+                for(int n = 0; n < MyUtils.carTypes.length; n++) {
+                    int drawable = MyUtils.carTypes[n];
+                    String name = MyUtils.carNames[n];
                     View view = inflater.inflate(R.layout.cell_car_type, null);
                     RelativeLayout ly_cover = view.findViewById(R.id.ly_cover);
                     ImageView img_carType = view.findViewById(R.id.img_carType);

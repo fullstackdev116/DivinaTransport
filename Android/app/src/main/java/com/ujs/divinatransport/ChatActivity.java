@@ -1,14 +1,12 @@
 package com.ujs.divinatransport;
 
 import static android.graphics.Color.WHITE;
-import static android.provider.Settings.System.DATE_FORMAT;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -16,7 +14,6 @@ import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -60,8 +57,7 @@ import com.google.firebase.storage.UploadTask;
 import com.ujs.divinatransport.Adapter.ChatListAdapter;
 import com.ujs.divinatransport.Model.Message;
 import com.ujs.divinatransport.Model.User;
-import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -120,7 +116,7 @@ public class ChatActivity extends BaseActivity {
         img_photo = findViewById(R.id.img_photo);
         ly_status = findViewById(R.id.ly_status);
         roomId = getIntent().getStringExtra("roomId");
-        user_id = Utils.getChatUserId(roomId);
+        user_id = MyUtils.getChatUserId(roomId);
         listView = findViewById(R.id.listView);
         chatListAdapter = new ChatListAdapter(this, arrayList);
         chatListAdapter.roomId = roomId;
@@ -144,12 +140,12 @@ public class ChatActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("isTyping").child(Utils.cur_user.uid).setValue(true);
+                MyUtils.mDatabase.child(MyUtils.tbl_chat).child(roomId).child("isTyping").child(MyUtils.cur_user.uid).setValue(true);
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("isTyping").child(Utils.cur_user.uid).setValue(false);
+                        MyUtils.mDatabase.child(MyUtils.tbl_chat).child(roomId).child("isTyping").child(MyUtils.cur_user.uid).setValue(false);
                     }
                 }, 3000);
             }
@@ -173,10 +169,10 @@ public class ChatActivity extends BaseActivity {
                     if (msg.length() == 0) {
                         return;
                     }
-                    Message message = new Message("", Utils.cur_user.uid, user_id, msg, "", "", System.currentTimeMillis(), false);
-                    Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("messages").push().setValue(message);
+                    Message message = new Message("", MyUtils.cur_user.uid, user_id, msg, "", "", System.currentTimeMillis(), false);
+                    MyUtils.mDatabase.child(MyUtils.tbl_chat).child(roomId).child("messages").push().setValue(message);
                     edit_message.setText("");
-                    App.sendPushMessage(user.token, "Chat from " + Utils.cur_user.name, message.message, "", ChatActivity.this, Utils.PUSH_CHAT, Utils.cur_user.uid, user.type);
+                    App.sendPushMessage(user.token, "Chat from " + MyUtils.cur_user.name, message.message, "", ChatActivity.this, MyUtils.PUSH_CHAT, MyUtils.cur_user.uid, user.type);
                 } else if (btn_send.getTag().equals("record")) {
                     if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ) {
                         ArrayList<String> arrPermissionRequests = new ArrayList<>();
@@ -218,7 +214,7 @@ public class ChatActivity extends BaseActivity {
                 .record();
     }
     void watchTypingEvent() {
-        Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("isTyping").child(user_id).addValueEventListener(new ValueEventListener() {
+        MyUtils.mDatabase.child(MyUtils.tbl_chat).child(roomId).child("isTyping").child(user_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue()!=null) {
@@ -240,7 +236,7 @@ public class ChatActivity extends BaseActivity {
 
     void readMessages() {
         arrayList.clear();
-        Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("messages").addChildEventListener(new ChildEventListener() {
+        MyUtils.mDatabase.child(MyUtils.tbl_chat).child(roomId).child("messages").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -300,7 +296,7 @@ public class ChatActivity extends BaseActivity {
     }
 
     void load_user(String user_id) {
-        Utils.mDatabase.child(Utils.tbl_user).child(user_id).addValueEventListener(new ValueEventListener() {
+        MyUtils.mDatabase.child(MyUtils.tbl_user).child(user_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue()!=null) {
@@ -380,7 +376,7 @@ public class ChatActivity extends BaseActivity {
         }
         Long tsLong = System.currentTimeMillis();
         String ts = tsLong.toString();
-        final StorageReference file_refer = Utils.mStorage.child(Utils.storage_chat+ts);
+        final StorageReference file_refer = MyUtils.mStorage.child(MyUtils.storage_chat+ts);
         // Listen for state changes, errors, and completion of the upload.
         file_refer.putFile(uri, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -391,9 +387,9 @@ public class ChatActivity extends BaseActivity {
                     public void onSuccess(Uri uri) {
                         progressDialog.dismiss();
                         String downloadUrl = uri.toString();
-                        Message message = new Message("", Utils.cur_user.uid, user_id, "", downloadUrl, file_type, System.currentTimeMillis(), false);
-                        Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("messages").push().setValue(message);
-                        App.sendPushMessage(user.token, getResources().getString(R.string.chat_from_) + " " + Utils.cur_user.name, getResources().getString(R.string.file_attached), "",ChatActivity.this, Utils.PUSH_CHAT, Utils.cur_user.uid, user.type);
+                        Message message = new Message("", MyUtils.cur_user.uid, user_id, "", downloadUrl, file_type, System.currentTimeMillis(), false);
+                        MyUtils.mDatabase.child(MyUtils.tbl_chat).child(roomId).child("messages").push().setValue(message);
+                        App.sendPushMessage(user.token, getResources().getString(R.string.chat_from_) + " " + MyUtils.cur_user.name, getResources().getString(R.string.file_attached), "",ChatActivity.this, MyUtils.PUSH_CHAT, MyUtils.cur_user.uid, user.type);
                     }
                 });
             }
@@ -407,7 +403,7 @@ public class ChatActivity extends BaseActivity {
         });
     }
     public void delete_message(Message message) {
-        Utils.mDatabase.child(Utils.tbl_chat).child(roomId).child("messages").child(message._id).setValue(null);
+        MyUtils.mDatabase.child(MyUtils.tbl_chat).child(roomId).child("messages").child(message._id).setValue(null);
     }
     @Override
     public boolean onSupportNavigateUp() {

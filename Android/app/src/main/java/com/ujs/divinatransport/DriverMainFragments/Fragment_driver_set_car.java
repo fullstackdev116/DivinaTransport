@@ -7,9 +7,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,21 +36,15 @@ import com.travijuu.numberpicker.library.Enums.ActionEnum;
 import com.travijuu.numberpicker.library.Interface.ValueChangedListener;
 import com.travijuu.numberpicker.library.NumberPicker;
 import com.ujs.divinatransport.App;
-import com.ujs.divinatransport.DriverSignupFragments.Fragment_driver_signup_license;
-import com.ujs.divinatransport.MainActivityCustomer;
 import com.ujs.divinatransport.MainActivityDriver;
 import com.ujs.divinatransport.Model.Car;
-import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.SignupActivityDriver;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 import com.ujs.divinatransport.idcamera.IDCardCamera;
 import com.ujs.divinatransport.idcamera.utils.FileUtils;
 
 import java.io.FileNotFoundException;
 import java.util.Arrays;
-
-import ca.antonious.materialdaypicker.MaterialDayPicker;
 
 public class Fragment_driver_set_car extends Fragment {
     MainActivityDriver activity;
@@ -97,7 +89,7 @@ public class Fragment_driver_set_car extends Fragment {
             @Override
             public void onClick(View v) {
                 if (edit_price.getText().toString().trim().length() == 0) {
-                    Utils.showAlert(getContext(), getResources().getString(R.string.warning), getResources().getString(R.string.please_fill_in_blank_field));
+                    MyUtils.showAlert(getContext(), getResources().getString(R.string.warning), getResources().getString(R.string.please_fill_in_blank_field));
                     return;
                 }
                 App.hideKeyboard(activity);
@@ -113,7 +105,7 @@ public class Fragment_driver_set_car extends Fragment {
                             .build();
                     Long tsLong = System.currentTimeMillis();
                     String ts = tsLong.toString();
-                    final StorageReference file_refer = Utils.mStorage.child(Utils.storage_car+ts);
+                    final StorageReference file_refer = MyUtils.mStorage.child(MyUtils.storage_car+ts);
                     file_refer.putFile(car_photo, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -123,7 +115,7 @@ public class Fragment_driver_set_car extends Fragment {
                                     activity.dismissProgress();
                                     String downloadUrl = uri.toString();
                                     car.photo = downloadUrl;
-                                    Utils.mDatabase.child(Utils.tbl_car).child(car._id).setValue(car);
+                                    MyUtils.mDatabase.child(MyUtils.tbl_car).child(car._id).setValue(car);
 
                                 }
                             });
@@ -131,14 +123,14 @@ public class Fragment_driver_set_car extends Fragment {
 
                     });
                 } else {
-                    Utils.mDatabase.child(Utils.tbl_car).child(car._id).setValue(car);
+                    MyUtils.mDatabase.child(MyUtils.tbl_car).child(car._id).setValue(car);
                 }
                 Snackbar.make(activity.parentLayout, getResources().getString(R.string.car_updated_successfully), 3000).show();
             }
         });
 
         activity.showProgress();
-        Utils.mDatabase.child(Utils.tbl_car).orderByChild("uid").equalTo(Utils.cur_user.uid)
+        MyUtils.mDatabase.child(MyUtils.tbl_car).orderByChild("uid").equalTo(MyUtils.cur_user.uid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -148,9 +140,9 @@ public class Fragment_driver_set_car extends Fragment {
                                 car = datas.getValue(Car.class);
                                 car._id = datas.getKey();
                                 Glide.with(activity).load(car.photo).apply(new RequestOptions().placeholder(R.drawable.ic_car2).centerCrop()).into(img_car);
-                                int index = Arrays.asList(Utils.carNames).indexOf(car.type);
+                                int index = Arrays.asList(MyUtils.carNames).indexOf(car.type);
                                 cv_carTyppe.setVisibility(View.VISIBLE);
-                                Glide.with(activity).load(Utils.carTypes[index]).apply(new RequestOptions().placeholder(R.drawable.ic_car2).fitCenter()).into(img_carType);
+                                Glide.with(activity).load(MyUtils.carTypes[index]).apply(new RequestOptions().placeholder(R.drawable.ic_car2).fitCenter()).into(img_carType);
 
                                 txt_carName.setText(car.type);
                                 numberPicker.setValue(car.seats);
@@ -180,9 +172,9 @@ public class Fragment_driver_set_car extends Fragment {
             public void run() {
                 final LayoutInflater inflater = LayoutInflater.from(activity);
                 ly_carType.removeAllViews();
-                for(int n = 0; n < Utils.carTypes.length; n++) {
-                    int drawable = Utils.carTypes[n];
-                    String name = Utils.carNames[n];
+                for(int n = 0; n < MyUtils.carTypes.length; n++) {
+                    int drawable = MyUtils.carTypes[n];
+                    String name = MyUtils.carNames[n];
                     View view = inflater.inflate(R.layout.cell_car_type, null);
                     RelativeLayout ly_cover = view.findViewById(R.id.ly_cover);
                     ImageView img_carType = view.findViewById(R.id.img_carType);

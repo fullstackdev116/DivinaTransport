@@ -74,12 +74,6 @@
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Orange Mobile Money WebPay (HTTP)"
-                android:tag="1"
-                />
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:text="Orange Mobile Money (SMS and USSD)"
                 android:tag="6"
                 />
@@ -87,23 +81,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Moov Mobile Money (SMS and USSD)"
-                android:tag="6"
-                />
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="PayDunya"
-                android:tag="2"
-                />
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="BICI"
-                android:tag="3"
+                android:tag="7"
                 />
 
         </RadioGroup>
-
+        <TextView
+            android:id="@+id/txt_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Payment process is queued. Please check your SMS or USSD message with payment request details"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/red"
+            android:visibility="gone"
+            />
         <Button
             android:id="@+id/btn_pay"
             android:layout_width="match_parent"
@@ -113,6 +104,7 @@
             android:layout_marginBottom="35dp"
             android:background="@drawable/round_frame"
             android:text="Pay" />
+
     </LinearLayout>
 
     <ImageButton

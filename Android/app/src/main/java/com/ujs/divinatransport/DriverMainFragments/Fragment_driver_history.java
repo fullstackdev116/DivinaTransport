@@ -15,17 +15,15 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.ujs.divinatransport.Adapter.DriverOrderListAdapter;
 import com.ujs.divinatransport.Adapter.HistoryListAdapter;
 import com.ujs.divinatransport.MainActivityDriver;
 import com.ujs.divinatransport.Model.Ride;
 import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 
 public class Fragment_driver_history extends Fragment {
     ListView listView;
@@ -45,7 +43,7 @@ public class Fragment_driver_history extends Fragment {
     }
     public void getHistory() {
         activity.showProgress();
-        Utils.mDatabase.child(Utils.tbl_history).orderByChild("driver_id").equalTo(Utils.cur_user.uid)
+        MyUtils.mDatabase.child(MyUtils.tbl_history).orderByChild("driver_id").equalTo(MyUtils.cur_user.uid)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {

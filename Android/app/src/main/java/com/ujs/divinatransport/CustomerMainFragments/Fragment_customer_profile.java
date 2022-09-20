@@ -42,12 +42,9 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.ujs.divinatransport.App;
-import com.ujs.divinatransport.DriverSignupFragments.Fragment_driver_signup_license;
 import com.ujs.divinatransport.MainActivityCustomer;
-import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.SignupActivityDriver;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 import com.ujs.divinatransport.idcamera.utils.PermissionUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -102,13 +99,13 @@ public class Fragment_customer_profile extends Fragment {
             public void onClick(View v) {
                 name = edit_name.getText().toString().trim();
                 if (user_photo == null && name.length() == 0) {
-                    Utils.showAlert(activity, getResources().getString(R.string.warning), getResources().getString(R.string.please_fill_in_blank_field));
+                    MyUtils.showAlert(activity, getResources().getString(R.string.warning), getResources().getString(R.string.please_fill_in_blank_field));
                     return;
                 }
                 App.hideKeyboard(activity);
                 if (user_photo == null) {
-                    Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("name").setValue(name);
-                    Utils.cur_user.name = name;
+                    MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).child("name").setValue(name);
+                    MyUtils.cur_user.name = name;
                     activity.setProfile();
                     Snackbar.make(activity.parentLayout, getResources().getString(R.string.user_updated_successfully), 3000).show();
                 } else {
@@ -132,7 +129,7 @@ public class Fragment_customer_profile extends Fragment {
                 .build();
         Long tsLong = System.currentTimeMillis();
         String ts = tsLong.toString();
-        final StorageReference file_refer = Utils.mStorage.child(Utils.storage_user+ts);
+        final StorageReference file_refer = MyUtils.mStorage.child(MyUtils.storage_user+ts);
         file_refer.putFile(user_photo, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -141,11 +138,11 @@ public class Fragment_customer_profile extends Fragment {
                     public void onSuccess(Uri uri) {
                         activity.dismissProgress();
                         String downloadUrl = uri.toString();
-                        Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("photo").setValue(downloadUrl);
-                        Utils.cur_user.photo = downloadUrl;
+                        MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).child("photo").setValue(downloadUrl);
+                        MyUtils.cur_user.photo = downloadUrl;
                         if (name.length() > 0) {
-                            Utils.mDatabase.child(Utils.tbl_user).child(Utils.cur_user.uid).child("name").setValue(name);
-                            Utils.cur_user.name = name;
+                            MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).child("name").setValue(name);
+                            MyUtils.cur_user.name = name;
                         }
                         activity.setProfile();
                         Snackbar.make(activity.parentLayout, getResources().getString(R.string.user_updated_successfully), 3000).show();
@@ -156,9 +153,9 @@ public class Fragment_customer_profile extends Fragment {
         });
     }
     void loadProfile() {
-        txt_phone.setText("+" + Utils.cur_user.phone);
-        edit_name.setText(Utils.cur_user.name);
-        Glide.with(activity).load(Utils.cur_user.photo).apply(new RequestOptions().override(150, 150).placeholder(R.drawable.ic_avatar).centerInside()).into(img_photo);
+        txt_phone.setText("+" + MyUtils.cur_user.phone);
+        edit_name.setText(MyUtils.cur_user.name);
+        Glide.with(activity).load(MyUtils.cur_user.photo).apply(new RequestOptions().override(150, 150).placeholder(R.drawable.ic_avatar).centerInside()).into(img_photo);
     }
     private void displayChoiceDialog() {
         String choiceString[] = new String[] {"Gallery" ,"Camera"};

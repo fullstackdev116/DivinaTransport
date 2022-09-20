@@ -1,11 +1,6 @@
 package com.ujs.divinatransport.Model;//package com.example.ujs.afterwork.com.ujs.rezoschool.Model;
 //
 
-import android.location.Location;
-
-import com.google.android.gms.maps.model.LatLng;
-import com.ujs.divinatransport.Utils.Utils;
-
 import java.io.Serializable;
 import java.util.Date;
 

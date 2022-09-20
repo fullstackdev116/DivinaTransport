@@ -20,12 +20,11 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ujs.divinatransport.Adapter.MessageListAdapter;
 import com.ujs.divinatransport.Model.ChatRoom;
 import com.ujs.divinatransport.Model.Message;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 
 import java.util.ArrayList;
 
@@ -64,10 +63,10 @@ public class Fragment_message extends Fragment {
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading...");
         progressDialog.show();
-        Utils.mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        MyUtils.mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChild(Utils.tbl_chat)) {
+                if (snapshot.hasChild(MyUtils.tbl_chat)) {
                     addMessages();
                 } else {
                     progressDialog.dismiss();
@@ -84,12 +83,12 @@ public class Fragment_message extends Fragment {
 
     }
     void addMessages() {
-        Utils.mDatabase.child(Utils.tbl_chat).addChildEventListener(new ChildEventListener() {
+        MyUtils.mDatabase.child(MyUtils.tbl_chat).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 progressDialog.dismiss();
                 if (dataSnapshot.getValue()!=null) {
-                    boolean flag = dataSnapshot.getKey().contains(Utils.cur_user.uid);
+                    boolean flag = dataSnapshot.getKey().contains(MyUtils.cur_user.uid);
                     if (flag) {
                         ChatRoom chatRoom = new ChatRoom();
                         chatRoom._id = dataSnapshot.getKey();
@@ -113,7 +112,7 @@ public class Fragment_message extends Fragment {
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 progressDialog.dismiss();
                 if (dataSnapshot.getValue()!=null) {
-                    boolean flag = dataSnapshot.getKey().contains(Utils.cur_user.uid);
+                    boolean flag = dataSnapshot.getKey().contains(MyUtils.cur_user.uid);
                     if ( flag) {
                         ChatRoom chatRoom = new ChatRoom();
                         chatRoom._id = dataSnapshot.getKey();

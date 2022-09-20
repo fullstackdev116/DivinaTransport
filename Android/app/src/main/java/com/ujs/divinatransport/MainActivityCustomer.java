@@ -1,5 +1,6 @@
 package com.ujs.divinatransport;
 
+import static android.Manifest.permission.CALL_PHONE;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
@@ -8,7 +9,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -40,17 +40,15 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.database.DataSnapshot;
-import com.ujs.divinatransport.Model.User;
 import com.ujs.divinatransport.service.LocationService;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.ujs.divinatransport.service.NotificationCallbackCustomer;
-import com.ujs.divinatransport.service.NotificationCallbackDriver;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -70,6 +68,7 @@ public class MainActivityCustomer extends BaseActivity {
 
     private final static int MY_PERMISSION_STORAGE = 201;
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
+    public final static int MY_PERMISSION_CALL = 301;
     Intent locationIntent;
 
     public interface LocationUpdateCallback {
@@ -142,6 +141,7 @@ public class MainActivityCustomer extends BaseActivity {
         IntentFilter locationIntent = new IntentFilter("LocationIntent");
         registerReceiver(myReceiver, locationIntent);
         setStoragePermission();
+        setPhoneCallPermission();
 
         new_message =(TextView) MenuItemCompat.getActionView(navigationView.getMenu().
                 findItem(R.id.nav_message));
@@ -158,8 +158,8 @@ public class MainActivityCustomer extends BaseActivity {
         };
     }
     public void setProfile() {
-        ((TextView) header.findViewById(R.id.txt_name)).setText(Utils.cur_user.name);
-        Glide.with(this).load(Utils.cur_user.photo)
+        ((TextView) header.findViewById(R.id.txt_name)).setText(MyUtils.cur_user.name);
+        Glide.with(this).load(MyUtils.cur_user.photo)
                 .apply(new RequestOptions().override(150, 150)
                         .placeholder(R.drawable.ic_avatar_white).centerCrop().dontAnimate()).into(img_photo);
     }
@@ -192,7 +192,7 @@ public class MainActivityCustomer extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Location location = (Location) intent.getParcelableExtra("loc");
-            Utils.cur_location = location;
+            MyUtils.cur_location = location;
             locationUpdateCallback.locationUpdateCallback();
         }
     };
@@ -206,8 +206,8 @@ public class MainActivityCustomer extends BaseActivity {
                     stopService(locationIntent);
                 }
                 App.setStatus(0);
-                Utils.FirebaseLogout();
-                Utils.mUser = null;
+                MyUtils.FirebaseLogout();
+                MyUtils.mUser = null;
                 Intent intent = new Intent(MainActivityCustomer.this, SplashActivity.class);
                 startActivity(intent);
                 ActivityCompat.finishAffinity(MainActivityCustomer.this);
@@ -219,6 +219,16 @@ public class MainActivityCustomer extends BaseActivity {
         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+    public void setPhoneCallPermission() {
+        if (ContextCompat.checkSelfPermission(this, CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ArrayList<String> arrPermissionRequests = new ArrayList<>();
+            arrPermissionRequests.add(CALL_PHONE);
+            ActivityCompat.requestPermissions(this, arrPermissionRequests.toArray(new String[arrPermissionRequests.size()]), MY_PERMISSION_CALL);
+        } else {
+
+        }
     }
     public void setStoragePermission() {
         if (ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE)
@@ -321,6 +331,12 @@ public class MainActivityCustomer extends BaseActivity {
                 }
             } else if (requestCode == MY_PERMISSION_STORAGE) {
                 createDirectory();
+            } else if (requestCode == MY_PERMISSION_CALL) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    Toast.makeText(MainActivityCustomer.this, "Please allow phone call permission!", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

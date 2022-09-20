@@ -1,14 +1,20 @@
 package com.ujs.divinatransport.DriverSignupFragments;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 
 import com.ujs.divinatransport.SignupActivityDriver;
 import com.ujs.divinatransport.R;
@@ -44,8 +50,34 @@ public class Fragment_driver_signup_intro extends Fragment {
                 activity.btn_next.setEnabled(activity.termsAgreed);
             }
         });
-
+        Button btn_terms = v.findViewById(R.id.btn_terms);
+        btn_terms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openTermsDialog();
+            }
+        });
         return v;
+    }
+    public void openTermsDialog() {
+        final Dialog dlg = new Dialog(activity, R.style.Theme_Transparent);
+        Window window = dlg.getWindow();
+        View view = getLayoutInflater().inflate(R.layout.dialog_terms, null);
+        WebView wv = view.findViewById(R.id.webview);
+        wv.loadUrl("file:///android_asset/terms.html");
+        ImageButton btn_close = view.findViewById(R.id.btn_close);
+        btn_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dlg.dismiss();
+            }
+        });
+
+        dlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dlg.setContentView(view);
+        window.setGravity(Gravity.CENTER);
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dlg.show();
     }
     @Override
     public void onResume() {

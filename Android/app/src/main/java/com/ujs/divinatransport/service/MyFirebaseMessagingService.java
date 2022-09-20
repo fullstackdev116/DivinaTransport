@@ -1,28 +1,14 @@
 package com.ujs.divinatransport.service;
 
 import android.app.ActivityManager;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.media.RingtoneManager;
-
-import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.ujs.divinatransport.App;
-import com.ujs.divinatransport.MainActivityCustomer;
-import com.ujs.divinatransport.MainActivityDriver;
-import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -50,21 +36,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         final String mainActivityCustomer = getPackageName() + ".MainActivityCustomer";
         final String chatActivity = getPackageName() + ".ChatActivity";
 
-        if (currentClass.equals(chatActivity) && push_type.equals(Utils.PUSH_CHAT)) {
+        if (currentClass.equals(chatActivity) && push_type.equals(MyUtils.PUSH_CHAT)) {
             return;
         }
 
-        Utils.sendNotification(getApplicationContext(), title, body, data, receiver_type);
+        MyUtils.sendNotification(getApplicationContext(), title, body, data, receiver_type);
 
-        if (push_type.equals(Utils.PUSH_CHAT)) {
+        if (push_type.equals(MyUtils.PUSH_CHAT)) {
             int cnt = App.readPreferenceInt(App.NewMessage, 0);
             App.setPreferenceInt(App.NewMessage, cnt+1);
-        } else if (push_type.equals(Utils.PUSH_RIDE)) {
+        } else if (push_type.equals(MyUtils.PUSH_RIDE)) {
             int cnt = App.readPreferenceInt(App.NewRide, 0);
             App.setPreferenceInt(App.NewRide, cnt+1);
         }
 
-        if (receiver_type.equals(Utils.DRIVER)) {
+        if (receiver_type.equals(MyUtils.DRIVER)) {
             App.notificationCallbackDriver.OnReceivedNotification();
         } else {
             App.notificationCallbackCustomer.OnReceivedNotification();

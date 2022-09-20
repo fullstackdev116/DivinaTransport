@@ -57,9 +57,8 @@ import com.jkb.vcedittext.VerificationAction;
 import com.jkb.vcedittext.VerificationCodeEditText;
 import com.ujs.divinatransport.App;
 import com.ujs.divinatransport.R;
-import com.ujs.divinatransport.SignupActivityCustomer;
 import com.ujs.divinatransport.SignupActivityDriver;
-import com.ujs.divinatransport.Utils.Utils;
+import com.ujs.divinatransport.Utils.MyUtils;
 import com.ujs.divinatransport.idcamera.utils.PermissionUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -159,7 +158,7 @@ public class Fragment_driver_signup_userinfo extends Fragment {
         btn_verify.findViewById(R.id.btn_verify).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!Utils.isEmptyEditText(edit_phone)) {
+                if (!MyUtils.isEmptyEditText(edit_phone)) {
                     country_code = txt_countryCode.getSelectedCountryCode();
                     number = edit_phone.getText().toString().trim();
                     number = number.replace(" ", "");
@@ -193,7 +192,7 @@ public class Fragment_driver_signup_userinfo extends Fragment {
             public void onVerificationFailed(FirebaseException e) {
                 activity.dismissProgress();
                 Log.d("msg", e.getLocalizedMessage());
-                Utils.showAlert(activity, getResources().getString(R.string.error), e.getMessage());
+                MyUtils.showAlert(activity, getResources().getString(R.string.error), e.getMessage());
             }
 
             @Override
@@ -287,19 +286,19 @@ public class Fragment_driver_signup_userinfo extends Fragment {
     public void signInWithPhone(PhoneAuthCredential credential)
     {
         activity.showProgress();
-        Utils.auth.signInWithCredential(credential)
+        MyUtils.auth.signInWithCredential(credential)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Utils.mDatabase.child(Utils.tbl_user).orderByChild(Utils.PHONE).equalTo(country_code+number)
+                            MyUtils.mDatabase.child(MyUtils.tbl_user).orderByChild(MyUtils.PHONE).equalTo(country_code+number)
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                             activity.dismissProgress();
                                             if (dataSnapshot.getValue() != null) {
-                                                Utils.FirebaseLogout();
-                                                Utils.showAlert(activity, getResources().getString(R.string.warning), getResources().getString(R.string.phone_number_already_exists));
+                                                MyUtils.FirebaseLogout();
+                                                MyUtils.showAlert(activity, getResources().getString(R.string.warning), getResources().getString(R.string.phone_number_already_exists));
                                             } else {
                                                 activity.dismissProgress();
                                                 Snackbar.make(getView(), getResources().getString(R.string.phone_verified_successfully), 2000).show();
