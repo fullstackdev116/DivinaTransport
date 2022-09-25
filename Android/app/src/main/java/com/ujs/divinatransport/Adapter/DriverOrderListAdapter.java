@@ -145,6 +145,10 @@ public class DriverOrderListAdapter extends BaseAdapter {
                                 MyUtils.mDatabase.child(MyUtils.tbl_ride_reject).child(key).setValue(rideReject);
 
                                 MyUtils.mDatabase.child(MyUtils.tbl_order).child(ride._id).setValue(null);
+
+                                MyUtils.cur_user.rejects ++;
+                                MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).setValue(MyUtils.cur_user);
+
                                 fragment.getOrders();
                             }
                         }).show();

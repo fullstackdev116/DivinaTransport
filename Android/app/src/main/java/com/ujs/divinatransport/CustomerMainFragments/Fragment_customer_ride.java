@@ -320,6 +320,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                             } else {
                                 user.rate = (user.rate + my_ride.rate)/2;
                             }
+                            user.rides ++;
                             int val = (int)user.rate*10;
                             user.rate = (float)val/10;
                             if (my_ride.isSOS) {
@@ -328,6 +329,9 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
                                 user.point += 20;
                             }
                             MyUtils.mDatabase.child(MyUtils.tbl_user).child(user.uid).setValue(user);
+                            MyUtils.cur_user.rides ++;
+                            MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).setValue(MyUtils.cur_user);
+
                             cancelRide();
                             if (marker_start!=null) marker_start.remove();
                             if (marker_target!=null) marker_target.remove();
@@ -746,6 +750,7 @@ public class Fragment_customer_ride extends Fragment implements OnMapReadyCallba
         activity.locationUpdateCallback = new MainActivityCustomer.LocationUpdateCallback() {
             @Override
             public void locationUpdateCallback() {
+//                Toast.makeText(activity, "update", Toast.LENGTH_SHORT).show();
                 mLastLocation = MyUtils.cur_location;
                 if (mMap == null) return;
                 addMarker(mMap, MyUtils.cur_location.getLatitude(), MyUtils.cur_location.getLongitude(), location_track, R.drawable.ic_pin0);

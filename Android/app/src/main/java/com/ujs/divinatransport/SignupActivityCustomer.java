@@ -74,9 +74,8 @@ public class SignupActivityCustomer extends AppCompatActivity {
         edit_phone = findViewById(R.id.edit_phone);
         edit_name = findViewById(R.id.edit_name);
         txt_countryCode = findViewById(R.id.txt_countryCode);
-        txt_countryCode.setCountryForPhoneCode(1);
-        edit_phone.setText("1111111111");
-        TextView txt_howitworks = findViewById(R.id.txt_howitworks);
+        txt_countryCode.setCountryForPhoneCode(225);
+//        edit_phone.setText("1111111111");
 
         btn_verify = findViewById(R.id.btn_verify);
         btn_submit = findViewById(R.id.btn_submit);
@@ -111,7 +110,7 @@ public class SignupActivityCustomer extends AppCompatActivity {
                 }
                 showProgress();
                 String token = MyUtils.getDeviceToken(SignupActivityCustomer.this);
-                User user = new User("", "", user_name, user_phone, "", 0, 0, MyUtils.PASSENGER, 3, token, 0);
+                User user = new User("", "", user_name, user_phone, "", 0, 0, MyUtils.PASSENGER, 3, token, 0, 0, 0);
                 MyUtils.mDatabase.child(MyUtils.tbl_user).push().setValue(user);
                 Snackbar.make(parentLayout, getResources().getString(R.string.user_registered_successfully), 3000).show();
                 App.goToMainPage(SignupActivityCustomer.this, progressDialog);
@@ -121,9 +120,10 @@ public class SignupActivityCustomer extends AppCompatActivity {
         ImageCarousel carousel = findViewById(R.id.carousel);
 
         List<CarouselItem> list = new ArrayList<>();
-        list.add(new CarouselItem(R.drawable.welcome1,"Passenger signup details first page"));
-        list.add(new CarouselItem(R.drawable.welcome2,"Passenger signup details second page"));
-        list.add(new CarouselItem(R.drawable.welcome3,"Passenger signup details third page"));
+        list.add(new CarouselItem(R.drawable.signup_how_to_request,"How to request?"));
+        list.add(new CarouselItem(R.drawable.signup_how_to_view_car,""));
+        list.add(new CarouselItem(R.drawable.signup_how_to_communicate,"How to communicate?"));
+        list.add(new CarouselItem(R.drawable.signup_how_to_pay_review,"How to pay and leave a review?"));
         carousel.setData(list);
 
         checkBox = findViewById(R.id.chk_agree);

@@ -325,7 +325,7 @@ public class MainActivityDriver extends BaseActivity {
         }
         App.MY_AUDIO_PATH = f3.getAbsolutePath();
 
-        File pictures = new File(Environment.getExternalStorageDirectory() + File.separator + "Pictures", "rezo");
+        File pictures = new File(Environment.getExternalStorageDirectory() + File.separator + "Pictures", "DivinaTransport");
         if (!pictures.exists()) {
             pictures.mkdir();
         }

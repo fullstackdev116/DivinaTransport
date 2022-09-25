@@ -285,6 +285,8 @@ public class Fragment_driver_drive extends Fragment implements OnMapReadyCallbac
                         RideReject rideReject = new RideReject("", sel_ride._id, MyUtils.cur_user.uid, new Date());
                         String key = MyUtils.mDatabase.child(MyUtils.tbl_ride_reject).push().getKey();
                         MyUtils.mDatabase.child(MyUtils.tbl_ride_reject).child(key).setValue(rideReject);
+                        MyUtils.cur_user.rejects ++;
+                        MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).setValue(MyUtils.cur_user);
                         if (marker_start!=null) marker_start.remove();
                         if (marker_target!=null) marker_target.remove();
                         if (polyline!=null) polyline.remove();

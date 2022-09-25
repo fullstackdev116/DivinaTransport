@@ -102,8 +102,8 @@ public class SplashActivity extends AppCompatActivity {
         View view = getLayoutInflater().inflate(R.layout.dialog_login, null);
         edit_phone = view.findViewById(R.id.edit_phone);
         txt_countryCode = view.findViewById(R.id.txt_countryCode);
-        txt_countryCode.setCountryForPhoneCode(1);
-        edit_phone.setText("1111111111");
+        txt_countryCode.setCountryForPhoneCode(225);
+//        edit_phone.setText("1111111111");
         txt_msg = view.findViewById(R.id.txt_msg);
         Button btn_login = view.findViewById(R.id.btn_login);
         btn_login.setOnClickListener(new View.OnClickListener() {

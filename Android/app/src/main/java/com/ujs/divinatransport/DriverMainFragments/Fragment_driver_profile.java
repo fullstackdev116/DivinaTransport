@@ -143,25 +143,27 @@ public class Fragment_driver_profile extends Fragment {
         txt_points.setText(String.valueOf(MyUtils.cur_user.point));
         Glide.with(activity).load(MyUtils.cur_user.photo).apply(new RequestOptions().override(150, 150)
                 .placeholder(R.drawable.ic_avatar_white).fitCenter()).into(img_photo);
+        txt_rejects.setText(String.valueOf(MyUtils.cur_user.rejects));
+        txt_drives.setText(String.valueOf(MyUtils.cur_user.rides));
 
-        MyUtils.mDatabase.child(MyUtils.tbl_ride_reject).orderByChild("driver_id").equalTo(MyUtils.cur_user.uid)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        activity.dismissProgress();
-                        if (dataSnapshot.getValue() != null) {
-
-                            long cnt = dataSnapshot.getChildrenCount();
-                            txt_rejects.setText(String.valueOf(cnt));
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w( "loadPost:onCancelled", databaseError.toException());
-                        // ...
-                    }
-                });
+//        MyUtils.mDatabase.child(MyUtils.tbl_ride_reject).orderByChild("driver_id").equalTo(MyUtils.cur_user.uid)
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        activity.dismissProgress();
+//                        if (dataSnapshot.getValue() != null) {
+//
+//                            long cnt = dataSnapshot.getChildrenCount();
+//                            txt_rejects.setText(String.valueOf(cnt));
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                        Log.w( "loadPost:onCancelled", databaseError.toException());
+//                        // ...
+//                    }
+//                });
 
         arrayList.clear();
         MyUtils.mDatabase.child(MyUtils.tbl_history).orderByChild("driver_id").equalTo(MyUtils.cur_user.uid)
@@ -170,8 +172,6 @@ public class Fragment_driver_profile extends Fragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         activity.dismissProgress();
                         if (dataSnapshot.getValue() != null) {
-                            long cnt = dataSnapshot.getChildrenCount();
-                            txt_drives.setText(String.valueOf(cnt));
                             for(DataSnapshot datas: dataSnapshot.getChildren()){
                                 Ride ride = datas.getValue(Ride.class);
                                 ride._id = datas.getKey();
@@ -279,6 +279,7 @@ public class Fragment_driver_profile extends Fragment {
         View view = getLayoutInflater().inflate(R.layout.dialog_update_profile, null);
         EditText edit_name = view.findViewById(R.id.edit_name);
         EditText edit_email = view.findViewById(R.id.edit_email);
+        TextView txt_phone = view.findViewById(R.id.txt_phone);
         img_photo1 = view.findViewById(R.id.img_photo1);
         img_photo1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -288,6 +289,7 @@ public class Fragment_driver_profile extends Fragment {
         });
         edit_name.setText(MyUtils.cur_user.name);
         edit_email.setText(MyUtils.cur_user.email);
+        txt_phone.setText(MyUtils.cur_user.phone);
         Glide.with(activity).load(MyUtils.cur_user.photo).apply(new RequestOptions().override(150, 150).placeholder(R.drawable.ic_avatar).centerInside()).into(img_photo1);
         ImageButton btn_close = view.findViewById(R.id.btn_close);
         btn_close.setOnClickListener(new View.OnClickListener() {

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/color_screen_background"
     tools:context="com.ujs.divinatransport.DriverSignupFragments.Fragment_driver_signup_intro">
 
@@ -19,6 +20,7 @@
             <org.imaginativeworld.whynotimagecarousel.ImageCarousel
                 android:id="@+id/carousel"
                 android:layout_width="match_parent"
+                app:imageScaleType="centerInside"
                 android:layout_height="256dp" />
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -41,10 +43,10 @@
 
                         <TextView
                             android:layout_width="match_parent"
-                            android:layout_height="100dp"
+                            android:layout_height="match_parent"
                             android:layout_marginTop="5dp"
                             android:singleLine="false"
-                            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse fermentum, erat vel volutpat porttitor, nunc mauris placerat nisi, sed lacinia dolor quam ut mauris. Nam at nulla facilisis, aliquet urna suscipit, semper velit. In tempus erat cursus nisi vehicula, id euismod ligula volutpat. Quisque accumsan dui blandit, hendrerit ligula vel, tristique tortor. Nulla efficitur nibh quis mauris venenatis vehicula. Fusce varius, ex non vulputate pellentesque, velit justo blandit purus, sodales vehicula magna risus a ipsum. Phasellus risus orci, rhoncus non ipsum sed, pellentesque efficitur elit."
+                            android:text="1. Driver Information\n   Set user name and email address with phone verification\n2. Driving License Information\n   Take a photo of your driving license card image and set driving license information\n3. Car Information"
                             android:textColor="@color/black" />
                     </RelativeLayout>
                     <LinearLayout
@@ -77,7 +79,7 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="10dp"
                     android:background="@color/color_screen_background"
-                    android:text="  Terms of Use and Privacy Policy  "
+                    android:text="  What do you need for signup?  "
                     android:textColor="#333333" />
             </RelativeLayout>
         </LinearLayout>

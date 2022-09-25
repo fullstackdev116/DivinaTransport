@@ -51,7 +51,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void applicationdidenterbackground() {
         if (!isWindowFocused) {
             isAppWentToBg = true;
-            App.setStatus(0);
+            App.setStatus(2);
         }
     }
 

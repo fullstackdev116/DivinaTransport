@@ -93,6 +93,8 @@ public class MessageListAdapter extends BaseAdapter {
                             .placeholder(R.drawable.ic_avatar).centerCrop().dontAnimate()).into(img_photo);
                     if (user.status == 0) {
                         ly_status.setBackground(activity.getResources().getDrawable(R.drawable.status_offline));
+                    } else if (user.status == 2) {
+                        ly_status.setBackground(activity.getResources().getDrawable(R.drawable.status_away));
                     } else {
                         ly_status.setBackground(activity.getResources().getDrawable(R.drawable.status_online));
                     }

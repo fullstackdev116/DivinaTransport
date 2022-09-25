@@ -152,8 +152,8 @@ public class Fragment_driver_signup_userinfo extends Fragment {
         });
         btn_verify = v.findViewById(R.id.btn_verify);
 
-        txt_countryCode.setCountryForPhoneCode(1);
-        edit_phone.setText("1111111111");
+        txt_countryCode.setCountryForPhoneCode(225);
+//        edit_phone.setText("1111111111");
 
         btn_verify.findViewById(R.id.btn_verify).setOnClickListener(new View.OnClickListener() {
             @Override

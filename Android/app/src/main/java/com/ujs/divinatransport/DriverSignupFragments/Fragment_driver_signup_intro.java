@@ -37,9 +37,9 @@ public class Fragment_driver_signup_intro extends Fragment {
         ImageCarousel carousel = v.findViewById(R.id.carousel);
 
         List<CarouselItem> list = new ArrayList<>();
-        list.add(new CarouselItem(R.drawable.welcome1,"Driver signup details first page"));
-        list.add(new CarouselItem(R.drawable.welcome2,"Driver signup details second page"));
-        list.add(new CarouselItem(R.drawable.welcome3,"Driver signup details third page"));
+        list.add(new CarouselItem(R.drawable.signup_how_to_apply,"How to apply?"));
+        list.add(new CarouselItem(R.drawable.signup_how_to_go_profile,"How to see profile?"));
+        list.add(new CarouselItem(R.drawable.signup_how_to_set_car,"How to set my car information?"));
         carousel.setData(list);
 
         checkBox = v.findViewById(R.id.chk_agree);

@@ -2,6 +2,9 @@ package com.ujs.divinatransport;
 
 import static android.content.ContentValues.TAG;
 
+import static com.ujs.divinatransport.Utils.MyUtils.tbl_geo_driver;
+import static com.ujs.divinatransport.Utils.MyUtils.tbl_geo_passenger;
+
 import android.app.Activity;
 import android.app.Application;
 import android.app.ProgressDialog;
@@ -35,8 +38,12 @@ import androidx.lifecycle.OnLifecycleEvent;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.OnDisconnect;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
@@ -149,7 +156,9 @@ public class App extends Application {
                                 MyUtils.cur_user = datas.getValue(User.class);
                                 MyUtils.cur_user.uid = datas.getKey();
 
-                                setStatus(1);
+                                DatabaseReference ref_status = MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).child("status");
+                                OnDisconnect onDisconnect = ref_status.onDisconnect();
+                                onDisconnect.setValue(0);
 //token update
                                 String token = MyUtils.getDeviceToken(activity);
                                 MyUtils.mDatabase.child(MyUtils.tbl_user).child(MyUtils.cur_user.uid).child("token").setValue(token);
@@ -167,14 +176,29 @@ public class App extends Application {
                                         MyUtils.FirebaseLogout();
                                         MyUtils.showAlert(activity, activity.getResources().getString(R.string.warning), activity.getResources().getString(R.string.please_wait_admin_enable_login));
                                     } else {  // enabled
+                                        setStatus(1);
+                                        DatabaseReference ref_geofire = MyUtils.mDatabase.child(tbl_geo_driver).child(MyUtils.cur_user.uid);
+                                        OnDisconnect onDisconnectGeofire = ref_geofire.onDisconnect();
+                                        onDisconnectGeofire.setValue(null);
+
                                         Intent myIntent = new Intent(activity, MainActivityDriver.class);
                                         activity.startActivity(myIntent);
                                         activity.finishAffinity();
                                     }
                                 } else if (MyUtils.cur_user.type.equals(MyUtils.PASSENGER)) {
-                                    Intent myIntent = new Intent(activity, MainActivityCustomer.class);
-                                    activity.startActivity(myIntent);
-                                    activity.finishAffinity();
+                                    if (MyUtils.cur_user.state == 2) { // disabled
+                                        MyUtils.FirebaseLogout();
+                                        MyUtils.showAlert(activity, activity.getResources().getString(R.string.warning), activity.getResources().getString(R.string.please_wait_admin_enable_login));
+                                    } else {  // enabled
+                                        setStatus(1);
+                                        DatabaseReference ref_geofire = MyUtils.mDatabase.child(tbl_geo_passenger).child(MyUtils.cur_user.uid);
+                                        OnDisconnect onDisconnectGeofire = ref_geofire.onDisconnect();
+                                        onDisconnectGeofire.setValue(null);
+
+                                        Intent myIntent = new Intent(activity, MainActivityCustomer.class);
+                                        activity.startActivity(myIntent);
+                                        activity.finishAffinity();
+                                    }
                                 }
                             }
                         } else { // go to signup intro
@@ -268,7 +292,7 @@ public class App extends Application {
     private void onAppBackgrounded() {
         Log.d("MyApp", "App in background");
 //        Toast.makeText(getApplicationContext(), "Background", Toast.LENGTH_SHORT).show();
-        setStatus(0);
+        setStatus(2);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)

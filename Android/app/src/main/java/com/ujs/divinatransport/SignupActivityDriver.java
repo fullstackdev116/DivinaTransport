@@ -92,6 +92,11 @@ public class SignupActivityDriver extends AppCompatActivity {
                         index_step--;
                         return;
                     }
+                    if (car_type == null) {
+                        MyUtils.showAlert(SignupActivityDriver.this, getResources().getString(R.string.warning), getResources().getString(R.string.please_select_a_car_type));
+                        index_step--;
+                        return;
+                    }
                     uploadCarPhotoToFirebase();
                 } else {
                     switchStep(true);
@@ -272,7 +277,7 @@ public class SignupActivityDriver extends AppCompatActivity {
                         dismissProgress();
                         String downloadUrl = uri.toString();
                         String token = MyUtils.getDeviceToken(SignupActivityDriver.this);
-                        User user = new User("", user_email, user_name, user_phone, downloadUrl, 0, 0, "DRIVER", 0, token, 0);
+                        User user = new User("", user_email, user_name, user_phone, downloadUrl, 0, 0, "DRIVER", 0, token, 0, 0, 0);
 //                        Utils.mDatabase.child(Utils.tbl_user).push().setValue(user);
                         String pushKey = MyUtils.mDatabase.child(MyUtils.tbl_user).push().getKey();
                         MyUtils.mDatabase.child(MyUtils.tbl_user).child(pushKey).setValue(user);

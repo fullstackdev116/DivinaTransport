@@ -311,6 +311,8 @@ public class ChatActivity extends BaseActivity {
                     }
                     if (user.status == 0) {
                         ly_status.setBackground(getResources().getDrawable(R.drawable.status_offline));
+                    } else if (user.status == 2) {
+                        ly_status.setBackground(getResources().getDrawable(R.drawable.status_away));
                     } else {
                         ly_status.setBackground(getResources().getDrawable(R.drawable.status_online));
                     }
