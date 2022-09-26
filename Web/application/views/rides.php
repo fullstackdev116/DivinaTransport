@@ -1,4 +1,3 @@
-  <div class="main-content">
     <div class="container-fluid">
         <div class="page-header">
             <div class="row align-items-end">
@@ -45,7 +44,12 @@
                                         <td>
                                             From: <?php echo $value['from_address'];?><br>
                                             To:&nbsp;&nbsp;&nbsp;&nbsp; <?php echo $value['to_address'];?><br><br>
-                                            <p style="color:red;"><?php echo $value['dateStr'];?><p>
+                                            <div class="row">
+                                                <div class="col-md-4"><p style="color:red;"><?php echo $value['dateStr'];?><p></div>
+                                                <?php if ($value['isSOS']) { ?>
+                                                <div class="col-md-4"><label class="badge badge-danger">SOS<label></div>
+                                                <?php } ?>
+                                            </div>
                                         </td>
                                         <td>
                                             <?php if ($value['transaction_id'] == "") echo $value['price'].'<br>(Cache)'; else echo $value['price'].'<br>(EdiaPay: '.$value['transaction_id'].')';?>

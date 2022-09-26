@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="<?php echo base_url();?>assets/plugins/icon-kit/dist/css/iconkit.min.css">
         <link rel="stylesheet" href="<?php echo base_url();?>assets/plugins/ionicons/dist/css/ionicons.min.css">
         <link rel="stylesheet" href="<?php echo base_url();?>assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css">
+
         <link rel="stylesheet" href="<?php echo base_url();?>assets/plugins/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
         <link rel="stylesheet" href="<?php echo base_url();?>assets/plugins/tempusdominus-bootstrap-4/build/css/tempusdominus-bootstrap-4.min.css">
         <link rel="stylesheet" href="<?php echo base_url();?>assets/plugins/c3/c3.min.css">
@@ -30,7 +31,7 @@
         <script src="<?php echo base_url();?>assets/src/js/vendor/modernizr-2.8.3.min.js"></script>
     </head>
 
-    <body>
+    <body> <!-- oncontextmenu="return false;" -->
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -86,17 +87,22 @@
                                 <div class="nav-item <?php if ($active == 'rides') echo 'active';?>">
                                     <a href="<?php echo base_url();?>home/rides"><i class="ik ik-corner-up-right"></i><span>Rides</span></a>
                                 </div>
+                                <div class="nav-item <?php if ($active == 'map') echo 'active';?>">
+                                    <a href="<?php echo base_url();?>home/map"><i class="ik ik-map"></i><span>Map</span></a>
+                                </div>
                                 
                             </nav>
                         </div>
                     </div>
                 </div>
+                <div class="main-content" style="background:#efefef;">
 
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script>window.jQuery || document.write('<script src="<?php echo base_url();?>assets/src/js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
         <script src="<?php echo base_url();?>assets/plugins/popper.js/dist/umd/popper.min.js"></script>
         <script src="<?php echo base_url();?>assets/plugins/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="<?php echo base_url();?>assets/plugins/perfect-scrollbar/dist/perfect-scrollbar.min.js"></script>
+
         <script src="<?php echo base_url();?>assets/plugins/screenfull/dist/screenfull.js"></script>
         <script src="<?php echo base_url();?>assets/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
         <script src="<?php echo base_url();?>assets/plugins/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>

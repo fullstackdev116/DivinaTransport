@@ -1,4 +1,3 @@
-  <div class="main-content">
     <div class="container-fluid">
         <div class="page-header">
             <div class="row align-items-end">
@@ -7,7 +6,7 @@
                         <i class="ik ik-users bg-blue"></i>
                         <div class="d-inline">
                             <h5>Passengers</h5>
-                            <span><?php echo count($data);?> drivers have been joined.</span>
+                            <span><?php echo count($data);?> passengers have been joined.</span>
                         </div>
                     </div>
                 </div>
@@ -27,6 +26,7 @@
                                         <th>No</th>
                                         <th class="nosort" >Avatar</th>
                                         <th>Contact</th>
+                                        <th>Ridings</th>
                                         <th>State</th>
                                     </tr>
                                 </thead>
@@ -39,6 +39,7 @@
                                         <td><?php echo $i;?></td>
                                         <td><img src="<?php echo $value['photo'];?>" onerror="this.onerror=null; this.src='<?php echo base_url();?>assets/img/avatar.png'" class="rounded-circle" style="width:50px; height:auto;" alt=""><br><?php echo $value['name'];?></td>
                                         <td>+<?php echo $value['phone'];?><br><?php echo $value['email'];?></td>
+                                        <td><?php echo $value['rides'];?></td>
                                         <td>
                                             <?php if ($value['state'] == 3) {?>
                                             <a href="<?php echo base_url();?>home/passengerDisable/<?php echo $key;?>" style="color:gray;">Disable</a>

@@ -87,6 +87,12 @@ class Home extends MY_Controller {
 		$this->load->view('footer');
 	}
 
+	public function map() {
+		$this->load->view('header', array('active' => 'map', 'new_driver' => $this->getNewDriver()));
+		$this->load->view('map');
+		$this->load->view('footer');
+	}
+
 	public function rides() {
 		$array_history = $this->getValueByKey(TBL_HISTORY);
 		$array_user = $this->getValueByKey(TBL_USER);

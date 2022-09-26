@@ -1,4 +1,3 @@
-  <div class="main-content">
     <div class="container-fluid">
         <div class="page-header">
             <div class="row align-items-end">
@@ -181,8 +180,6 @@
                 data: null,
                 success: function(res) {
                     var data = jQuery.parseJSON(res);
-                    var gender = data.gender;
-                    console.log(gender);
                     $("#car_photo").attr('src', data.photo);
                     $("#car_type").html(data.type);
                     $("#car_seats").html(data.seats);
